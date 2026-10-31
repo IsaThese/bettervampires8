@@ -83,6 +83,7 @@ public class VExtendedPlayer implements IExtendedEntityProperties {
 		case HYPNOTIZING:
 		case WALL_CLIMB:
 		case OTHERFORM:
+		case UNLOCKED_RESTORED_POWERS:
 			return true;
 		default:
 			return false;

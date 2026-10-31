@@ -5,34 +5,29 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.tihyo.legends.abilities.Ability;
-import com.tihyo.legends.abilities.AbilityHelper;
+import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.tihyo.legends.management.LegendsGameRules;
 import com.tihyo.legends.management.PlayerHelper;
+import com.tihyo.legends.management.properties.LegendsProperties;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 @Mixin(value = PlayerHelper.class, remap = false)
 public abstract class PlayerHelperMixin {
 
-@Inject(method = "isInvincible", at = @At("HEAD"), cancellable = true)
-private static void isInvincibleChange(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
-	cir.cancel();
-    cir.setReturnValue( (AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.invincible) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.powerWithin) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.bold) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.mistForm) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.devonianBeast) 
-            //|| AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.vampireBite) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.werewolfBite) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.batonBash) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.vadersMaelstrom) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.choke) 
-            //|| AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.hypnosisControl) 
-            || AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.lightningShield) 
-            || player.worldObj.getGameRules().getGameRuleBooleanValue(LegendsGameRules.isInvincible))); // field_70170_p.func_82736_K().func_82766_b
+	@Inject(method = "isInvincible", at = @At("HEAD"), cancellable = true)
+	private static void isInvincibleChange(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+		cir.cancel();
+		cir.setReturnValue(
+				LegendsAbilityBridge.isInvincible(player)
+				|| LegendsAbilityBridge.isMist(player)
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.POWER_WITHIN) > 0
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.DEVONIAN_BEAST) > 0
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.WEREWOLF_BITE) > 0
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.BATON_BASH) > 0
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.VADER_MAELSTROM) > 0
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.CHOKE) > 0
+				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.LIGHTNING_SHIELD) > 0
+				|| player.worldObj.getGameRules().getGameRuleBooleanValue(LegendsGameRules.isInvincible));
+	}
 }
-}
-
-

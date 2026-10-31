@@ -18,6 +18,7 @@ import com.emoniph.witchery.util.SoundEffect;
 import com.mrsand.StatBoostChanges.ModCompat;
 import com.mrsand.StatBoostChanges.StatBoostChanges;
 import com.mrsand.StatBoostChanges.StatBoostConfig;
+import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager;
@@ -145,7 +146,7 @@ public class GeneralEventHandler {
 					&& !LegacyHelper.getLegacyClass(player).getWeaknesses(player)
 					&& !MorphHelper.isMorphed(player)) 
 			{
-				if (PhysicsUtil.isMobLookingAtPlayer(target, player, .75) && (LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")) || ExtendedPlayer.get(player).getVampireLevel() >= 8)
+				if (PhysicsUtil.isMobLookingAtPlayer(target, player, .75) && (VampireRestoredAbilities.hasHypnosisMastery(player) || LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")) || ExtendedPlayer.get(player).getVampireLevel() >= 8)
 						&& VExtendedPlayer.get(player).getBoolean(PlayerKeys.HYPNOTIZING))
 					StatBoostChanges.network.sendToServer(new PacketSyncTarget(target.getEntityId()));
 			}
@@ -471,7 +472,7 @@ public class GeneralEventHandler {
 			if (playerEx.isVampire() && !GeneralUtil.isInLight(player)) {
 				VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 				boolean isMesmerizeSelected = (playerEx.getSelectedVampirePower() == VampirePower.MESMERIZE);
-				boolean canUseMesmerize = (LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")) || playerEx.getVampireLevel() >= 8);
+				boolean canUseMesmerize = (VampireRestoredAbilities.hasHypnosisMastery(player) || LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")) || playerEx.getVampireLevel() >= 8);
 
 				if (playerEx.getSelectedVampirePower() == VampirePower.NONE && held != null && held.getItem() == Witchery.Items.CANE_SWORD) {
 					ItemCaneSword cane = (ItemCaneSword) held.getItem();
@@ -481,7 +482,7 @@ public class GeneralEventHandler {
 				}
 
 				if (player.worldObj.isRemote) {
-					if (playerEx.getSelectedVampirePower() == VampirePower.DRINK && player.isSneaking() && LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis"))) {
+					if (playerEx.getSelectedVampirePower() == VampirePower.DRINK && player.isSneaking() && (VampireRestoredAbilities.hasHypnosisMastery(player) || LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")))) {
 						// Holding an item fires RIGHT_CLICK_BLOCK then RIGHT_CLICK_AIR in one click — only
 						// process AIR when holding something; empty hand may only get BLOCK.
 						if (held != null && event.action != Action.RIGHT_CLICK_AIR) {

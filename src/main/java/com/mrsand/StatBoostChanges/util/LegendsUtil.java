@@ -1,14 +1,12 @@
 package com.mrsand.StatBoostChanges.util;
 
+import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.tihyo.horror.blocks.RegisterBlocksHorror;
-import com.tihyo.legends.abilities.Ability;
-import com.tihyo.legends.abilities.AbilityHelper;
 import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
-import com.tihyo.legends.legacy.LegacyManager;
 import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.morph.MorphHelper;
@@ -59,14 +57,14 @@ public class LegendsUtil {
 	}
 
 	public static boolean isHidingMorph(EntityPlayer player) {
-		return (!MorphHelper.isVampireBeast(player) && (MorphHelper.isMorphed(player) || AbilityHelper.isAbilityActive(player, Ability.mistForm)));
+		return (!MorphHelper.isVampireBeast(player) && (MorphHelper.isMorphed(player) || LegendsAbilityBridge.isMist(player)));
 	}
 	public static final String NBT_MIST_DEMIST_TICKS = "statbooMistDemistTicks";
 	/** Delay after exit press before mist actually clears. */
 	public static final int MIST_DEMIST_DELAY_TICKS = 5 * 20;
 
 	public static boolean isMist(EntityPlayer player) {
-		return AbilityHelper.isAbilityActive(player, Ability.mistForm);
+		return LegendsAbilityBridge.isMist(player);
 	}
 
 	/** Mist/bat/wolf cannot use items, right-click blocks, or entity-interact. */
@@ -95,14 +93,14 @@ public class LegendsUtil {
 	public static void activateMistFormIndefinite(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
 		cancelMistDemist(player);
-		AbilityHelper.addEffectAndSync(player, Ability.mistForm, Integer.MAX_VALUE, 0);
+		LegendsAbilityBridge.setMistFormIndefinite(player);
 	}
 
 	public static void clearMistForm(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
 		cancelMistDemist(player);
 		if (isMist(player)) {
-			AbilityHelper.removeEffectAndSync(player, Ability.mistForm);
+			LegendsAbilityBridge.clearMistForm(player);
 		}
 	}
 
@@ -138,7 +136,7 @@ public class LegendsUtil {
 		t--;
 		if (t <= 0) {
 			cancelMistDemist(player);
-			AbilityHelper.removeEffectAndSync(player, Ability.mistForm);
+			LegendsAbilityBridge.clearMistForm(player);
 			applyMistKeyCooldownAfterDemist(player);
 			return;
 		}
@@ -146,7 +144,9 @@ public class LegendsUtil {
 	}
 
 	private static void applyMistKeyCooldownAfterDemist(EntityPlayer player) {
-		int key = LegacyHelper.findAbility(player, "morphVampireMist");
+		// Legends 8 renamed mist power to "morpMist"
+		int key = LegacyHelper.findAbility(player, "morpMist");
+		if (key <= 0) key = LegacyHelper.findAbility(player, "morphVampireMist");
 		if (key <= 0) return;
 		if (player.getEntityData().getInteger("isInCombat") == 1) {
 			setLegacyCooldown(player, key, 40);
@@ -157,7 +157,7 @@ public class LegendsUtil {
 
 	public static boolean isBloodLust(EntityPlayer player) {
 		return Loader.isModLoaded("legends") && player != null
-				&& AbilityHelper.isAbilityActive(player, Ability.bloodLust);
+				&& LegendsAbilityBridge.isBloodLust(player);
 	}
 
 	/**
@@ -173,12 +173,12 @@ public class LegendsUtil {
 	public static void clearBloodLust(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
 		if (isBloodLust(player)) {
-			AbilityHelper.removeEffectAndSync(player, Ability.bloodLust);
+			LegendsAbilityBridge.clearBloodLust(player);
 		}
 	}
 
 	public static void displayFangs(EntityPlayer player) {
-		if(LegacyHelper.getLegacyClass(player) == LegacyRegistry.vampire && !AbilityHelper.isAbilityActive(player, Ability.vampireFangs)) {
+		if(LegacyHelper.getLegacyClass(player) == LegacyRegistry.vampire && !LegendsAbilityBridge.isVampireFangs(player)) {
 			PowersHandler.vampireFangs(player, true);
 		}
 	}
@@ -290,7 +290,7 @@ public class LegendsUtil {
 		//		MorphHelper.morph(player, MorphRegistry.vampireBeast);
 	}
 	public static boolean fangs(EntityPlayer player) {
-		return AbilityHelper.isAbilityActive(player, Ability.vampireFangs);
+		return LegendsAbilityBridge.isVampireFangs(player);
 	}
 
 	public static boolean isVampireBeast(EntityPlayer player) {
@@ -338,17 +338,19 @@ public class LegendsUtil {
 	}
 
 	public static boolean hasLearnedBeastForm(EntityPlayer player) {
-		return LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("morphVampireBeast"));
+		// Legends 8 removed MorphVampireBeast power; auto-grant restored Demonic Form.
+		return VampireRestoredAbilities.hasDemonicForm(player);
 	}
 	public static boolean hasBeastInSlot(EntityPlayer player){
-		return LegacyHelper.findAbility(player, "morphVampireBeast") != 0;
+		return VampireRestoredAbilities.hasDemonicForm(player)
+				|| LegacyHelper.findAbility(player, "morphVampireBeast") != 0;
 	}
 
 	public static void bloodVision(EntityPlayer player, boolean display) {
 		PowersHandler.bloodVision(player, display);
 	}
 	public static boolean bloodVision(EntityPlayer player) {
-		return AbilityHelper.isAbilityActive(player, Ability.bloodVision);
+		return LegendsAbilityBridge.isBloodVision(player);
 	}
 
 	public static boolean isVampire(EntityPlayer player) {
@@ -356,8 +358,8 @@ public class LegendsUtil {
 	}
 	public static boolean mobAttack(EntityPlayer player) {
 		if(LegacyHelper.getLegacyClass(player) == LegacyRegistry.vampire) {
-			return (AbilityHelper.isAbilityActive(player, Ability.vampireFangs) || MorphHelper.isMorphed(player)
-					||AbilityHelper.isAbilityActive(player, Ability.bloodVision));
+			return (LegendsAbilityBridge.isVampireFangs(player) || MorphHelper.isMorphed(player)
+					|| LegendsAbilityBridge.isBloodVision(player));
 		}
 		return false;
 
@@ -406,7 +408,8 @@ public class LegendsUtil {
 			vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
 			vPlayer.syncClient();
 			MorphHelper.morph(player, MorphRegistry.vampireBeast); //Turns back to human
-			if (LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("morphVampireMist")))
+			if (LegacyHelper.findAbility(player, "morpMist") != 0
+					|| LegacyHelper.findAbility(player, "morphVampireMist") != 0)
 				PowersHandler.mistForm(player, 12); // make mist form forever? Could
 			// probably change time to 8000
 			// or large
@@ -415,15 +418,16 @@ public class LegendsUtil {
 					new ChatComponentText("You are extremely thirsty.")
 					.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 		} 
-		//First time and transform to beast (learned power is enough — do not require hotbar slot)
+		//First time and transform to beast (auto-granted Demonic Form — do not require hotbar slot)
 		else if ((bloodPower > 0 && bloodPower < criticalBlood)
 				&& !isInSunlight
 				&& !vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE) 
 				&& !MorphHelper.isVampireBeast(player)) {
 
-			if (LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("morphVampireBeast"))) {
+			if (VampireRestoredAbilities.hasDemonicForm(player)) {
 				if(MorphHelper.isMorphed(player))
 					LegendsUtil.ifMorphedTurnHuman(player);
+				SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 10.0D);
 				MorphHelper.morph(player, MorphRegistry.vampireBeast);
 				player.addChatComponentMessage(
 						new ChatComponentText("Enraged, you use your demonic form.")
@@ -434,7 +438,8 @@ public class LegendsUtil {
 				player.addPotionEffect(new PotionEffect(Potion.regeneration.id, 20 * 10, 3, false));
 				return true;
 			}
-			else if (LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("morphVampireMist"))) {
+			else if (LegacyHelper.findAbility(player, "morpMist") != 0
+					|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
 				vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
 				vPlayer.syncClient();
 				PowersHandler.mistForm(player, 12);

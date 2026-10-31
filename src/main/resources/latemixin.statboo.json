@@ -6,7 +6,7 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-      "legends.BlockAlterMixin",
+      "legends.BlockAltarMixin",
       
       "BlockCoffinMixin",
       "BlockCoffinVampirismMixin",
@@ -19,21 +19,13 @@
       "ExtendedVillagerMixin",
       "GenericEventsMixin",
       
-      "legends.HypnosisMasteryMixin",
-      
       "ItemGeneralMixin",
       "ItemGlassGobletMixin",
       "ItemVampireClothesMixin",
       
-      
-      "legends.LegacyPowerDemonicFuryMixin",
       "legends.LegacyPowerMorphBatMixin",
-      "legends.LegacyPowerMorphBeastMixin",
       "legends.LegacyPowerMorphMistMixin",
-      "legends.LegacyPowerMorphVampireBeastMixin",
       "legends.LegacyPowerMorphWolfMixin",
-      "legends.LegacyPowerTeleportationMixin",
-      "legends.LegacyPowerWallClimbingMixin",
       "legends.LegacyVampireMixin",
       "legends.LegendsCommonEventHandlerMixin",
       "legends.ModelVampireApparelV1Mixin",

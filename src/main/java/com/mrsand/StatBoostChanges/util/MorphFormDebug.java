@@ -3,8 +3,6 @@ package com.mrsand.StatBoostChanges.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.tihyo.legends.abilities.Ability;
-import com.tihyo.legends.abilities.AbilityHelper;
 import com.tihyo.legends.morph.MorphHelper;
 
 import cpw.mods.fml.common.Loader;
@@ -66,7 +64,7 @@ public final class MorphFormDebug {
 	private static boolean interesting(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends")) return false;
 		return MorphHelper.isMorphed(player)
-				|| AbilityHelper.isAbilityActive(player, Ability.mistForm)
+				|| LegendsAbilityBridge.isMist(player)
 				|| (Loader.isModLoaded("vampirism") && VampirismUtil.isBatMode(player))
 				|| LegendsUtil.blocksBlockBreak(player)
 				|| LegendsUtil.blocksItemUse(player);
@@ -90,7 +88,7 @@ public final class MorphFormDebug {
 		sb.append(" bat=").append(MorphHelper.isBat(player));
 		sb.append(" wolf=").append(MorphHelper.isWolf(player));
 		sb.append(" beast=").append(MorphHelper.isVampireBeast(player));
-		sb.append(" mist=").append(AbilityHelper.isAbilityActive(player, Ability.mistForm));
+		sb.append(" mist=").append(LegendsAbilityBridge.isMist(player));
 		try {
 			String morphTag = MorphHelper.getMorphTag(player);
 			sb.append(" tag=").append(morphTag == null || morphTag.isEmpty() ? "\"\"" : morphTag);

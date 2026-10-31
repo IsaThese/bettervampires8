@@ -10,9 +10,6 @@ import com.gtnewhorizon.gtnhmixins.LateMixin;
 @LateMixin
 public class LateMixinsLoader implements ILateMixinLoader {
 
-	//Sets up LateMixins for all Mixins needed in order to change class files
-	// that are not my mods, also allows safe mod integration or powerful class changes
-
 	public String getMixinConfig() {
 		return "latemixin.statboo.json";
 	}
@@ -23,12 +20,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
 		if (loadedMods.contains("witchery") && loadedMods.contains("legends")) {
 			mixins.add("EntityWitchHunterMixin");
 			mixins.add("ItemVampireClothesMixin");
-			mixins.add("legends.HypnosisMasteryMixin");
 			mixins.add("legends.LegacyPowerMorphBatMixin");
-			mixins.add("legends.LegacyPowerMorphBeastMixin");
 			mixins.add("legends.LegacyPowerMorphMistMixin");
 			mixins.add("legends.LegacyPowerMorphWolfMixin");
-			mixins.add("legends.LegacyPowerTeleportationMixin");
 			mixins.add("legends.LegacyVampireMixin");
 			mixins.add("legends.LegendsCommonEventHandlerMixin");
 			mixins.add("legends.MorphWolfMixin");
@@ -38,11 +32,8 @@ public class LateMixinsLoader implements ILateMixinLoader {
 
 		// --- LEGENDS ONLY REQUIRED ---
 		if (loadedMods.contains("legends")) {
-			mixins.add("legends.BlockAlterMixin");
+			mixins.add("legends.BlockAltarMixin");
 			mixins.add("legends.EntityVampireMixin");
-			mixins.add("legends.LegacyPowerDemonicFuryMixin");
-			mixins.add("legends.LegacyPowerMorphVampireBeastMixin");
-			mixins.add("legends.LegacyPowerWallClimbingMixin");
 			mixins.add("legends.ModelVampireApparelV1Mixin");
 			mixins.add("legends.ModelVampireTeethMixin");
 			mixins.add("legends.MorphBatMixin");
@@ -65,12 +56,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 
 		if (loadedMods.contains("vampirism")) {
 			mixins.add("BlockCoffinVampirismMixin");
-//			mixins.add("RenderHandlerMixin");
 			mixins.add("VampirePlayerMixin");
-		}
-
-		if (loadedMods.contains("Minecraft")) {
-			// mixins.add("EntitySpiderMixin");
 		}
 
 		return mixins;

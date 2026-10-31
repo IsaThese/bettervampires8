@@ -3,15 +3,16 @@ package com.mrsand.StatBoostChanges.common.handlers;
 import java.util.UUID;
 
 import com.emoniph.witchery.Witchery;
+import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
+import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.MorphUtil;
+import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
-import com.tihyo.legends.abilities.Ability;
-import com.tihyo.legends.abilities.AbilityHelper;
 import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.morph.MorphHelper;
 
@@ -52,8 +53,8 @@ public class LegendsEventHandler {
 				return;
 			}
 			boolean isVampireBeast = MorphHelper.isVampireBeast(player);
-			boolean isFuryActive = AbilityHelper.isAbilityActive(player, Ability.demonicFury);
-			boolean isBiteActive = AbilityHelper.isAbilityActive(player, Ability.vampireBite);
+			boolean isFuryActive = VampireRestoredAbilities.isDemonicFuryActive(player);
+			boolean isBiteActive = LegendsAbilityBridge.isVampireBite(player);
 
 			boolean holdingCane = player.getHeldItem() != null && player.getHeldItem().getItem() == Witchery.Items.CANE_SWORD;
 
@@ -104,7 +105,7 @@ public class LegendsEventHandler {
 	public void onAttack(AttackEntityEvent event) {
 		if (event.entity instanceof EntityPlayer && !event.entityPlayer.worldObj.isRemote) {
 			EntityPlayer player = (EntityPlayer)event.entity;
-			if (AbilityHelper.isAbilityActive((EntityLivingBase)player, Ability.demonicFury)) {
+			if (VampireRestoredAbilities.isDemonicFuryActive(player)) {
 				if (event.target instanceof EntityLivingBase) {
 					EntityLivingBase entity = (EntityLivingBase)event.target;
 					if(entity.getHealth() > 0 && !entity.isDead) {
@@ -223,9 +224,16 @@ public class LegendsEventHandler {
 
 		if (event.phase != Phase.START) return;
 
+		if (!player.worldObj.isRemote && Loader.isModLoaded("legends")) {
+			VampireRestoredAbilities.tick(player);
+			LegendsUtil.tickMistDemist(player);
+			if (LegendsAbilityBridge.isMist(player)) {
+				PhysicsUtil.handlePhasingPhysics(player);
+				player.getEntityData().setBoolean("IsMistFormSmall", true);
+			}
+		}
 
-
-		boolean isMistActive = AbilityHelper.isAbilityActive(player, Ability.mistForm);
+		boolean isMistActive = LegendsAbilityBridge.isMist(player);
 		boolean wasMisty = player.getEntityData().getBoolean("IsMistFormSmall");
 
 		// --- CASE: ABILITY ENDED ---

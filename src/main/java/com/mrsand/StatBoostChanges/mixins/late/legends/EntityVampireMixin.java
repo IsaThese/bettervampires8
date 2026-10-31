@@ -17,11 +17,10 @@ import com.tihyo.legends.entities.mobs.EntitySmartCreature;
 import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.management.PlayerHelper;
-import com.tihyo.legends.management.interfaces.ICustomDurDamage;
-import com.tihyo.legends.management.interfaces.IExtraEssence;
 import com.tihyo.legends.management.interfaces.IHostile;
 import com.tihyo.legends.management.interfaces.ILegendsCreature;
-import com.tihyo.legends.management.interfaces.ITokenDrop;
+import com.tihyo.legends.management.interfaces.INightSpawn;
+import com.tihyo.legends.management.interfaces.IVulnurableMob;
 
 import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.Entity;
@@ -35,7 +34,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 @Mixin(value = EntityVampire.class, remap = false)
-public abstract class EntityVampireMixin extends EntitySmartCreature implements ILegendsCreature, IHostile, ITokenDrop, ICustomDurDamage, IExtraEssence {
+public abstract class EntityVampireMixin extends EntitySmartCreature implements ILegendsCreature, IHostile, IVulnurableMob, INightSpawn {
     
     //@Shadow public abstract IAttributeInstance func_110148_a(IAttribute attribute);
     //@Shadow public abstract BaseAttributeMap func_110140_aT();
@@ -165,14 +164,14 @@ public abstract class EntityVampireMixin extends EntitySmartCreature implements 
       }
     
     
-    @Shadow public abstract float getPunch(); 
+    @Shadow public abstract float getSwing(); 
     @Shadow public abstract void setPunch(float value);
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     public void attackChanges(EntityLivingBase entity, CallbackInfo ci) {
     	ci.cancel();
     	float attackDamage = .5F; //Default is 5
         if (canAttackEntity(entity)) {
-          if (getPunch() <= 0.0F)
+          if (getSwing() <= 0.0F)
             setPunch(.2F); 
           entity.attackEntityFrom(DamageSource.causeMobDamage((EntityLivingBase)this), entity.isPotionActive(LegendsEffects.werewolfVenom.id) ? (attackDamage / 2.0F) : attackDamage);
           if (this.ticksExisted % 100 == 0)

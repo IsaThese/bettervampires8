@@ -28,8 +28,8 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid = "bettervampires", name = "Better Vampires", version = "1.0.0"
-//, dependencies = "required-after:unimixins@[0.1.19);"
+@Mod(modid = "bettervampires", name = "Better Vampires", version = "1.0.0",
+		dependencies = "after:legends;after:witchery;after:unimixins"
 		)
 
 
@@ -82,6 +82,7 @@ public class StatBoostChanges {
 		}
 
 		if(Loader.isModLoaded("legends")) {
+			com.mrsand.StatBoostChanges.abilities.powers.BvVampirePowers.register();
 			LegendsEventHandler legendsHandler = new LegendsEventHandler();
 			MinecraftForge.EVENT_BUS.register(legendsHandler);
 			FMLCommonHandler.instance().bus().register(legendsHandler);
