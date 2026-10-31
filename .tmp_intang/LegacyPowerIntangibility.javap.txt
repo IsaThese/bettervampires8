@@ -1,0 +1,96 @@
+﻿Compiled from "LegacyPowerIntangibility.java"
+public class com.tihyo.legends.legacy.powers.LegacyPowerIntangibility extends com.tihyo.legends.legacy.LegacyPower {
+  private static java.util.List<com.tihyo.legends.legacy.LegendsLegacy> legacies;
+
+  public com.tihyo.legends.legacy.powers.LegacyPowerIntangibility();
+    Code:
+       0: aload_0
+       1: invokespecial #12                 // Method com/tihyo/legends/legacy/LegacyPower."<init>":()V
+       4: return
+
+  public java.lang.String getName();
+    Code:
+       0: ldc           #18                 // String phaseHorror
+       2: areturn
+
+  public java.lang.String getDisplayName();
+    Code:
+       0: ldc           #21                 // String Intangibility
+       2: areturn
+
+  public com.tihyo.legends.legacy.PowerType getType();
+    Code:
+       0: getstatic     #29                 // Field com/tihyo/legends/legacy/PowerType.assignable:Lcom/tihyo/legends/legacy/PowerType;
+       3: areturn
+
+  public int getRank();
+    Code:
+       0: iconst_4
+       1: ireturn
+
+  public java.lang.String getCost();
+    Code:
+       0: ldc           #34                 // String 50
+       2: areturn
+
+  public int getAssignedKey(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokevirtual #38                 // Method getName:()Ljava/lang/String;
+       5: invokestatic  #44                 // Method com/tihyo/legends/legacy/LegacyHelper.findAbility:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+       8: ireturn
+
+  public void keyPressed(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void onHold(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: invokestatic  #53                 // Method com/tihyo/legends/legacy/LegacyHelper.isActive:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+       4: ifeq          37
+       7: aload_1
+       8: invokestatic  #57                 // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+      11: aload_1
+      12: invokevirtual #62                 // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      15: ifne          37
+      18: aload_1
+      19: invokestatic  #67                 // Method com/tihyo/legends/management/PlayerHelper.isPhaseStunned:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      22: ifne          37
+      25: aload_1
+      26: getfield      #73                 // Field net/minecraft/entity/player/EntityPlayer.field_70124_G:Z
+      29: ifeq          37
+      32: aload_1
+      33: iconst_1
+      34: invokestatic  #79                 // Method com/tihyo/legends/handlers/PowersHandler.phasing:(Lnet/minecraft/entity/player/EntityPlayer;I)V
+      37: return
+
+  public void execute(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void addToLegacy();
+    Code:
+       0: aload_0
+       1: getstatic     #83                 // Field legacies:Ljava/util/List;
+       4: getstatic     #89                 // Field com/tihyo/legends/legacy/LegacyRegistry.vampire:Lcom/tihyo/legends/legacy/LegendsLegacy;
+       7: invokestatic  #93                 // Method com/tihyo/legends/legacy/LegacyHelper.addPowerToLegacy:(Lcom/tihyo/legends/legacy/LegacyPower;Ljava/util/List;Lcom/tihyo/legends/legacy/LegendsLegacy;)V
+      10: return
+
+  public java.util.List<com.tihyo.legends.legacy.LegendsLegacy> getLegacies();
+    Code:
+       0: getstatic     #83                 // Field legacies:Ljava/util/List;
+       3: areturn
+
+  public java.lang.String getDescription();
+    Code:
+       0: ldc           #98                 // String Pass through any solid object.
+       2: areturn
+
+  static {};
+    Code:
+       0: invokestatic  #105                // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+       3: putstatic     #83                 // Field legacies:Ljava/util/List;
+       6: return
+}

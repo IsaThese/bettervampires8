@@ -1,0 +1,13 @@
+#General Multiplier. Is divided by 10.
+multiplier=10
+#Vanilla
+Cow=10
+EntityHorse=10
+Villager=15
+Pig=5
+Sheep=5
+Ozelot=5
+Wolf=5
+
+#MCA
+MCA.EntityHuman=15

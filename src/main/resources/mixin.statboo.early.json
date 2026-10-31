@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.7.11",
+  "package": "com.mrsand.StatBoostChanges.mixins.early",
+  "refmap": "mixins.statboo.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "mixins": [
+    "EntitySpiderMixin",
+    "EntityGhastMixin",
+    "EntityBlazeMixin",
+    "BatSkillMixin",
+    "MixinAbstractClientPlayer",
+    "EntityPlayerMPMixin",
+    "EntityPlayerMixin",
+    "FoodStatsMixin",
+    "ItemArmorVampireClothesRepairMixin",
+    "LegendsRenderHelperMixin",
+    "RenderPlayerMorphHandMixin",
+    "EventBusHandDebugMixin",
+    "ItemRendererHandDebugMixin",
+    "RenderPlayerArmDebugMixin",
+    "RenderPlayerWitcheryHandDebugMixin",
+    "RenderPlayerWitcheryHandFixMixin",
+    "ItemRendererWitcheryHandDebugMixin",
+    "RenderPlayerHandWitcheryDebugMixin"
+  ]
+}

@@ -1,0 +1,165 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "https://maven.minecraftforge.net/"
+        }
+        maven {
+            name = "curesmaven"
+            url = "https://www.cursemaven.com"
+        }
+                maven {
+                    name = "sonatype"
+                    url = "https://oss.sonatype.org/content/repositories/snapshots/"
+                }
+        maven { // The repo from which to get waila
+        name "Mobius Repo"
+        url "https://mobiusstrip.eu/maven"
+    }
+    maven { url 'https://tehnut.info/maven/' }
+    }
+    dependencies {
+        classpath ('com.anatawa12.forge:ForgeGradle:1.2-1.1.+') {
+            changing = true
+        }
+    }
+}
+
+
+apply plugin: 'forge'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+
+// Forge 1.7.10 used to open eclipse/ as the workspace with the project in
+// the parent folder. Newer Eclipse rejects that overlap, so use a sibling
+// workspace (BetterVampires-eclipse) and keep eclipse/ as the game run dir.
+eclipse {
+    project {
+        name = 'Minecraft'
+    }
+    jdt {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+        file.withProperties { props ->
+            props['org.eclipse.jdt.core.compiler.problem.rawTypeReference'] = 'ignore'
+            props['org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation'] = 'ignore'
+        }
+    }
+    classpath {
+        file {
+            whenMerged { classpath ->
+                classpath.entries.findAll { it.kind == 'con' && it.path.contains('JRE_CONTAINER') }.each {
+                    it.path = 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_361/'
+                }
+            }
+        }
+    }
+}
+
+// These settings allow you to choose what version of Java you want to be compatible with. Forge 1.7.10 runs on Java 6 to 8.
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = project.version
+group = project.group
+
+minecraft {
+    version = project.minecraft_version + "-" + project.forge_version
+    runDir = "run"
+}
+
+dependencies {
+    // you may put jars on which you depend on in ./libs
+    // or you may define them like so..
+    //compile "some.group:artifact:version:classifier"
+    //compile "some.group:artifact:version"
+    // real examples
+    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // for more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html Compile only is for optional
+    compileOnly files('lib/witchery-1.7.10-0.24.1.jar') //Witchery
+    //compileOnly files('lib/gtnhmixins-2.1.13.jar')
+    //compileOnly files('lib/gtnhmixins-2.1.13-processor.jar') Usuing UTILMixins Instead
+    implementation files('lib/+unimixins-all-1.7.10-0.1.19.jar')
+    //  implementation files('lib/1Legends-1.7.10-1.3.3.jar') //Was using old legends mod, but bugs
+    compileOnly files('lib/1Legends-1.7.10-5.4.jar')
+    compileOnly files('lib/electro.jar')
+    compileOnly files('lib/Vampirism-1.7.10-0.7.9.jar')
+    compileOnly files('lib/Morph-Beta-0.9.2.jar')
+    //compileOnly("lib/Electroblob's Wizardry - 1.1.6 - MC 1.7.10")
+    compileOnly files('lib/Waila-1.5.10_1.7.10.jar')
+    compileOnly files('lib/Guide-API-1.7.10-1.0.1-20-deobf.jar')
+    compileOnly group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.annotation', version: '1.1.0'
+    
+}
+jar {
+    manifest {
+        attributes 'FMLAT': 'BetterV_at.cfg' ,
+        'FMLCorePlugin': 'com.mrsand.StatBoostChanges.StatBoostCore',
+            'FMLCorePluginContainsFMLMod': 'true', // Only if your jar also has a @Mod
+            'ForceLoadAsMod': 'true'
+    }
+}
+
+processResources {
+    // This will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // Replace values in only mcmod.info.
+    filesMatching('mcmod.info') {
+        // Replace version and mcversion.
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+}
+
+// Ensures that the encoding of source files is set to UTF-8, see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+// This task creates a .jar file containing the source code of this mod.
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+// This task creates a .jar file containing a deobfuscated version of this mod, for other developers to use in a development environment.
+task devJar(type: Jar) {
+    classifier = "dev"
+    from sourceSets.main.output
+}
+
+// Creates the listed artifacts on building the mod.
+artifacts {
+    archives sourcesJar
+    archives devJar
+}
+
+// This block configures any maven publications you want to make.
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+        // Add any other artifacts here that you would like to publish!
+            artifact(jar) {
+                builtBy build
+            }
+            artifact(sourcesJar) {
+                builtBy sourcesJar
+            }
+            artifact(devJar) {
+                builtBy devJar
+            }
+        }
+    }
+
+    // This block selects the repositories you want to publish to.
+    repositories {
+        // Add the repositories you want to publish to here.
+    }
+}

@@ -1,0 +1,55 @@
+{
+  "required": true,
+  "minVersion": "0.7.11",
+  "package": "com.mrsand.StatBoostChanges.mixins.late",
+  "refmap": "mixins.statboo.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+      "legends.BlockAlterMixin",
+      
+      "BlockCoffinMixin",
+      "BlockCoffinVampirismMixin",
+      /*"BloodSourceMixin",*/
+      "CreatureUtilMixin",
+      /*"EntitySpiderMixin",*/
+      "legends.EntityVampireMixin",
+      "EntityWitchHunterMixin",
+      "ExtendedPlayerMixin",
+      "ExtendedVillagerMixin",
+      "GenericEventsMixin",
+      
+      "legends.HypnosisMasteryMixin",
+      
+      "ItemGeneralMixin",
+      "ItemGlassGobletMixin",
+      "ItemVampireClothesMixin",
+      
+      
+      "legends.LegacyPowerDemonicFuryMixin",
+      "legends.LegacyPowerMorphBatMixin",
+      "legends.LegacyPowerMorphBeastMixin",
+      "legends.LegacyPowerMorphMistMixin",
+      "legends.LegacyPowerMorphVampireBeastMixin",
+      "legends.LegacyPowerMorphWolfMixin",
+      "legends.LegacyPowerTeleportationMixin",
+      "legends.LegacyPowerWallClimbingMixin",
+      "legends.LegacyVampireMixin",
+      "legends.LegendsCommonEventHandlerMixin",
+      "legends.ModelVampireApparelV1Mixin",
+      "legends.ModelVampireTeethMixin",
+      "legends.MorphBatMixin",
+      "legends.MorphHelperMixin",
+      "legends.MorphWolfMixin",
+      "legends.PlayerHelperMixin",
+      "legends.PowersHandlerMixin",
+      "legends.RegisterBlocksMixin",
+      "legends.RegisterHorrorBlocksMixin",
+      
+      "RenderHandlerMixin",
+      /*"RenderPlayerHandMixin", */
+      
+      "ShapeshiftMixin",
+      "VampirePlayerMixin"
+    ]
+}

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "bettervampires",
+  "name": "Better Vampires",
+  "description": "Changes vampires in Legends and Witchery Mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Mr Sand"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

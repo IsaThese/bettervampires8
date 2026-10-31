@@ -1,0 +1,22 @@
+# Ensure the wrapper script always has UNIX line endings to prevent execution errors on Mac/Linux
+gradlew text eol=lf
+*.bat text eol=crlf
+
+# Git LFS for media and archives
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS for heavy Java binaries (Dependencies and Forge)
+lib/**/*.jar filter=lfs diff=lfs merge=lfs -text
+build/dirtyArtifacts/**/*.jar filter=lfs diff=lfs merge=lfs -text
+
+# Gradle wrapper is small and should stay a normal git blob
+gradle/wrapper/gradle-wrapper.jar -filter=lfs -diff=lfs -merge=lfs -text

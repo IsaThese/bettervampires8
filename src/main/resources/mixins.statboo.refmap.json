@@ -1,0 +1,14 @@
+{
+  "mappings": {
+    "com/mrsand/StatBoostChanges/mixins/early/EntitySpiderMixin": {
+      "findPlayerToAttack": "Lnet/minecraft/entity/monster/EntitySpider;func_70782_k()Lnet/minecraft/entity/Entity;"
+    }
+  },
+  "data": {
+    "searge": {
+      "com/mrsand/StatBoostChanges/mixins/early/EntitySpiderMixin": {
+        "findPlayerToAttack": "Lnet/minecraft/entity/monster/EntitySpider;func_70782_k()Lnet/minecraft/entity/Entity;"
+      }
+    }
+  }
+}

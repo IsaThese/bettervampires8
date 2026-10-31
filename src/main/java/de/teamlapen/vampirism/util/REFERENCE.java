@@ -1,0 +1,49 @@
+package de.teamlapen.vampirism.util;
+
+public class REFERENCE {
+	public static final class ENTITY {
+		public static final String VAMPIRE_HUNTER_NAME = "vampirism.vampireHunter";
+		public static final String VAMPIRE_NAME = "vampirism.vampire";
+		public static final String DRACULA_NAME = "vampirism.dracula";
+		public static final String GHOST_NAME = "vampirism.ghost";
+		public static final String VAMPIRE_BARON = "vampirism.vampireBaron";
+		public static final String VAMPIRE_MINION_REMOTE_NAME = "vampirism.vampireMinionR";
+		public static final String VAMPIRE_MINION_SAVEABLE_NAME = "vampirism.vampireMinionS";
+		public static final String DEAD_MOB_NAME = "vampirism.dead_mob";
+		public static final String BLINDING_BAT_NAME = "vampirism.blinding_bat";
+		public static final String DUMMY_CREATURE_NAME = "vampirism.dummy_creature";
+		public static final String PORTAL_GUARD_NAME = "vampirism.portal_guard";
+		public static final String CONVERTED_CREATURE_NAME = "vampirism.converted.creature";
+		public static final String CONVERTED_VILLAGER_NAME = "vampirism.converted.villager";
+		public static final String CONVERTED_SHEEP_NAME = "vampirism.converted.sheep";
+		public static final String VAMPIRE_HUNTER_2_NAME = "vampirism.vampireHunter2";
+		public static final String GARLIC_BOMB_NAME = "vampirism.garlicbomb";
+	}
+
+	public enum KEY {
+		UNKNOWN, SUCK, AUTO, SKILL, VISION, MINION_CONTROL
+	}
+
+	public static final class KEYS {
+		public static final String CATEGORY = "keys.vampirism.category";
+		public static final String SUCK_BLOOD = "keys.vampirism.suck";
+		public static final String AUTO_BLOOD = "keys.vampirism.auto";
+		public static final String TOGGLE_SKILLS = "keys.vampirism.skill";
+		public static final String SWITCH_VISION = "key.vampirism.vision";
+		public static final String MINION_CONTROL = "key.vampirism.minion_control";
+	}
+
+	public static final String MODID = "vampirism";
+
+	public static final String NAME = "Vampirism";
+	public static final String VERSION = "0.7.8.5";
+	public static final String MINECRAFT_VERSION = "@MVERSION@";
+	public static final String VAMPIRE_LEVEL_NBT_KEY = "vampirelevel";
+
+	public static final int HIGHEST_REACHABLE_LEVEL = 14;
+
+	public static final String UPDATE_FILE_LINK = "http://teamlapen.de/projects/vampirism/files/modversion.json";
+
+	public static final String SUPPORTER_FILE_LINK = "https://raw.githubusercontent.com/TeamLapen/Vampirism/1.7.10/src/main/resources/supporters.txt";
+
+}
