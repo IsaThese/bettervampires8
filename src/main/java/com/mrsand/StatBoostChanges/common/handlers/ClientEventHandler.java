@@ -1,10 +1,12 @@
 package com.mrsand.StatBoostChanges.common.handlers;
 
+import com.mrsand.StatBoostChanges.client.HypnosisBarHud;
 import com.mrsand.StatBoostChanges.util.HandRenderDebug;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
 import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryHandRenderDebug;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -21,6 +23,12 @@ public class ClientEventHandler {
 	public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
 //        if (event.type != RenderGameOverlayEvent.ElementType.HOTBAR) return;
 //        PacketVignette.render(event.resolution);
+	}
+
+	@SubscribeEvent
+	public void onRenderHypnosisBar(RenderGameOverlayEvent.Post event) {
+		if (!Loader.isModLoaded("legends")) return;
+		HypnosisBarHud.render(event);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)

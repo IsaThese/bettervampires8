@@ -72,6 +72,11 @@ public final class HypnosisDebug {
 		log(player, "DIM", op + " " + fromDim + "->" + toDim, true);
 	}
 
+	/** Mastery hold pull probe (log only; high frequency — gated by caller). */
+	public static void logMastery(EntityPlayer player, String detail) {
+		log(player, "MASTERY", detail, false);
+	}
+
 	public static String format(EntityPlayer player, String tag, String detail) {
 		String side = "?";
 		int dim = -999;

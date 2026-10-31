@@ -4,12 +4,15 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mrsand.StatBoostChanges.abilities.HypnosisMasteryLogic;
+import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyPower;
 import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.legacy.LegendsLegacy;
 import com.tihyo.legends.legacy.PowerType;
 import com.tihyo.legends.management.LegendsChatFormat;
+import com.tihyo.legends.management.LegendsHelper;
+import com.tihyo.legends.morph.MorphHelper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
@@ -43,9 +46,41 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 		return LegacyHelper.findAbility(player, getName());
 	}
 
+	/** Required in Legends 8: base canHold returns false, so onHold never runs. */
+	@Override
+	public boolean canHold(EntityPlayer player) {
+		return true;
+	}
+
 	@Override
 	public void keyPressed(EntityPlayer player) {
-		// Continuous channel runs in execute while the assigned key is held.
+		// Continuous channel: onHold refreshes duration; execute runs while useAbility is true.
+	}
+
+	/**
+	 * Mirror Legends 5.4 Hypnosis Mastery: while held, keep ability duration &gt; 0
+	 * so {@link LegacyHelper#useAbility} passes in execute.
+	 */
+	@Override
+	public void onHold(EntityPlayer player) {
+		if (player == null) return;
+		int key = getAssignedKey(player);
+		if (key <= 0) return;
+
+		if (MorphHelper.isMorphed(player)) {
+			if (LegendsHelper.getTicks(player) % 10 == 0) {
+				warn(player, "Must return to human form to hypnotize.");
+			}
+			return;
+		}
+
+		if (VampireRestoredAbilities.getHypnosisStrength(player) <= 0) return;
+		if (LegacyHelper.getLegacyClass(player) == null) return;
+		if (LegacyHelper.getLegacyClass(player).getWeaknesses(player)) return;
+
+		LegacyHelper.setDuration(player, key, 4);
+		// Legends 5: client must raycast + sync CURRENT_TARGET_ID while holding.
+		HypnosisMasteryLogic.refreshClientTarget(player);
 	}
 
 	@Override
@@ -53,6 +88,11 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 		if (player == null) return;
 		int key = getAssignedKey(player);
 		if (key <= 0) return;
+		// Client: still tick so getTarget can sync the crosshair entity to the server.
+		if (player.worldObj.isRemote) {
+			HypnosisMasteryLogic.tickChannel(player);
+			return;
+		}
 		if (!LegacyHelper.useAbility(player, key)) return;
 		if (LegacyHelper.getLegacyClass(player) == null) return;
 		if (LegacyHelper.getLegacyClass(player).getWeaknesses(player)) return;
@@ -76,7 +116,7 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Mastered hypnosis: channel to paralyze villagers, thrall creatures, and dominate tameables.";
+		return "You have mastered the art of hypnosis, now able to fully control your subject. Hold to use on subject and control their movements. When you punch, you will give the subject the effects of the standard hypnosis, causing them to lose control. Drains hypnosis bar (purple tip next to special).";
 	}
 
 	@Override

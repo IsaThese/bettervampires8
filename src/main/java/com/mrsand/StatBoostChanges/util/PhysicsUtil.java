@@ -2,6 +2,8 @@ package com.mrsand.StatBoostChanges.util;
 
 import java.util.List;
 
+import com.tihyo.legends.management.LegendsHelper;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockGlass;
@@ -15,11 +17,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -183,16 +183,15 @@ public class PhysicsUtil {
 		return true;
 	}
 
-	// Copied from legends Code
+	/** Exact Legends 5 {@code LegendsMathHelper.rayTrace}: getPosition + getLook. */
 	public static MovingObjectPosition rayTrace(EntityLivingBase entity, double distance, float partialTicks) {
 		Vec3 vec3 = entity.getPosition(partialTicks);
 		Vec3 vec31 = entity.getLook(partialTicks);
 		Vec3 vec32 = vec3.addVector(vec31.xCoord * distance, vec31.yCoord * distance, vec31.zCoord * distance);
-		return entity.worldObj.func_147447_a(vec3, vec32, false, false, true); // func_147447 returns first hit object,
-		// and does math
+		return entity.worldObj.func_147447_a(vec3, vec32, false, false, true);
 	}
 
-	// Copied from Legends Code
+	/** Exact Legends 5 {@code LegendsHelper.getTargetFromCrosshairs}. */
 	public static EntityLivingBase getTargetFromCrosshairs(EntityPlayer player, float partialTicks, double distance) {
 		double d0 = distance;
 		MovingObjectPosition posHit = rayTrace((EntityLivingBase) player, d0, partialTicks);
@@ -243,24 +242,12 @@ public class PhysicsUtil {
 		return null;
 	}
 
-	// Modified from Legends Code
+	/**
+	 * Prefer {@link LegendsHelper#getTarget} for mastery — it syncs {@code CURRENT_TARGET_ID}.
+	 * This local copy matches Legends 5 crosshair math for other BV call sites.
+	 */
 	public static EntityLivingBase getTarget(EntityPlayer player, double distance) {
-		if (getTargetFromCrosshairs(player, 1.0F, distance) != null) {
-			NBTTagCompound nbt = player.getEntityData();
-			nbt.setInteger("staringEntityHypnosisID",
-					Integer.valueOf(getTargetFromCrosshairs(player, 1.0F, distance).getEntityId()));
-		} else {
-			player.getEntityData().removeTag("staringEntityHypnosisID");
-		}
-		Entity entity = player.worldObj.getEntityByID(player.getEntityData().getInteger("staringEntityHypnosisID"));
-		if (entity != null && entity instanceof EntityLivingBase && player.getDistanceToEntity(entity) <= distance) {
-			return (EntityLivingBase) entity;
-		}
-		//	      LegendsPropertyModifier.set(player, 44, Integer.valueOf(getTargetFromCrosshairs(player, 1.0F, distance).getEntityId())); 
-		//	    if (player.worldObj.getEntityByID(LegendsProperties.getInt(player, 44)) != null && player.worldObj.getEntityByID(LegendsProperties.getInt(player, 44)) instanceof EntityLivingBase && player.getDistanceToEntity(player.worldObj.getEntityByID(LegendsProperties.getInt(player, 44))) <= distance)
-		//	      return (EntityLivingBase)player.worldObj.getEntityByID(LegendsProperties.getInt(player, 44)); 
-	
-		return null;
+		return LegendsHelper.getTarget(player, distance);
 	}
 
 	public static boolean isMobLookingAtPlayer(EntityLivingBase mob, EntityPlayer player, double angleTolerance) {

@@ -11,6 +11,7 @@ import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyPower;
 import com.tihyo.legends.legacy.LegacyRegistry;
+import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.management.properties.PropertyManager;
 
 import net.minecraft.block.Block;
@@ -103,12 +104,19 @@ public final class VampireRestoredAbilities {
 	public static void setHypnosisStrength(EntityPlayer player, int amount) {
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		if (v == null || player.worldObj.isRemote) return;
-		v.setInteger(PlayerKeys.HYPNOSIS_STRENGTH, Math.max(0, amount));
+		v.setInteger(PlayerKeys.HYPNOSIS_STRENGTH, LegendsHelper.limit(amount, 0, DEFAULT_HYPNOSIS_STRENGTH));
 		v.syncClient();
 	}
 
 	public static void addHypnosisStrength(EntityPlayer player, int delta) {
 		setHypnosisStrength(player, getHypnosisStrength(player) + delta);
+	}
+
+	/** True while Hypnosis Mastery hold duration is active. */
+	public static boolean isHypnosisMasteryChanneling(EntityPlayer player) {
+		if (player == null || !hasHypnosisMastery(player)) return false;
+		int key = BvVampirePowers.hypnosisMastery.getAssignedKey(player);
+		return key > 0 && LegacyHelper.getDuration(player, key) > 0;
 	}
 
 	public static boolean isDemonicFuryActive(EntityPlayer player) {
@@ -142,7 +150,17 @@ public final class VampireRestoredAbilities {
 			}
 		}
 
+		tickHypnosisStrengthRegen(player);
 		tickWebPassThrough(player);
+	}
+
+	/** Legends 5.4: +1 hypnotic strength every 5 ticks while not controlling. */
+	private static void tickHypnosisStrengthRegen(EntityPlayer player) {
+		if (!hasHypnosisMastery(player)) return;
+		if (isHypnosisMasteryChanneling(player)) return;
+		if (getHypnosisStrength(player) >= DEFAULT_HYPNOSIS_STRENGTH) return;
+		if (LegendsHelper.getTicks(player) % 5 != 0) return;
+		addHypnosisStrength(player, 1);
 	}
 
 	/** Passive intangibility: no collision with cobwebs only. */

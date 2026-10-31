@@ -1,204 +1,141 @@
 package com.mrsand.StatBoostChanges.abilities;
 
-import com.emoniph.witchery.Witchery;
-import com.emoniph.witchery.common.ExtendedPlayer;
-import com.emoniph.witchery.entity.EntityVillageGuard;
-import com.emoniph.witchery.entity.EntityWitchHunter;
-import com.emoniph.witchery.network.PacketParticles;
-import com.emoniph.witchery.util.ParticleEffect;
-import com.emoniph.witchery.util.SoundEffect;
-import com.emoniph.witchery.util.TargetPointUtil;
-import com.emoniph.witchery.util.TimeUtil;
-import com.mrsand.StatBoostChanges.util.GeneralUtil;
-import com.mrsand.StatBoostChanges.util.WitcheryUtil;
+import com.mrsand.StatBoostChanges.abilities.powers.BvVampirePowers;
+import com.mrsand.StatBoostChanges.util.HypnosisDebug;
+import com.tihyo.legends.abilities.LegendsAbilities;
+import com.tihyo.legends.effects.LegendsEffects;
+import com.tihyo.legends.entities.mobs.EntityPunchingBag;
+import com.tihyo.legends.entities.mobs.EntityStand;
 import com.tihyo.legends.handlers.PowersHandler;
+import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.management.LegendsHelper;
+import com.tihyo.legends.management.PlayerHelper;
+import com.tihyo.legends.management.interfaces.IKaiju;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
 
-/** Witchery channel/thrall behavior for BetterVampires Hypnosis Mastery. */
+/**
+ * Legends 5.4 Hypnosis Mastery control.
+ * <p>
+ * Targeting matches Legends 5 {@code LegendsHelper.getTarget}: the <b>client</b> raycasts and
+ * syncs {@code CURRENT_TARGET_ID} to the server; the <b>server</b> reads that ID and applies pull.
+ */
 public final class HypnosisMasteryLogic {
 
 	private HypnosisMasteryLogic() {}
 
+	/**
+	 * Call every tick while holding (client + server). Client pass only refreshes the synced
+	 * crosshair target; server pass drains / aims / pulls.
+	 */
 	public static void tickChannel(EntityPlayer player) {
-		if (player == null || VampireRestoredAbilities.getHypnosisStrength(player) <= 5
-				|| GeneralUtil.isInLight(player)) {
-			return;
-		}
+		if (player == null) return;
 
+		// Legends 5: client raycast → CURRENT_TARGET_ID packet → server lookup.
 		EntityLivingBase target = LegendsHelper.getTarget(player, 25.0D);
-		if (target == null) {
+
+		if (player.worldObj.isRemote) {
 			return;
 		}
 
-		ExtendedPlayer playerEx = ExtendedPlayer.get(player);
-
-		WitcheryUtil.beginHypnosisChannel(player);
-		GeneralUtil.forceLookAtEntity(target, player);
-		WitcheryUtil.applyChannelFloat(target);
-
-		if (LegendsHelper.getTicks(player) % 20 == 0) {
-			VampireRestoredAbilities.addHypnosisStrength(player, -1);
-		}
+		if (VampireRestoredAbilities.getHypnosisStrength(player) <= 5) return;
 
 		if (!player.isSwingInProgress) {
 			PowersHandler.aimingRightArm(player, 1, 0);
 		}
 
+		// Legends 5.4 dual drain: common handler (−1/2 ticks) + execute (−1/10 ticks).
+		if (LegendsHelper.getTicks(player) % 2 == 0) {
+			VampireRestoredAbilities.addHypnosisStrength(player, -1);
+		}
+		if (LegendsHelper.getTicks(player) % 10 == 0) {
+			VampireRestoredAbilities.addHypnosisStrength(player, -1);
+		}
+
+		boolean touched = target != null && PlayerHelper.canBeTouched(player, target);
+		boolean controllable = canControlTarget(target);
+
+		if (HypnosisDebug.enabled() && LegendsHelper.getTicks(player) % 10 == 0) {
+			int key = BvVampirePowers.hypnosisMastery.getAssignedKey(player);
+			int duration = key > 0 ? LegacyHelper.getDuration(player, key) : -1;
+			Vec3 lookDbg = player.getLook(1.0F);
+			HypnosisDebug.logMastery(player,
+					"str=" + VampireRestoredAbilities.getHypnosisStrength(player)
+							+ " key=" + key + " dur=" + duration
+							+ " target=" + (target == null ? "null" : target.getCommandSenderName())
+							+ " touched=" + touched + " control=" + controllable
+							+ String.format(" look=%.2f,%.2f,%.2f", lookDbg.xCoord, lookDbg.yCoord, lookDbg.zCoord));
+		}
+
+		if (target == null || !touched || !controllable) {
+			return;
+		}
+
+		if (target instanceof EntityPlayer && ((EntityPlayer) target).capabilities.isCreativeMode) {
+			return;
+		}
+
 		if (player.isSwingInProgress) {
+			target.addPotionEffect(new PotionEffect(LegendsEffects.hypnosis.id, 200, 0));
 			VampireRestoredAbilities.addHypnosisStrength(player, -10);
-		}
-
-		if (target instanceof EntityCreeper) {
-			((EntityCreeper) target).setCreeperState(-1);
-		}
-
-		if ((target instanceof EntityVillager || target instanceof EntityVillageGuard)
-				&& !(target instanceof com.emoniph.witchery.entity.EntityVillagerWere)) {
-			NBTTagCompound nbt = target.getEntityData();
-			int attempt = nbt.getInteger("VampireHypnosisAttempts") + 1;
-			nbt.setInteger("VampireHypnosisAttempts", attempt);
-
-			if (attempt > 10 && !target.isPotionActive(Witchery.Potions.PARALYSED)) {
-				if (!WitcheryUtil.tryHypnosisBloodCost(player)) {
-					WitcheryUtil.resetHypnosisAttempts(target);
-					WitcheryUtil.endHypnosisChannel(player);
-					return;
-				}
-				WitcheryUtil.resetHypnosisAttempts(target);
-				if (!player.worldObj.isRemote) {
-					target.addPotionEffect(new PotionEffect(Witchery.Potions.PARALYSED.id, TimeUtil.secsToTicks(240),
-							(playerEx.getVampireLevel() >= 8) ? 5 : 4));
-				}
-				SoundEffect.WITCHERY_RANDOM_HYPNOSIS.playAtPlayer(target.worldObj, player, 0.5F, 1.0F);
-				if (target instanceof EntityVillageGuard) {
-					EntityVillageGuard guard = (EntityVillageGuard) target;
-					guard.setTarget(null);
-					guard.setAttackTarget(null);
-					guard.setRevengeTarget(null);
-				}
-				if (target instanceof EntityVillager) {
-					GeneralUtil.removeAvoidanceTasks((EntityVillager) target);
-				}
-				WitcheryUtil.endHypnosisChannel(player);
-			}
 			return;
 		}
 
-		if (target instanceof net.minecraft.entity.passive.EntityTameable) {
-			net.minecraft.entity.passive.EntityTameable tameable = (net.minecraft.entity.passive.EntityTameable) target;
-			NBTTagCompound nbt = target.getEntityData();
-			if (player.ticksExisted % 5 == 0) {
-				nbt.setInteger("VampireHypnosisAttempts", nbt.getInteger("VampireHypnosisAttempts") + 1);
+		LegendsAbilities.hypnosis(target);
+
+		if (target instanceof EntityLiving) {
+			EntityLiving living = (EntityLiving) target;
+			if (living.getNavigator() != null) {
+				living.getNavigator().clearPathEntity();
 			}
-			int attempt = nbt.getInteger("VampireHypnosisAttempts");
-
-			if (attempt >= 12) {
-				if (!WitcheryUtil.tryHypnosisBloodCost(player)) {
-					WitcheryUtil.resetHypnosisAttempts(target);
-					WitcheryUtil.endHypnosisChannel(player);
-					return;
-				}
-				WitcheryUtil.resetHypnosisAttempts(target);
-
-				net.minecraft.util.ChatStyle style = new net.minecraft.util.ChatStyle()
-						.setBold(true)
-						.setColor(net.minecraft.util.EnumChatFormatting.RED);
-
-				String feedback;
-				if (!tameable.isTamed()) {
-					tameable.setTamed(true);
-					tameable.func_152115_b(player.getUniqueID().toString());
-					if (tameable instanceof net.minecraft.entity.passive.EntityOcelot) {
-						((net.minecraft.entity.passive.EntityOcelot) tameable).setTameSkin(1 + tameable.worldObj.rand.nextInt(3));
-					}
-					tameable.worldObj.setEntityState(tameable, (byte) 7);
-					feedback = "It's now loyal to you";
-				} else {
-					tameable.setTamed(false);
-					tameable.func_152115_b("");
-					if (tameable instanceof net.minecraft.entity.passive.EntityOcelot) {
-						((net.minecraft.entity.passive.EntityOcelot) tameable).setTameSkin(0);
-					}
-					tameable.worldObj.setEntityState(tameable, (byte) 6);
-					feedback = "It forgets its owner";
-				}
-
-				tameable.setAttackTarget(null);
-				tameable.setRevengeTarget(null);
-				tameable.getNavigator().clearPathEntity();
-
-				if (!player.worldObj.isRemote) {
-					player.addChatMessage(new ChatComponentText(feedback).setChatStyle(style));
-				}
-
-				SoundEffect.WITCHERY_RANDOM_HYPNOSIS.playAtPlayer(target.worldObj, player, 0.5F, 1.0F);
-				WitcheryUtil.endHypnosisChannel(player);
-			}
-			return;
+			living.setAttackTarget(null);
+			living.setRevengeTarget(null);
 		}
 
-		if (target instanceof EntityCreature && !(target instanceof EntityWitchHunter) && !(target instanceof EntitySquid)) {
-			EntityLiving targetLiving = (EntityLiving) target;
-			NBTTagCompound nbt = target.getEntityData();
-			if (player.ticksExisted % 5 == 0) {
-				nbt.setInteger("VampireHypnosisAttempts", nbt.getInteger("VampireHypnosisAttempts") + 1);
-			}
+		// Aim offsets match Legends 5 hypnosisControl (*3/*5/*3). Scale 0.25 is snappier
+		// than stock 0.1 (still below force-choke 0.5). Y only when target is below caster.
+		final double pullScale = 0.25D;
+		Vec3 look = player.getLook(1.0F);
+		double dx = player.posX + look.xCoord * 3.0D - target.posX;
+		double dy = player.posY + look.yCoord * 5.0D - target.posY;
+		double dz = player.posZ + look.zCoord * 3.0D - target.posZ;
+		double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		if (dist < 1.0E-4D) return;
 
-			int attempt = nbt.getInteger("VampireHypnosisAttempts");
+		double mx = dx / dist * pullScale;
+		double mz = dz / dist * pullScale;
 
-			if (!WitcheryUtil.isThralledBy(targetLiving, player) && attempt >= 12) {
-				if (!WitcheryUtil.tryHypnosisBloodCost(player)) {
-					WitcheryUtil.resetHypnosisAttempts(targetLiving);
-					WitcheryUtil.endHypnosisChannel(player);
-					return;
-				}
-				WitcheryUtil.resetHypnosisAttempts(targetLiving);
-				nbt.removeTag("fearTimer");
-
-				WitcheryUtil.startThrall(targetLiving, player, TimeUtil.secsToTicks(240));
-				SoundEffect.WITCHERY_RANDOM_HYPNOSIS.playAtPlayer(target.worldObj, player, 0.5F, 1.0F);
-				if (!player.worldObj.isRemote) {
-					player.addChatMessage(new ChatComponentText("It bends to your will"));
-				}
-				WitcheryUtil.endHypnosisChannel(player);
-
-			} else if (WitcheryUtil.isThralledBy(targetLiving, player) && attempt >= 20) {
-				WitcheryUtil.resetHypnosisAttempts(targetLiving);
-				WitcheryUtil.clearThrall(targetLiving);
-				Witchery.packetPipeline.sendToAllAround(
-						(IMessage) new PacketParticles(ParticleEffect.MOB_SPELL, SoundEffect.MOB_ZOMBIE_INFECT, targetLiving, 0.5D, 1.0D),
-						TargetPointUtil.from(targetLiving, 16.0D));
-				if (!player.worldObj.isRemote) {
-					player.addChatMessage(new ChatComponentText("You relinquish control"));
-				}
-				if (target instanceof EntityMob) {
-					EntityMob mob = (EntityMob) target;
-					if (mob instanceof EntitySkeleton) {
-						GeneralUtil.restoreSkeletonTask((EntitySkeleton) mob);
-					} else if (mob instanceof EntityZombie) {
-						GeneralUtil.restoreZombieTask((EntityZombie) mob);
-						GeneralUtil.sendDebugMessage(player, "You restore the undead's desires");
-					} else {
-						GeneralUtil.restoreGeneralTargetTasks(mob);
-					}
-				}
-				WitcheryUtil.endHypnosisChannel(player);
-			}
+		target.motionX = mx;
+		if (target.posY < player.posY) {
+			target.motionY = dy / dist * pullScale;
 		}
+		target.motionZ = mz;
+		target.fallDistance = 0.0F;
+		target.velocityChanged = true;
+
+		if (HypnosisDebug.enabled() && LegendsHelper.getTicks(player) % 10 == 0) {
+			HypnosisDebug.logMastery(player,
+					String.format("pull %s motion=%.3f,%.3f,%.3f dist=%.2f",
+							target.getCommandSenderName(), target.motionX, target.motionY, target.motionZ, dist));
+		}
+	}
+
+	/** Client-only: force a getTarget pass so CURRENT_TARGET_ID syncs while key is held. */
+	public static void refreshClientTarget(EntityPlayer player) {
+		if (player == null || !player.worldObj.isRemote) return;
+		LegendsHelper.getTarget(player, 25.0D);
+	}
+
+	/** Inlined Legends 5.4 {@code LegendsHelper.canLiftTarget} eligibility. */
+	private static boolean canControlTarget(EntityLivingBase target) {
+		return target != null
+				&& !(target instanceof IKaiju)
+				&& !(target instanceof EntityPunchingBag)
+				&& !(target instanceof EntityStand)
+				&& target.height < 20.0F;
 	}
 }
