@@ -1,10 +1,13 @@
 package com.mrsand.StatBoostChanges.mixins.late.legends;
 
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
@@ -23,6 +26,7 @@ import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.morph.MorphHelper;
+import com.tihyo.legends.morph.MorphRegistry;
 
 import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,6 +37,21 @@ import net.minecraft.potion.Potion;
 public abstract class LegacyVampireMixin {
 
 	@Shadow public abstract boolean getWeaknesses(EntityPlayer player);
+
+	/**
+	 * Legends 8 removed morphVampireBeast from the vampire whitelist.
+	 * Restore it when Demonic Form is unlocked (same morph Dracula uses).
+	 */
+	@Inject(method = "morphs", at = @At("RETURN"))
+	private void allowVampireBeastMorph(EntityPlayer player, CallbackInfoReturnable<List<String>> cir) {
+		if (!VampireRestoredAbilities.hasDemonicForm(player)) return;
+		List<String> morphs = cir.getReturnValue();
+		if (morphs == null) return;
+		String beast = MorphRegistry.vampireBeast.getName();
+		if (!morphs.contains(beast)) {
+			morphs.add(beast);
+		}
+	}
 
 	@Inject(method = "stats", at = @At("HEAD"), cancellable = true)
 	private void changeStats(EntityPlayer player, CallbackInfo cir) {

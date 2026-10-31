@@ -275,19 +275,15 @@ public class LegendsUtil {
 			}
 		}
 
-		if(!isVampireBeast(player))
+		if (!Loader.isModLoaded("legends")) return;
+		if (!isVampireBeast(player))
 			ifMorphedTurnHuman(player);
-		if(Loader.isModLoaded("witchery")) {
-			if(!MorphHelper.isVampireBeast(player)) {
-				MorphHelper.morph(player, MorphRegistry.vampireBeast);
-
-			} else {
-				ifMorphedTurnHuman(player);
-			}
-			player.worldObj.playSoundAtEntity((Entity)player, "mob.bat.takeoff", 3.0F, 1.0F);
-
+		if (!MorphHelper.isVampireBeast(player)) {
+			MorphHelper.morph(player, MorphRegistry.vampireBeast);
+		} else {
+			ifMorphedTurnHuman(player);
 		}
-		//		MorphHelper.morph(player, MorphRegistry.vampireBeast);
+		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff", 3.0F, 1.0F);
 	}
 	public static boolean fangs(EntityPlayer player) {
 		return LegendsAbilityBridge.isVampireFangs(player);
