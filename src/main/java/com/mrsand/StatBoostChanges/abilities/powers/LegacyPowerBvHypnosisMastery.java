@@ -116,7 +116,7 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "You have mastered the art of hypnosis, now able to fully control your subject. Hold to use on subject and control their movements. When you punch, you will give the subject the effects of the standard hypnosis, causing them to lose control. Drains hypnosis bar (purple tip next to special).";
+		return "Hold to hypnotize. Stand still to stun a target and, after ~6s of focus, enthrall / tame / paralyse them (blood cost; one success message). Sneak to drag them toward the block behind them along your gaze without binding. The purple bar does not drain. Punch applies standard hypnosis.";
 	}
 
 	@Override

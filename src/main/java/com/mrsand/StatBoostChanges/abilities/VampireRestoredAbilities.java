@@ -151,6 +151,7 @@ public final class VampireRestoredAbilities {
 		}
 
 		tickHypnosisStrengthRegen(player);
+		HypnosisMasteryLogic.tickSessionExpiry(player);
 		tickWebPassThrough(player);
 	}
 
