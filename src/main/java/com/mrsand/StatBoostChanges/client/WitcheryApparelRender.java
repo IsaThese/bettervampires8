@@ -1,7 +1,9 @@
 package com.mrsand.StatBoostChanges.client;
 
+import com.emoniph.witchery.item.ItemVampireClothes;
 import com.mrsand.StatBoostChanges.ModCompat;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
+import com.tihyo.horror.client.models.characters.ModelDracula;
 import com.tihyo.legends.client.models.ModelPlayer;
 import com.tihyo.legends.proxies.ClientProxy;
 
@@ -17,20 +19,20 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 
 /**
- * Maps Witchery {@code ItemVampireClothes} render to Legends vampire apparel:
- * chest/coat only. Hat/legs/boots stay equipped for set bonuses but use a
- * dedicated hidden ModelBiped (not the shared Legends instance) so they draw
- * nothing and cannot leave arms with showModel=false on the coat model.
- * Lord + full set: coat hides in sunlight (day/night apparel behavior).
+ * Maps Witchery {@code ItemVampireClothes} render to Legends {@link ModelDracula}:
+ * chest/coat + cape only (head hidden). Hat/legs/boots stay equipped for set bonuses
+ * but use a dedicated hidden ModelBiped. Textures come from resource-pack
+ * {@code vampire_apparel_v1}. Lord + full set: coat hides in sunlight.
  */
 @SideOnly(Side.CLIENT)
 public final class WitcheryApparelRender {
 
-	private static final int LEGENDS_VAMPIRE_APPAREL_MODEL_ID = 141;
+	/** ClientProxy id for {@link ModelDracula}. */
+	private static final int LEGENDS_DRACULA_MODEL_ID = 154;
 	private static final String CHEST_TEXTURE =
 			"horror:textures/models/armors/legacy/vampire_apparel_v1/vampire_apparel_v1_1_0.png";
 
-	/** Separate from Legends model 141 — all parts off for non-chest slots. */
+	/** Separate from the shared Dracula instance — all parts off for non-chest slots. */
 	private static final ModelBiped HIDDEN = createHiddenModel();
 
 	private WitcheryApparelRender() {}
@@ -63,6 +65,12 @@ public final class WitcheryApparelRender {
 		return vp != null && vp.isInSunlight();
 	}
 
+	public static boolean wearsWitcheryVampireChest(EntityPlayer player) {
+		if (player == null) return false;
+		ItemStack chest = player.getCurrentArmor(2);
+		return chest != null && chest.getItem() instanceof ItemVampireClothes;
+	}
+
 	public static ModelBiped getArmorModel(EntityLivingBase entity, ItemStack stack, int slot) {
 		if (stack == null || !(stack.getItem() instanceof ItemArmor)) {
 			return null;
@@ -74,12 +82,12 @@ public final class WitcheryApparelRender {
 			return HIDDEN;
 		}
 
-		ModelBiped model = ClientProxy.getArmorModel(LEGENDS_VAMPIRE_APPAREL_MODEL_ID);
+		ModelBiped model = ClientProxy.getArmorModel(LEGENDS_DRACULA_MODEL_ID);
 		if (model == null) {
 			return null;
 		}
 
-		// Shared Legends apparel instance — set flags for chest pass only
+		// Chest pass: body + arms; never draw Dracula head/face.
 		setShow(model.bipedHead, false);
 		setShow(model.bipedHeadwear, false);
 		setShow(model.bipedBody, true);
@@ -87,6 +95,19 @@ public final class WitcheryApparelRender {
 		setShow(model.bipedLeftArm, true);
 		setShow(model.bipedRightLeg, false);
 		setShow(model.bipedLeftLeg, false);
+
+		if (model instanceof ModelDracula) {
+			ModelDracula dracula = (ModelDracula) model;
+			setShow(dracula.Head, false);
+			setShow(dracula.Teeth1, false);
+			setShow(dracula.Teeth2, false);
+			setShow(dracula.Teeth3, false);
+			setShow(dracula.Teeth4, false);
+			setShow(dracula.Teeth5, false);
+			setShow(dracula.Teeth6, false);
+			setShow(dracula.Brow1, false);
+			setShow(dracula.Brow2, false);
+		}
 
 		model.isSneak = entity.isSneaking();
 		model.isRiding = entity.isRiding();

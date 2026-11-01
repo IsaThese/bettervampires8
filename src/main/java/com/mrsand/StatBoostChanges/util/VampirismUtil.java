@@ -17,6 +17,12 @@ public class VampirismUtil {
 	public static boolean isVampire(EntityPlayer player) {
 		return VampirePlayer.get(player).getLevel() > 0;
 	}
+
+	public static boolean isVampireLord(EntityPlayer player) {
+		if (player == null) return false;
+		VampirePlayer vp = VampirePlayer.get(player);
+		return vp != null && vp.isVampireLord();
+	}
 	public static boolean isCoffin(Block block) {
 		return block instanceof BlockCoffin;
 	}

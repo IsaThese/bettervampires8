@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.emoniph.witchery.common.ExtendedPlayer;
+import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
@@ -19,6 +20,8 @@ import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.tihyo.horror.legacy.LegacyVampire;
 import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.abilities.LegendsImmunities;
+import com.tihyo.legends.abilities.Stat;
+import com.tihyo.legends.abilities.StatHelper;
 import com.tihyo.legends.abilities.status.StatusAbility;
 import com.tihyo.legends.effects.LegendsEffects;
 import com.tihyo.legends.handlers.PowersHandler;
@@ -37,6 +40,21 @@ import net.minecraft.potion.Potion;
 public abstract class LegacyVampireMixin {
 
 	@Shadow public abstract boolean getWeaknesses(EntityPlayer player);
+
+	/**
+	 * Legends 8 stubbed getWeaknesses to always false. With Daywalker removed,
+	 * restore L5-style sunlight weakness so most powers are blocked in the sun.
+	 * Vampirism lords stay unaffected.
+	 */
+	@Inject(method = "getWeaknesses", at = @At("HEAD"), cancellable = true)
+	private void bvSunWeakness(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+		if (!DaywalkerControl.isEnabled()) return;
+		if (DaywalkerControl.isVampireLord(player)) {
+			cir.setReturnValue(Boolean.FALSE);
+			return;
+		}
+		cir.setReturnValue(Boolean.valueOf(StatHelper.isAbilityActive(player, Stat.isInSunlight)));
+	}
 
 	/**
 	 * Legends 8 removed morphVampireBeast from the vampire whitelist.

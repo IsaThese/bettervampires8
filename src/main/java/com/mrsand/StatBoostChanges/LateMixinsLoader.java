@@ -24,7 +24,6 @@ public class LateMixinsLoader implements ILateMixinLoader {
 			mixins.add("legends.LegacyPowerMorphMistMixin");
 			mixins.add("legends.LegacyPowerMorphWolfMixin");
 			mixins.add("legends.LegacyVampireMixin");
-			mixins.add("legends.LegendsCommonEventHandlerMixin");
 			mixins.add("legends.MorphWolfMixin");
 			mixins.add("legends.PowersHandlerMixin");
 			mixins.add("ShapeshiftMixin");
@@ -34,6 +33,9 @@ public class LateMixinsLoader implements ILateMixinLoader {
 		if (loadedMods.contains("legends")) {
 			mixins.add("legends.BlockAltarMixin");
 			mixins.add("legends.EntityVampireMixin");
+			mixins.add("legends.HorrorCommonEventHandlerMixin");
+			mixins.add("legends.LegacyHelperMixin");
+			mixins.add("legends.ModelDraculaMixin");
 			mixins.add("legends.ModelVampireApparelV1Mixin");
 			mixins.add("legends.ModelVampireTeethMixin");
 			mixins.add("legends.MorphBatMixin");

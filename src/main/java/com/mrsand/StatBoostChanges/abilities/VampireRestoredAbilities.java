@@ -62,6 +62,12 @@ public final class VampireRestoredAbilities {
 				changed = true;
 			}
 		}
+		if (DaywalkerControl.isEnabled() && LegacyRegistry.daywalker != null
+				&& learned.contains(LegacyRegistry.daywalker)) {
+			learned.remove(LegacyRegistry.daywalker);
+			powersChanged = true;
+			changed = true;
+		}
 		if (powersChanged) {
 			PropertyManager.setUnlockedPowers(player, learned);
 		}

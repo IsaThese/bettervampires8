@@ -61,7 +61,7 @@ public class LegendsUtil {
 	}
 	public static final String NBT_MIST_DEMIST_TICKS = "statbooMistDemistTicks";
 	/** Delay after exit press before mist actually clears. */
-	public static final int MIST_DEMIST_DELAY_TICKS = 5 * 20;
+	public static final int MIST_DEMIST_DELAY_TICKS = 2 * 20;
 
 	public static boolean isMist(EntityPlayer player) {
 		return LegendsAbilityBridge.isMist(player);
@@ -88,7 +88,7 @@ public class LegendsUtil {
 	}
 
 	/**
-	 * Mist with no practical expiry. Exit via {@link #requestMistDemist} (5s) or {@link #clearMistForm}.
+	 * Mist with no practical expiry. Exit via {@link #requestMistDemist} (2s) or {@link #clearMistForm}.
 	 */
 	public static void activateMistFormIndefinite(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
@@ -108,7 +108,7 @@ public class LegendsUtil {
 		return player != null && player.getEntityData().getInteger(NBT_MIST_DEMIST_TICKS) > 0;
 	}
 
-	/** Begin 5s solidify / demist. Second call while demisting cancels and stays mist. */
+	/** Begin 2s solidify / demist. Second call while demisting cancels and stays mist. */
 	public static void requestMistDemist(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
 		if (!isMist(player)) return;

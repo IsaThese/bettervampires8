@@ -3,6 +3,7 @@ package com.mrsand.StatBoostChanges.common.handlers;
 import com.mrsand.StatBoostChanges.client.HypnosisBarHud;
 import com.mrsand.StatBoostChanges.util.HandRenderDebug;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
+import com.mrsand.StatBoostChanges.util.MistPhaseDebug;
 import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryHandRenderDebug;
 
@@ -61,6 +62,12 @@ public class ClientEventHandler {
 			Minecraft mc = Minecraft.getMinecraft();
 			if (mc != null && mc.thePlayer != null) {
 				HypnosisDebug.announceIfNeeded(mc.thePlayer);
+			}
+		}
+		if (MistPhaseDebug.enabled()) {
+			Minecraft mc = Minecraft.getMinecraft();
+			if (mc != null && mc.thePlayer != null) {
+				MistPhaseDebug.announceIfNeeded(mc.thePlayer);
 			}
 		}
 	}

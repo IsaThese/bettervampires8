@@ -42,7 +42,7 @@ public abstract class LegacyPowerMorphMistMixin {
 
 		if (player.isInWater()) return;
 
-		// Already mist: start 5s demist, or cancel demist to stay misted
+		// Already mist: start 2s demist, or cancel demist to stay misted
 		if (LegendsUtil.isMist(player)) {
 			LegendsUtil.requestMistDemist(player);
 			return;

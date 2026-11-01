@@ -83,6 +83,7 @@ public class StatBoostChanges {
 
 		if(Loader.isModLoaded("legends")) {
 			com.mrsand.StatBoostChanges.abilities.powers.BvVampirePowers.register();
+			com.mrsand.StatBoostChanges.abilities.DaywalkerControl.stripFromVampireTree();
 			LegendsEventHandler legendsHandler = new LegendsEventHandler();
 			MinecraftForge.EVENT_BUS.register(legendsHandler);
 			FMLCommonHandler.instance().bus().register(legendsHandler);

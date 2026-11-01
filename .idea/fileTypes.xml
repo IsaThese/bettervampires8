@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FileTypeManager" version="18">
+    <extensionMap>
+      <mapping pattern="latemixin.statboo.json" type="JSON5" />
+      <mapping pattern="mixin.statboo.json" type="JSON5" />
+      <mapping pattern="mixin.statboo.early.json" type="JSON5" />
+    </extensionMap>
+  </component>
+</project>

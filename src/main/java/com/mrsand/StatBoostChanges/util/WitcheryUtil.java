@@ -360,7 +360,7 @@ public class WitcheryUtil {
 			entity.getNavigator().clearPathEntity();
 		}
 
-		PlayerDataUtil.setControlling(player, true);
+		// Do not call setControlling here — cane sword owns that combat/follow flag and its chat.
 		SoundEffect.WITCHERY_RANDOM_HYPNOSIS.playAtPlayer(player.worldObj, player, 0.5F, 1.0F);
 		return true;
 	}

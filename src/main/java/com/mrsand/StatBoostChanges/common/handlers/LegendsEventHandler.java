@@ -9,6 +9,7 @@ import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
+import com.mrsand.StatBoostChanges.util.MistPhaseDebug;
 import com.mrsand.StatBoostChanges.util.MorphUtil;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
@@ -17,6 +18,7 @@ import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.morph.MorphHelper;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
@@ -222,14 +224,24 @@ public class LegendsEventHandler {
 
 
 
+		if (event.phase == Phase.END) {
+			if (Loader.isModLoaded("legends") && LegendsAbilityBridge.isMist(player)) {
+				MistPhaseDebug.sample(player, "tickEND");
+			}
+			return;
+		}
 		if (event.phase != Phase.START) return;
 
-		if (!player.worldObj.isRemote && Loader.isModLoaded("legends")) {
-			VampireRestoredAbilities.tick(player);
-			LegendsUtil.tickMistDemist(player);
+		if (Loader.isModLoaded("legends")) {
+			if (!player.worldObj.isRemote) {
+				VampireRestoredAbilities.tick(player);
+				LegendsUtil.tickMistDemist(player);
+			}
+			// noClip/phasing must run on client too or mist cannot phase through blocks.
 			if (LegendsAbilityBridge.isMist(player)) {
-				PhysicsUtil.handlePhasingPhysics(player);
+				PhysicsUtil.handleMistPhasing(player);
 				player.getEntityData().setBoolean("IsMistFormSmall", true);
+				MistPhaseDebug.sample(player, "tickSTART");
 			}
 		}
 
@@ -313,6 +325,21 @@ public class LegendsEventHandler {
 				player.noClip = false;
 			}
 		}
+	}
+
+	/**
+	 * Legends LivingUpdate clears noClip unless isPhasing/isIntangible.
+	 * Mist is neither — re-assert after Legends so moveEntity still phases.
+	 */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onMistLivingUpdate(LivingEvent.LivingUpdateEvent event) {
+		if (!(event.entityLiving instanceof EntityPlayer)) return;
+		if (!Loader.isModLoaded("legends")) return;
+		EntityPlayer player = (EntityPlayer) event.entityLiving;
+		if (!LegendsAbilityBridge.isMist(player)) return;
+		// Re-apply full mist physics after Legends (clears noClip + may add flight motionY).
+		PhysicsUtil.handleMistPhasing(player);
+		MistPhaseDebug.sample(player, "postLegends");
 	}
 
 	@SubscribeEvent

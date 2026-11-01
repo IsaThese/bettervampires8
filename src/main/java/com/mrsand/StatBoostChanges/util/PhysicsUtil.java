@@ -126,10 +126,108 @@ public class PhysicsUtil {
 	        return;
 	    }
 	
-	    // 3. CLEANUP
+	// 3. CLEANUP
 	    if (!player.capabilities.isCreativeMode) {
 	        player.noClip = false;
 	    }
+	}
+
+	/**
+	 * Mist-form phasing (original BV buoyancy + L8 always-noClip).
+	 * Hover at foot level (motionY=0); sneak to sink; jump to rise.
+	 * Stuck escape ignores sole-overlap with the floor under always-noClip.
+	 */
+	public static void handleMistPhasing(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return;
+		World world = player.worldObj;
+
+		AxisAlignedBB box = player.boundingBox.contract(0.05D, 0.05D, 0.05D);
+		int minX = MathHelper.floor_double(box.minX);
+		int maxX = MathHelper.floor_double(box.maxX);
+		int minY = MathHelper.floor_double(box.minY);
+		int maxY = MathHelper.floor_double(box.maxY);
+		int minZ = MathHelper.floor_double(box.minZ);
+		int maxZ = MathHelper.floor_double(box.maxZ);
+		// Don't treat the block under the soles as "stuck" (always-noClip sinks slightly).
+		int stuckMinY = MathHelper.floor_double(player.posY + 0.2D);
+
+		boolean isStuck = false;
+		boolean canPhase = false;
+		boolean onPorousFloor = false;
+		double targetX = player.posX;
+		double targetZ = player.posZ;
+		double bestDist = 999.0D;
+
+		for (int x = minX - 1; x <= maxX + 1; x++) {
+			for (int z = minZ - 1; z <= maxZ + 1; z++) {
+				for (int y = minY; y <= maxY + 1; y++) {
+					Block block = world.getBlock(x, y, z);
+
+					if (x >= minX && x <= maxX && y >= stuckMinY && y <= maxY && z >= minZ && z <= maxZ) {
+						if (block.getMaterial().isSolid() && !isBlockPorous(block)) {
+							isStuck = true;
+						}
+					}
+
+					if (isBlockPorous(block)) {
+						canPhase = true;
+					}
+
+					Block feetBlock = world.getBlock(x, MathHelper.floor_double(player.posY), z);
+					Block headBlock = world.getBlock(x, MathHelper.floor_double(player.posY + 1.0D), z);
+					boolean isGap = (feetBlock.getMaterial() == Material.air || isBlockPorous(feetBlock))
+							&& (headBlock.getMaterial().isSolid() && !isBlockPorous(headBlock));
+					boolean isSafe = feetBlock.getMaterial() == Material.air && headBlock.getMaterial() == Material.air;
+					if (isGap || isSafe) {
+						canPhase = true;
+						double dSq = player.getDistanceSq(x + 0.5D, player.posY, z + 0.5D);
+						if (dSq < bestDist) {
+							bestDist = dSq;
+							targetX = x + 0.5D;
+							targetZ = z + 0.5D;
+						}
+					}
+
+					if (y == MathHelper.floor_double(player.posY - 0.1D) && isBlockPorous(block)) {
+						onPorousFloor = true;
+					}
+				}
+			}
+		}
+
+		if (player.isEntityInsideOpaqueBlock()) {
+			isStuck = true;
+		}
+
+		player.noClip = true;
+
+		if ((canPhase || onPorousFloor) && bestDist > 0.1D && bestDist < 4.0D) {
+			player.motionX += (targetX - player.posX) * 0.05D;
+			player.motionZ += (targetZ - player.posZ) * 0.05D;
+		}
+
+		// Original BV vertical logic
+		if (player.isSneaking()) {
+			player.motionY = -0.15D;
+		} else if (player.isJumping) {
+			player.motionY = 0.2D;
+		} else if (isStuck) {
+			player.motionY = 0.12D;
+			if (world.isAirBlock(
+					MathHelper.floor_double(player.posX),
+					MathHelper.floor_double(player.posY + 1.5D),
+					MathHelper.floor_double(player.posZ))) {
+				player.motionY = 0.2D;
+			}
+		} else {
+			player.motionY = 0.0D; // Neutral buoyancy — hover; shift to sink
+		}
+	}
+
+	/** Re-assert after Legends LivingUpdate clears noClip on non-phasing players. */
+	public static void ensureMistNoClip(EntityPlayer player) {
+		if (player == null) return;
+		player.noClip = true;
 	}
 
 	public static boolean isBlockPorous(Block block) {

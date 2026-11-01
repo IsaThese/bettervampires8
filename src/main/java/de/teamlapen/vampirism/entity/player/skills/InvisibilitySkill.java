@@ -10,14 +10,14 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Lord mist form (replaces vanilla invisibility). Uses Legends mistForm.
- * Indefinite while active; second pie press starts a 5s demist delay (not instant).
+ * Indefinite while active; second pie press starts a 2s demist delay (not instant).
  * Cannot start mist in sunlight; pie still shows while already misted so demist works.
  */
 public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 
 	@Override
 	public boolean canBeUsedBy(VampirePlayer vampire, EntityPlayer player) {
-		// Keep available while misted so pie can start/cancel the 5s demist
+		// Keep available while misted so pie can start/cancel the 2s demist
 		return Loader.isModLoaded("legends")
 				&& vampire.isVampireLord()
 				&& !player.isInWater();
@@ -100,7 +100,7 @@ public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 
 	/**
 	 * Called instead of instant deactivate when pie-toggled while mist is active.
-	 * Starts 5s demist, or cancels demist if already solidifying (stay misted).
+	 * Starts 2s demist, or cancels demist if already solidifying (stay misted).
 	 */
 	public void requestExit(VampirePlayer vampire, EntityPlayer player) {
 		if (player == null || player.worldObj == null || player.worldObj.isRemote || !Loader.isModLoaded("legends")) return;

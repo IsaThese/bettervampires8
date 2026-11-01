@@ -140,14 +140,18 @@ classes/
 .project
 eclipse
 
-.idea/
+.idea/*
+!.idea/fileTypes.xml
+!.idea/inspectionProfiles/
+!.idea/inspectionProfiles/**
 *.iml
 *.ipr
 
 # vscode
 
 .settings/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 bin/
 
 # Cursor
@@ -155,6 +159,9 @@ bin/
 
 # Scratch javap/decompile dumps from dependency jars (local research only)
 .tmp_decompile/
+.tmp_legends_cmp/
+.tmp_intang/
+.tmp_cape/
 
 # Built jars stay out of git. Dependency jars in lib/ are tracked with Git LFS (private repo).
 *.jar

@@ -187,7 +187,7 @@ public abstract class GenericEventsMixin {
 			//Should Cancel abilities?
 			if (playerEx.isVampire() && CreatureUtil.isInSunlight(player)) {
 				ci.cancel();
-				// Lord + full Witchery clothes: no Witchery sun package
+				// BetterVampires: lord + full Witchery clothes skip; L5+ debuff only; else fire+slow
 				if (WitcheryUtil.hasFullSunImmunity(player)) {
 					return;
 				}
@@ -195,9 +195,6 @@ public abstract class GenericEventsMixin {
 					if (playerEx.getVampireLevel() >= 5) {
 						player.addPotionEffect(new PotionEffect(Potion.weakness.id, TimeUtil.secsToTicks(10), 4, false));
 						player.addPotionEffect(new PotionEffect(Potion.digSlowdown.id, TimeUtil.secsToTicks(10), 0, true));
-
-
-						// cancel original method 
 					}
 					else {
 						playerEx.decreaseBloodPower(2, false);
@@ -205,7 +202,6 @@ public abstract class GenericEventsMixin {
 						player.addPotionEffect(new PotionEffect(Potion.digSlowdown.id, TimeUtil.secsToTicks(2), 0, true));
 						player.setFire(1);
 						player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, TimeUtil.secsToTicks(2), 2, true));
-
 					}
 				}
 			}

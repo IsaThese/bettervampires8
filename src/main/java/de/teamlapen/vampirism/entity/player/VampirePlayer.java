@@ -859,7 +859,7 @@ public class VampirePlayer implements ISyncableExtendedProperties, IMinionLord {
 			return;
 		int t = skillTimer[i];
 		if (t > 0) {// Running, only for lasting skills
-			// Mist: second press starts 5s demist (or cancels demist); not instant off
+			// Mist: second press starts 2s demist (or cancels demist); not instant off
 			if (s instanceof InvisibilitySkill) {
 				((InvisibilitySkill) s).requestExit(this, player);
 				dirty = true;

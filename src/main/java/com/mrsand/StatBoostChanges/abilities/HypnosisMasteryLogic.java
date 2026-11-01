@@ -44,7 +44,8 @@ import net.minecraft.util.Vec3;
  * Hypnosis Mastery: hold to control.
  * <ul>
  *   <li>Stand — stun in place and build a one-session bind (~6s).</li>
- *   <li>Sneak — drag toward the block behind them along the look ray (no bind).</li>
+ *   <li>Stand again on a bind you own — same ~6s session releases thrall/tame/paralyse.</li>
+ *   <li>Sneak — drag toward the block behind them along the look ray (no bind/release).</li>
  * </ul>
  * Purple bar does not drain while channeling.
  */
@@ -58,6 +59,9 @@ public final class HypnosisMasteryLogic {
 	private static final int SESSION_GAP_TICKS = 10;
 	private static final int THRALL_DURATION_SECS = 240;
 	private static final double PULL_SCALE = 0.25D;
+	/** Extra vertical authority so lift beats gravity / ground stickiness. */
+	private static final double PULL_SCALE_UP = 0.55D;
+	private static final double MIN_LIFT = 0.42D;
 	private static final double PSYCHIC_RANGE = 25.0D;
 
 	private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<UUID, Session>();
@@ -208,8 +212,19 @@ public final class HypnosisMasteryLogic {
 		if (dist < 1.0E-4D) return;
 
 		target.motionX = dx / dist * PULL_SCALE;
-		target.motionY = dy / dist * PULL_SCALE;
 		target.motionZ = dz / dist * PULL_SCALE;
+
+		// Block above the mob (ceiling / higher surface): force real lift, not gravity-cancelled nudge.
+		boolean blockAbove = hit.hitVec.yCoord > target.posY + 0.2D;
+		if (blockAbove) {
+			double lift = dy / dist * PULL_SCALE_UP;
+			if (lift < MIN_LIFT) lift = MIN_LIFT;
+			target.motionY = lift;
+			target.onGround = false;
+		} else {
+			target.motionY = dy / dist * PULL_SCALE;
+		}
+
 		target.fallDistance = 0.0F;
 		target.velocityChanged = true;
 	}
@@ -232,13 +247,15 @@ public final class HypnosisMasteryLogic {
 		if (s == null || s.boundThisSession) return;
 		if (now % ATTEMPT_INTERVAL != 0) return;
 
+		// Stand-hold again on a bind you own → release (~6s new session).
+		if (isReleasableBind(player, target)) {
+			tickReleaseProgress(player, target, s);
+			return;
+		}
+
 		// Villager / guard → long paralyse.
 		if ((target instanceof EntityVillager || target instanceof EntityVillageGuard)
 				&& !(target instanceof com.emoniph.witchery.entity.EntityVillagerWere)) {
-			if (target.isPotionActive(Witchery.Potions.PARALYSED)) {
-				s.boundThisSession = true;
-				return;
-			}
 			int attempt = bumpAttempts(player, target, PARALYSE_THRESHOLD);
 			if (attempt < PARALYSE_THRESHOLD) return;
 			if (!WitcheryUtil.tryHypnosisBloodCost(player)) {
@@ -264,10 +281,11 @@ public final class HypnosisMasteryLogic {
 			return;
 		}
 
-		// Tameables → tame once if untamed (never untame by holding longer).
+		// Tameables → tame once if untamed.
 		if (target instanceof EntityTameable) {
 			EntityTameable tameable = (EntityTameable) target;
 			if (tameable.isTamed()) {
+				// Someone else's pet — do not steal or release.
 				s.boundThisSession = true;
 				return;
 			}
@@ -296,12 +314,13 @@ public final class HypnosisMasteryLogic {
 			return;
 		}
 
-		// Other creatures → DIY thrall once (never clear by holding longer).
+		// Other creatures → DIY thrall once.
 		if (target instanceof EntityCreature
 				&& !(target instanceof EntityWitchHunter)
 				&& !(target instanceof EntitySquid)) {
 			EntityLiving living = (EntityLiving) target;
-			if (WitcheryUtil.isThralledBy(living, player)) {
+			if (WitcheryUtil.isThralled(living)) {
+				// Another controller's thrall — do not steal.
 				s.boundThisSession = true;
 				return;
 			}
@@ -319,6 +338,54 @@ public final class HypnosisMasteryLogic {
 			playBindSuccess(player, target, false);
 			s.boundThisSession = true;
 		}
+	}
+
+	/** True when stand-hold should release instead of bind. */
+	private static boolean isReleasableBind(EntityPlayer player, EntityLivingBase target) {
+		if ((target instanceof EntityVillager || target instanceof EntityVillageGuard)
+				&& !(target instanceof com.emoniph.witchery.entity.EntityVillagerWere)
+				&& target.isPotionActive(Witchery.Potions.PARALYSED)) {
+			return true;
+		}
+		if (target instanceof EntityTameable) {
+			EntityTameable tameable = (EntityTameable) target;
+			return tameable.isTamed() && tameable.func_152114_e(player);
+		}
+		if (target instanceof EntityLiving) {
+			return WitcheryUtil.isThralledBy((EntityLiving) target, player);
+		}
+		return false;
+	}
+
+	private static void tickReleaseProgress(EntityPlayer player, EntityLivingBase target, Session s) {
+		int attempt = bumpAttempts(player, target, THRALL_THRESHOLD);
+		if (attempt < THRALL_THRESHOLD) return;
+		if (!WitcheryUtil.tryHypnosisBloodCost(player)) {
+			WitcheryUtil.resetHypnosisAttempts(target);
+			return;
+		}
+		WitcheryUtil.resetHypnosisAttempts(target);
+
+		if ((target instanceof EntityVillager || target instanceof EntityVillageGuard)
+				&& target.isPotionActive(Witchery.Potions.PARALYSED)) {
+			target.removePotionEffect(Witchery.Potions.PARALYSED.id);
+		} else if (target instanceof EntityTameable) {
+			EntityTameable tameable = (EntityTameable) target;
+			tameable.setTamed(false);
+			tameable.func_152115_b("");
+			tameable.setAttackTarget(null);
+			tameable.setRevengeTarget(null);
+			if (tameable.getNavigator() != null) {
+				tameable.getNavigator().clearPathEntity();
+			}
+			tameable.worldObj.setEntityState(tameable, (byte) 6);
+		} else if (target instanceof EntityLiving) {
+			WitcheryUtil.clearThrall((EntityLiving) target);
+		}
+
+		notifyBind(player, "You release your hold on their mind");
+		playBindSuccess(player, target, true);
+		s.boundThisSession = true;
 	}
 
 	private static int bumpAttempts(EntityPlayer player, EntityLivingBase target, int threshold) {

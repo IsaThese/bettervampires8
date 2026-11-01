@@ -23,11 +23,12 @@
       "ItemGlassGobletMixin",
       "ItemVampireClothesMixin",
       
+      "legends.HorrorCommonEventHandlerMixin",
+      "legends.LegacyHelperMixin",
       "legends.LegacyPowerMorphBatMixin",
       "legends.LegacyPowerMorphMistMixin",
       "legends.LegacyPowerMorphWolfMixin",
       "legends.LegacyVampireMixin",
-      "legends.LegendsCommonEventHandlerMixin",
       "legends.ModelVampireApparelV1Mixin",
       "legends.ModelVampireTeethMixin",
       "legends.MorphBatMixin",

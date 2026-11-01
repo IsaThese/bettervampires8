@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "**/latemixin*.json": "jsonc",
+    "**/mixin*.json": "jsonc",
+    "**/mixins*.json": "jsonc"
+  }
+}

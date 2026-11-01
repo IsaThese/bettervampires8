@@ -138,7 +138,7 @@ public final class BALANCE {
 		@DefaultInt(value = 8, minValue = -1, name = "Vampire Rage Min Level", comment = "Set to -1 to deactivate this skill")
 		public static int RAGE_MIN_LEVEL;
 
-		@DefaultInt(value = 10, name = "Invisibility (Vampire Lord) Duration", comment = "Unused when Legends is loaded (pie Mist is indefinite; second press starts 5s demist). Fallback seconds only without Legends.")
+		@DefaultInt(value = 10, name = "Invisibility (Vampire Lord) Duration", comment = "Unused when Legends is loaded (pie Mist is indefinite; second press starts 2s demist). Fallback seconds only without Legends.")
 		public static int INVISIBILITY_DURATION;
 		@DefaultInt(value = 45, name = "Invisibility Cooldown")
 		public static int INVISIBILITY_COOLDOWN;

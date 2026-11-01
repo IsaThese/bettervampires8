@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <!-- Mixin configs use /* */ comments; Mixin parses them. Keep as .json for loaders. -->
+    <inspection_tool class="JsonStandardComplianceInspection" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="myWarnAboutComments" value="false" />
+    </inspection_tool>
+  </profile>
+</component>
