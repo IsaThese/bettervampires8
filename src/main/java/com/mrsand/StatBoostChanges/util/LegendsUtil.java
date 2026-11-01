@@ -34,16 +34,18 @@ public class LegendsUtil {
 	}
 	public static void ifMorphedTurnHuman(EntityPlayer player) {
 		if (MorphHelper.isMorphed(player)) {
-			if (MorphHelper.isBat(player)) {
+			boolean wasBat = MorphHelper.isBat(player);
+			if (wasBat) {
 				MorphHelper.morph(player, MorphRegistry.bat);
 			} else if (MorphHelper.isWolf(player)) {
 				MorphHelper.morph(player, MorphRegistry.wolf);
 			} else if (MorphHelper.isVampireBeast(player)) {
 				MorphHelper.morph(player, MorphRegistry.vampireBeast);
-
+			}
+			if (wasBat) {
+				PhysicsUtil.ejectFromSolidsIfNeeded(player);
 			}
 		}
-
 	}
 
 	// In LegendsUtil.java
@@ -223,6 +225,7 @@ public class LegendsUtil {
 		// Disable: only demorph if currently bat (MorphHelper.morph toggles)
 		if (MorphHelper.isBat(player)) {
 			MorphHelper.morph(player, MorphRegistry.bat);
+			PhysicsUtil.ejectFromSolidsIfNeeded(player);
 		}
 		return true;
 	}

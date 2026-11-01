@@ -2,6 +2,7 @@ package com.mrsand.StatBoostChanges.util;
 
 import java.util.List;
 
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.tihyo.legends.management.LegendsHelper;
 
 import net.minecraft.block.Block;
@@ -206,11 +207,11 @@ public class PhysicsUtil {
 			player.motionZ += (targetZ - player.posZ) * 0.05D;
 		}
 
-		// Original BV vertical logic
+		// Vertical: hover unless sneak/jump/stuck (flight lift stays cancelled)
 		if (player.isSneaking()) {
-			player.motionY = -0.15D;
+			player.motionY = StatBoostConfig.mistSinkSpeed;
 		} else if (player.isJumping) {
-			player.motionY = 0.2D;
+			player.motionY = StatBoostConfig.mistJumpSpeed;
 		} else if (isStuck) {
 			player.motionY = 0.12D;
 			if (world.isAirBlock(
@@ -222,12 +223,111 @@ public class PhysicsUtil {
 		} else {
 			player.motionY = 0.0D; // Neutral buoyancy — hover; shift to sink
 		}
+
+		applyMistHorizontalSpeed(player);
+	}
+
+	/** WASD push + speed cap while misted (config-tuned). */
+	private static void applyMistHorizontalSpeed(EntityPlayer player) {
+		float forward = player.moveForward;
+		float strafe = player.moveStrafing;
+		if (forward != 0.0F || strafe != 0.0F) {
+			float len = MathHelper.sqrt_float(forward * forward + strafe * strafe);
+			if (len < 1.0E-4F) return;
+			forward /= len;
+			strafe /= len;
+			float yaw = player.rotationYaw * (float) Math.PI / 180.0F;
+			double sin = MathHelper.sin(yaw);
+			double cos = MathHelper.cos(yaw);
+			double speed = StatBoostConfig.mistHorizontalSpeed;
+			player.motionX += (strafe * cos - forward * sin) * speed;
+			player.motionZ += (forward * cos + strafe * sin) * speed;
+		}
+
+		double max = StatBoostConfig.mistMaxHorizontalSpeed;
+		if (max <= 0.0D) return;
+		double horiz = Math.sqrt(player.motionX * player.motionX + player.motionZ * player.motionZ);
+		if (horiz > max) {
+			double scale = max / horiz;
+			player.motionX *= scale;
+			player.motionZ *= scale;
+		}
 	}
 
 	/** Re-assert after Legends LivingUpdate clears noClip on non-phasing players. */
 	public static void ensureMistNoClip(EntityPlayer player) {
 		if (player == null) return;
 		player.noClip = true;
+	}
+
+	/**
+	 * After mist/bat exit: if embedded, teleport to nearest 2-high air with solid floor.
+	 * @return true if safe (or not stuck); false if still stuck (kept noClip for retry)
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean ejectFromSolidsIfNeeded(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return true;
+		World world = player.worldObj;
+
+		if (!needsSolidEject(player)) {
+			return true;
+		}
+
+		int px = MathHelper.floor_double(player.posX);
+		int py = MathHelper.floor_double(player.posY);
+		int pz = MathHelper.floor_double(player.posZ);
+
+		double bestGroundedDistSq = -1.0D;
+		double gX = 0, gY = 0, gZ = 0;
+		boolean foundGrounded = false;
+
+		for (int x = px - 5; x <= px + 5; x++) {
+			for (int z = pz - 5; z <= pz + 5; z++) {
+				for (int y = py - 2; y <= py + 4; y++) {
+					if (!world.isAirBlock(x, y, z) || !world.isAirBlock(x, y + 1, z)) continue;
+
+					Block floor = world.getBlock(x, y - 1, z);
+					boolean hasGround = floor.getMaterial().isSolid() || floor.isOpaqueCube();
+					if (!hasGround) continue; // final snap must stand on solid/opaque
+
+					double dx = (x + 0.5D) - player.posX;
+					double dy = y - player.posY;
+					double dz = (z + 0.5D) - player.posZ;
+					double distSq = dx * dx + dy * dy + dz * dz;
+					if (!foundGrounded || distSq < bestGroundedDistSq) {
+						bestGroundedDistSq = distSq;
+						gX = x + 0.5D;
+						gY = y;
+						gZ = z + 0.5D;
+						foundGrounded = true;
+					}
+				}
+			}
+		}
+
+		if (foundGrounded) {
+			player.setPositionAndUpdate(gX, gY, gZ);
+			return true;
+		}
+
+		player.noClip = true;
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static boolean needsSolidEject(EntityPlayer player) {
+		if (player.isEntityInsideOpaqueBlock()) return true;
+
+		int fx = MathHelper.floor_double(player.posX);
+		int fy = MathHelper.floor_double(player.posY);
+		int fz = MathHelper.floor_double(player.posZ);
+		World world = player.worldObj;
+		if (!world.isAirBlock(fx, fy, fz) || !world.isAirBlock(fx, fy + 1, fz)) {
+			return true;
+		}
+
+		List colliding = world.getCollidingBoundingBoxes(player, player.boundingBox);
+		return colliding != null && !colliding.isEmpty();
 	}
 
 	public static boolean isBlockPorous(Block block) {

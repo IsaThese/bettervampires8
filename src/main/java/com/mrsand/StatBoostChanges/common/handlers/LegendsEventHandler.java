@@ -25,7 +25,6 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityVillager;
@@ -36,8 +35,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -250,76 +247,11 @@ public class LegendsEventHandler {
 
 		// --- CASE: ABILITY ENDED ---
 		if (!isMistActive && wasMisty) {
-			World world = player.worldObj;
-
-			// If the player is inside a block, we find the nearest exit
-			if (player.isEntityInsideOpaqueBlock()) {
-				int px = MathHelper.floor_double(player.posX);
-				int py = MathHelper.floor_double(player.posY);
-				int pz = MathHelper.floor_double(player.posZ);
-
-				// Priority 1: Grounded (Closest 2x Air + Solid Floor)
-				double bestGroundedDistSq = -1.0D;
-				double gX = 0, gY = 0, gZ = 0;
-				boolean foundGrounded = false;
-
-				// Priority 2: Any Air (Closest 2x Air anywhere - Fallback)
-				double bestAirDistSq = -1.0D;
-				double aX = 0, aY = 0, aZ = 0;
-				boolean foundAnyAir = false;
-
-				// Radial Search: 3 block radius
-				for (int x = px - 3; x <= px + 3; x++) {
-					for (int z = pz - 3; z <= pz + 3; z++) {
-						for (int y = py - 1; y <= py + 2; y++) {
-
-							// Check for 2-block high air gap
-							if (world.isAirBlock(x, y, z) && world.isAirBlock(x, y + 1, z)) {
-								double dx = (x + 0.5D) - player.posX;
-								double dy = y - player.posY;
-								double dz = (z + 0.5D) - player.posZ;
-								double distSq = dx*dx + dy*dy + dz*dz;
-
-								// Check if there is a solid block to stand on
-								Block floor = world.getBlock(x, y - 1, z);
-								boolean hasGround = floor.getMaterial().isSolid() || floor.isOpaqueCube();
-
-								// Track Closest Grounded Spot
-								if (hasGround) {
-									if (!foundGrounded || distSq < bestGroundedDistSq) {
-										bestGroundedDistSq = distSq;
-										gX = x + 0.5D; gY = y; gZ = z + 0.5D;
-										foundGrounded = true;
-									}
-								}
-
-								// Track Closest Any Air Spot (The fallback)
-								if (!foundAnyAir || distSq < bestAirDistSq) {
-									bestAirDistSq = distSq;
-									aX = x + 0.5D; aY = y; aZ = z + 0.5D;
-									foundAnyAir = true;
-								}
-							}
-						}
-					}
-				}
-
-				// --- EXECUTE SNAP ---
-				if (foundGrounded) {
-					player.setPositionAndUpdate(gX, gY, gZ);
-				} 
-				else if (foundAnyAir) {
-					player.setPositionAndUpdate(aX, aY, aZ);
-				} 
-				else {
-					// If absolutely no air was found in a 7x7x4 area, keep noClip 
-					// on so the player can continue drifting out manually.
-					player.noClip = true;
-					return; // Wait for next tick to try search again or wait for player to move
-				}
+			// Snap to solid ground if embedded; retry next tick if none found.
+			if (!PhysicsUtil.ejectFromSolidsIfNeeded(player)) {
+				return;
 			}
 
-			// --- FINAL CLEANUP (Ran if safe, or after a successful snap) ---
 			player.getEntityData().setBoolean("IsMistFormSmall", false);
 			if (!player.capabilities.isCreativeMode) {
 				player.noClip = false;

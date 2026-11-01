@@ -24,7 +24,7 @@ public class StatBoostConfig {
 	 * When true, vampire apparel cape uses Legends basic red cape. When false,
 	 * uses the default (custom) cape_0 texture.
 	 */
-	public static boolean useRedVampireCape = false;
+	public static boolean useRedVampireCape = true;
 
 	/**
 	 * When true, Legends Daywalker is removed for vampire legacy players. Sunlight
@@ -38,6 +38,15 @@ public class StatBoostConfig {
 	 * fire); lower levels burn even with a helmet; lord+full clothes full skip.
 	 */
 	public static boolean bvAccurateSunDamage = true;
+
+	/** Per-tick WASD push while misted. */
+	public static double mistHorizontalSpeed = 0.14D;
+	/** Cap on horizontal mist speed (blocks/tick). */
+	public static double mistMaxHorizontalSpeed = 0.4D;
+	/** Space while misted. */
+	public static double mistJumpSpeed = 0.4D;
+	/** Sneak while misted (negative = sink). */
+	public static double mistSinkSpeed = -0.4D;
 
 	public static void load(File configFile) {
 		config = new Configuration(configFile);
@@ -73,6 +82,27 @@ public class StatBoostConfig {
 				"legacy",
 				true,
 				"When true, use BetterVampires sun rules: Witchery vampire level >= 5 gets debuffs only (no fire); below 5 burns even with a helmet; Vampire Lord + full Witchery clothes skips the sun package. When false, leave Legends 8 helmet soft-fire alone.");
+		// Mist speeds: tune field defaults above for now (skip .cfg override).
+//		mistHorizontalSpeed = config.get(
+//				"mist",
+//				"mistHorizontalSpeed",
+//				mistHorizontalSpeed,
+//				"Per-tick WASD acceleration while in mist form. Raise for snappier mist travel.").getDouble(mistHorizontalSpeed);
+//		mistMaxHorizontalSpeed = config.get(
+//				"mist",
+//				"mistMaxHorizontalSpeed",
+//				mistMaxHorizontalSpeed,
+//				"Max horizontal speed (blocks/tick) while misted.").getDouble(mistMaxHorizontalSpeed);
+//		mistJumpSpeed = config.get(
+//				"mist",
+//				"mistJumpSpeed",
+//				mistJumpSpeed,
+//				"Upward speed while holding jump in mist form.").getDouble(mistJumpSpeed);
+//		mistSinkSpeed = config.get(
+//				"mist",
+//				"mistSinkSpeed",
+//				mistSinkSpeed,
+//				"Vertical speed while sneaking in mist (negative sinks through floors).").getDouble(mistSinkSpeed);
 		if (config.hasChanged()) {
 			config.save();
 		}
