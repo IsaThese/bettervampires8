@@ -13,6 +13,9 @@
       /*"BloodSourceMixin",*/
       "CreatureUtilMixin",
       /*"EntitySpiderMixin",*/
+      "legends.EntityHerobrineHostilityMixin",
+      "legends.EntitySmartCreatureHostilityMixin",
+      "legends.EntitySmartWaterCreatureHostilityMixin",
       "legends.EntityVampireMixin",
       "EntityWitchHunterMixin",
       "ExtendedPlayerMixin",
@@ -36,6 +39,7 @@
       "legends.MorphHelperMixin",
       "legends.MorphWolfMixin",
       "legends.PlayerHelperMixin",
+      "legends.PlayerRenderHelperHypnosisAimMixin",
       "legends.PowersHandlerMixin",
       "legends.RegisterBlocksMixin",
       "legends.RegisterHorrorBlocksMixin",

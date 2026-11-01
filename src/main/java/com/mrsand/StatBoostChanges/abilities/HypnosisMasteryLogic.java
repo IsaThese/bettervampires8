@@ -22,6 +22,7 @@ import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.management.interfaces.IKaiju;
+import com.tihyo.legends.management.properties.LegendsProperties;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -65,6 +66,7 @@ public final class HypnosisMasteryLogic {
 	private static final double PSYCHIC_RANGE = 25.0D;
 
 	private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<UUID, Session>();
+	private static final String BV_AIM_OWNED_TAG = "bvHypnosisAimOwned";
 
 	private HypnosisMasteryLogic() {}
 
@@ -75,7 +77,71 @@ public final class HypnosisMasteryLogic {
 	}
 
 	/**
-	 * Call every tick while holding (client + server). Client pass only refreshes the synced
+	 * Raise-hand pose: Legends 5 applied aiming via addEffectAndSync every hold tick.
+	 * L8 uses AIMING_RIGHT / PlayerDataPacket but only syncs on value change — force sync
+	 * when already 20, and apply locally on the client so FP/F5 do not wait on the packet.
+	 * Only while Hypnosis Mastery is actively channeling.
+	 */
+	public static void refreshAimingPose(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return;
+		if (!VampireRestoredAbilities.isHypnosisMasteryChanneling(player)) return;
+		if (player.isSwingInProgress) return;
+		if (VampireRestoredAbilities.getHypnosisStrength(player) <= 5) return;
+
+		Integer aimingObj = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
+		int aimingBefore = aimingObj == null ? 0 : aimingObj.intValue();
+
+		player.getEntityData().setBoolean(BV_AIM_OWNED_TAG, true);
+
+		if (player.worldObj.isRemote) {
+			LegendsProperties.AIMING_RIGHT.setWithoutNotify(player, Integer.valueOf(20));
+			LegendsProperties.AIMING_RIGHT_TYPE.setWithoutNotify(player, Integer.valueOf(0));
+			if (HypnosisDebug.enabled() && LegendsHelper.getTicks(player) % 10 == 0) {
+				HypnosisDebug.logAiming(player, "client-local", aimingBefore, PlayerHelper.isAimingRightArm(player));
+			}
+			return;
+		}
+
+		boolean wouldNoOp = aimingBefore == 20;
+		PowersHandler.aimingRightArm(player, 1, 0);
+		// aimingRightArm skips set/sync when already 20 — observers never refresh without this.
+		if (wouldNoOp) {
+			LegendsProperties.AIMING_RIGHT.sync(player);
+			LegendsProperties.AIMING_RIGHT_TYPE.sync(player);
+		}
+		if (HypnosisDebug.enabled() && LegendsHelper.getTicks(player) % 10 == 0) {
+			HypnosisDebug.logAiming(player, wouldNoOp ? "server-forceSync" : "server-set",
+					aimingBefore, PlayerHelper.isAimingRightArm(player));
+		}
+	}
+
+	/**
+	 * Drop the raise-hand pose immediately when mastery hold ends (do not wait for L8's ~1s decay).
+	 * Only clears AIMING we previously raised so other powers keep their pose.
+	 */
+	public static void clearAimingPose(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return;
+		NBTTagCompound data = player.getEntityData();
+		if (!data.getBoolean(BV_AIM_OWNED_TAG)) return;
+		data.removeTag(BV_AIM_OWNED_TAG);
+
+		Integer aimingObj = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
+		int aiming = aimingObj == null ? 0 : aimingObj.intValue();
+
+		if (player.worldObj.isRemote) {
+			LegendsProperties.AIMING_RIGHT.setWithoutNotify(player, Integer.valueOf(0));
+			LegendsProperties.AIMING_RIGHT_TYPE.setWithoutNotify(player, Integer.valueOf(0));
+		} else {
+			LegendsProperties.AIMING_RIGHT.set(player, Integer.valueOf(0));
+			LegendsProperties.AIMING_RIGHT_TYPE.set(player, Integer.valueOf(0));
+		}
+		if (HypnosisDebug.enabled()) {
+			HypnosisDebug.logAiming(player, "clear", aiming, PlayerHelper.isAimingRightArm(player));
+		}
+	}
+
+	/**
+	 * Call every tick while holding (client + server). Client pass refreshes aim pose +
 	 * crosshair target; server pass aims / stun-or-pull / bind progress.
 	 */
 	public static void tickChannel(EntityPlayer player) {
@@ -84,6 +150,7 @@ public final class HypnosisMasteryLogic {
 		EntityLivingBase target = LegendsHelper.getTarget(player, 25.0D);
 
 		if (player.worldObj.isRemote) {
+			refreshAimingPose(player);
 			return;
 		}
 
@@ -93,9 +160,7 @@ public final class HypnosisMasteryLogic {
 		// Infinite channel: bar is never spent here (still gates at > 5 so empty bar blocks use).
 		if (VampireRestoredAbilities.getHypnosisStrength(player) <= 5) return;
 
-		if (!player.isSwingInProgress) {
-			PowersHandler.aimingRightArm(player, 1, 0);
-		}
+		refreshAimingPose(player);
 
 		boolean touched = target != null && PlayerHelper.canBeTouched(player, target);
 		boolean controllable = canControlTarget(target);
@@ -106,10 +171,13 @@ public final class HypnosisMasteryLogic {
 			int duration = key > 0 ? LegacyHelper.getDuration(player, key) : -1;
 			Session s = SESSIONS.get(player.getUniqueID());
 			Vec3 lookDbg = player.getLook(1.0F);
+			Integer aim = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
 			HypnosisDebug.logMastery(player,
 					"str=" + VampireRestoredAbilities.getHypnosisStrength(player)
 							+ " key=" + key + " dur=" + duration
 							+ " sneak=" + sneaking
+							+ " aim=" + (aim == null ? 0 : aim.intValue())
+							+ " isAiming=" + PlayerHelper.isAimingRightArm(player)
 							+ " target=" + (target == null ? "null" : target.getCommandSenderName())
 							+ " touched=" + touched + " control=" + controllable
 							+ " sessBound=" + (s != null && s.boundThisSession)
@@ -179,6 +247,7 @@ public final class HypnosisMasteryLogic {
 	public static void refreshClientTarget(EntityPlayer player) {
 		if (player == null || !player.worldObj.isRemote) return;
 		LegendsHelper.getTarget(player, 25.0D);
+		refreshAimingPose(player);
 	}
 
 	/**

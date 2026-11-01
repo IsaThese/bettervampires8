@@ -1,0 +1,26 @@
+﻿  public static void hypnosis(net.minecraft.entity.player.EntityPlayer, int);
+    Code:
+       0: getstatic     #3616               // Field com/tihyo/legends/management/properties/LegendsProperties.HYPNOSIS:Lcom/tihyo/legends/management/properties/LegendsProperties;
+       3: aload_0
+       4: invokevirtual #41                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+       7: checkcast     #43                 // class java/lang/Integer
+      10: invokevirtual #47                 // Method java/lang/Integer.intValue:()I
+      13: iload_1
+      14: bipush        20
+      16: imul
+      17: if_icmpeq     45
+      20: getstatic     #3616               // Field com/tihyo/legends/management/properties/LegendsProperties.HYPNOSIS:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      23: aload_0
+      24: iload_1
+      25: bipush        20
+      27: imul
+      28: invokestatic  #51                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      31: invokevirtual #55                 // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+      34: pop
+      35: aload_0
+      36: fconst_0
+      37: ldc_w         #716                // float 9.0f
+      40: ldc           #237                // float 4.0f
+      42: invokestatic  #534                // Method com/tihyo/legends/management/PlayerHelper.setAnimationTicks:(Lnet/minecraft/entity/player/EntityPlayer;FFF)V
+      45: return
+

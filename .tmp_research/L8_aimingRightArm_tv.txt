@@ -1,0 +1,56 @@
+﻿  public static void aimingRightArm(net.minecraft.entity.player.EntityPlayer, int, int);
+    descriptor: (Lnet/minecraft/entity/player/EntityPlayer;II)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=4, locals=3, args_size=3
+         0: aload_0
+         1: getfield      #25                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+         4: getfield      #31                 // Field net/minecraft/world/World.field_72995_K:Z
+         7: ifne          74
+        10: getstatic     #37                 // Field com/tihyo/legends/management/properties/LegendsProperties.AIMING_RIGHT:Lcom/tihyo/legends/management/properties/LegendsProperties;
+        13: aload_0
+        14: invokevirtual #41                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+        17: checkcast     #43                 // class java/lang/Integer
+        20: invokevirtual #47                 // Method java/lang/Integer.intValue:()I
+        23: iload_1
+        24: bipush        20
+        26: imul
+        27: if_icmpeq     45
+        30: getstatic     #37                 // Field com/tihyo/legends/management/properties/LegendsProperties.AIMING_RIGHT:Lcom/tihyo/legends/management/properties/LegendsProperties;
+        33: aload_0
+        34: iload_1
+        35: bipush        20
+        37: imul
+        38: invokestatic  #51                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+        41: invokevirtual #55                 // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+        44: pop
+        45: getstatic     #58                 // Field com/tihyo/legends/management/properties/LegendsProperties.AIMING_RIGHT_TYPE:Lcom/tihyo/legends/management/properties/LegendsProperties;
+        48: aload_0
+        49: invokevirtual #41                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+        52: checkcast     #43                 // class java/lang/Integer
+        55: invokevirtual #47                 // Method java/lang/Integer.intValue:()I
+        58: iload_2
+        59: if_icmpeq     74
+        62: getstatic     #58                 // Field com/tihyo/legends/management/properties/LegendsProperties.AIMING_RIGHT_TYPE:Lcom/tihyo/legends/management/properties/LegendsProperties;
+        65: aload_0
+        66: iload_2
+        67: invokestatic  #51                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+        70: invokevirtual #55                 // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+        73: pop
+        74: return
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      75     0 player   Lnet/minecraft/entity/player/EntityPlayer;
+            0      75     1 timer   I
+            0      75     2  type   I
+      LineNumberTable:
+        line 173: 0
+        line 176: 10
+        line 177: 30
+        line 178: 45
+        line 179: 62
+        line 181: 74
+      StackMapTable: number_of_entries = 2
+        frame_type = 45 /* same */
+        frame_type = 28 /* same */
+

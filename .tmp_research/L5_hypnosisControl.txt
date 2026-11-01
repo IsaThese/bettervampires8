@@ -1,0 +1,11 @@
+﻿  public static void hypnosisControl(net.minecraft.entity.player.EntityPlayer, int);
+    Code:
+       0: aload_0
+       1: getstatic     #3111               // Field com/tihyo/legends/abilities/Ability.hypnosisControl:Lcom/tihyo/legends/abilities/Ability;
+       4: iload_1
+       5: iconst_5
+       6: imul
+       7: iconst_0
+       8: invokestatic  #31                 // Method com/tihyo/legends/abilities/AbilityHelper.addEffectAndSync:(Lnet/minecraft/entity/EntityLivingBase;Lcom/tihyo/legends/abilities/Ability;II)V
+      11: return
+

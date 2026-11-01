@@ -288,6 +288,8 @@ public class LegendsEventHandler {
 		EntityPlayer player = (EntityPlayer) event.entityLiving;
 		VampireRestoredAbilities.tickWebPassThrough(player);
 		if (!Loader.isModLoaded("legends")) return;
+		// After Horror Transvection flight: sneak+jump holds altitude for horizontal-only move.
+		PhysicsUtil.tickTransvectionAltitudeLock(player);
 		if (!LegendsAbilityBridge.isMist(player)) return;
 		// Re-apply full mist physics after Legends (clears noClip + may add flight motionY).
 		PhysicsUtil.handleMistPhasing(player);

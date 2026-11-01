@@ -3,6 +3,7 @@ package com.mrsand.StatBoostChanges.mixins.late.legends;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
@@ -10,6 +11,7 @@ import com.tihyo.legends.management.LegendsGameRules;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.management.properties.LegendsProperties;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 @Mixin(value = PlayerHelper.class, remap = false)
@@ -29,5 +31,20 @@ public abstract class PlayerHelperMixin {
 				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.CHOKE) > 0
 				|| LegendsAbilityBridge.getIntProp(player, LegendsProperties.LIGHTNING_SHIELD) > 0
 				|| player.worldObj.getGameRules().getGameRuleBooleanValue(LegendsGameRules.isInvincible));
+	}
+
+	/** Allow other ability keys while Transvection hover is active. */
+	@Redirect(
+			method = "canPerformAbility",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/properties/LegendsProperties;get(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;"
+			)
+	)
+	private static Object bvIgnoreTransvectionBusy(LegendsProperties props, Entity entity) {
+		if (props == LegendsProperties.TRANSVECTION) {
+			return Boolean.FALSE;
+		}
+		return props.get(entity);
 	}
 }

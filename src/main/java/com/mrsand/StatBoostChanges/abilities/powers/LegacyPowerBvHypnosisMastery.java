@@ -88,12 +88,15 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 		if (player == null) return;
 		int key = getAssignedKey(player);
 		if (key <= 0) return;
-		// Client: still tick so getTarget can sync the crosshair entity to the server.
+		// L8 calls execute every LivingUpdate; only channel while hold duration is active.
+		if (!LegacyHelper.useAbility(player, key)) {
+			HypnosisMasteryLogic.clearAimingPose(player);
+			return;
+		}
 		if (player.worldObj.isRemote) {
 			HypnosisMasteryLogic.tickChannel(player);
 			return;
 		}
-		if (!LegacyHelper.useAbility(player, key)) return;
 		if (LegacyHelper.getLegacyClass(player) == null) return;
 		if (LegacyHelper.getLegacyClass(player).getWeaknesses(player)) return;
 		HypnosisMasteryLogic.tickChannel(player);

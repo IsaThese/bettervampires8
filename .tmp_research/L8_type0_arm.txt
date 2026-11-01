@@ -1,0 +1,163 @@
+    20025: aload         8
+    20027: invokestatic  #1960              // Method com/tihyo/legends/management/PlayerHelper.isAimingRightArm:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    20030: ifeq          20385
+    20033: aload         8
+    20035: invokestatic  #1963              // Method com/tihyo/legends/management/PlayerHelper.getRightArmAimingType:(Lnet/minecraft/entity/player/EntityPlayer;)I
+    20038: ifne          20385
+    20041: aload_0
+    20042: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20045: fconst_0
+    20046: putfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20049: aload_0
+    20050: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20053: fconst_0
+    20054: putfield      #1311              // Field net/minecraft/client/model/ModelRenderer.field_78796_g:F
+    20057: aload_0
+    20058: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20061: fconst_0
+    20062: putfield      #1316              // Field net/minecraft/client/model/ModelRenderer.field_78808_h:F
+    20065: aload_0
+    20066: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20069: aload         8
+    20071: invokestatic  #1563              // Method com/tihyo/legends/management/PlayerHelper.getAnimationTicks:(Lnet/minecraft/entity/player/EntityPlayer;)F
+    20074: ldc_w         #513               // float 0.2f
+    20077: fmul
+    20078: invokestatic  #1271              // Method net/minecraft/util/MathHelper.func_76134_b:(F)F
+    20081: ldc_w         #442               // float 1.2f
+    20084: fmul
+    20085: ldc_w         #442               // float 1.2f
+    20088: fsub
+    20089: putfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20092: aload         8
+    20094: getstatic     #1360              // Field com/tihyo/legends/abilities/Stat.swinging:Lcom/tihyo/legends/abilities/Stat;
+    20097: invokestatic  #1094              // Method com/tihyo/legends/abilities/StatHelper.isAbilityActive:(Lnet/minecraft/entity/EntityLivingBase;Lcom/tihyo/legends/abilities/Stat;)Z
+    20100: ifne          20179
+    20103: aload         8
+    20105: getstatic     #1966              // Field com/tihyo/legends/abilities/Stat.webShooting:Lcom/tihyo/legends/abilities/Stat;
+    20108: invokestatic  #1094              // Method com/tihyo/legends/abilities/StatHelper.isAbilityActive:(Lnet/minecraft/entity/EntityLivingBase;Lcom/tihyo/legends/abilities/Stat;)Z
+    20111: ifeq          20179
+    20114: aload_0
+    20115: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20118: dup
+    20119: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20122: aload_0
+    20123: getfield      #328               // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+    20126: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20129: ldc_w         #1711              // float 1.5707964f
+    20132: fsub
+    20133: fneg
+    20134: ldc_w         #1712              // float 6.0f
+    20137: fmul
+    20138: invokestatic  #1715              // Method java/lang/Math.abs:(F)F
+    20141: ldc_w         #513               // float 0.2f
+    20144: fmul
+    20145: invokestatic  #1271              // Method net/minecraft/util/MathHelper.func_76134_b:(F)F
+    20148: ldc_w         #442               // float 1.2f
+    20151: fmul
+    20152: ldc_w         #442               // float 1.2f
+    20155: fsub
+    20156: aload         8
+    20158: invokestatic  #506               // Method com/tihyo/legends/management/PlayerHelper.isFlying:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    20161: ifeq          20170
+    20164: ldc_w         #343               // float 0.9f
+    20167: goto          20171
+    20170: fconst_0
+    20171: fsub
+    20172: fadd
+    20173: putfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20176: goto          20340
+    20179: getstatic     #1969              // Field com/tihyo/legends/management/properties/LegendsProperties.HAMMER_THROW:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    20182: aload         8
+    20184: invokevirtual #113               // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    20187: checkcast     #115               // class java/lang/Boolean
+    20190: invokevirtual #119               // Method java/lang/Boolean.booleanValue:()Z
+    20193: iconst_1
+    20194: if_icmpne     20274
+    20197: aload         8
+    20199: invokestatic  #708               // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingThorEndgame:(Lnet/minecraft/entity/EntityLivingBase;)Z
+    20202: ifeq          20274
+    20205: aload_0
+    20206: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20209: dup
+    20210: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20213: aload_0
+    20214: getfield      #328               // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+    20217: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20220: ldc_w         #1711              // float 1.5707964f
+    20223: fsub
+    20224: fneg
+    20225: ldc_w         #1712              // float 6.0f
+    20228: fmul
+    20229: invokestatic  #1715              // Method java/lang/Math.abs:(F)F
+    20232: ldc_w         #513               // float 0.2f
+    20235: fmul
+    20236: invokestatic  #1271              // Method net/minecraft/util/MathHelper.func_76134_b:(F)F
+    20239: ldc_w         #442               // float 1.2f
+    20242: fmul
+    20243: ldc_w         #442               // float 1.2f
+    20246: fsub
+    20247: aload         8
+    20249: invokestatic  #506               // Method com/tihyo/legends/management/PlayerHelper.isFlying:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    20252: ifeq          20261
+    20255: ldc_w         #343               // float 0.9f
+    20258: goto          20262
+    20261: fconst_0
+    20262: fsub
+    20263: ldc_w         #1875              // float 2.5f
+    20266: fadd
+    20267: fadd
+    20268: putfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20271: goto          20340
+    20274: aload_0
+    20275: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20278: dup
+    20279: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20282: aload_0
+    20283: getfield      #328               // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+    20286: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20289: ldc_w         #1711              // float 1.5707964f
+    20292: fsub
+    20293: fneg
+    20294: ldc_w         #1712              // float 6.0f
+    20297: fmul
+    20298: invokestatic  #1715              // Method java/lang/Math.abs:(F)F
+    20301: ldc_w         #513               // float 0.2f
+    20304: fmul
+    20305: invokestatic  #1271              // Method net/minecraft/util/MathHelper.func_76134_b:(F)F
+    20308: ldc_w         #442               // float 1.2f
+    20311: fmul
+    20312: ldc_w         #442               // float 1.2f
+    20315: fsub
+    20316: aload         8
+    20318: invokestatic  #506               // Method com/tihyo/legends/management/PlayerHelper.isFlying:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    20321: ifeq          20330
+    20324: ldc_w         #343               // float 0.9f
+    20327: goto          20331
+    20330: fconst_0
+    20331: fsub
+    20332: ldc_w         #1308              // float 1.5f
+    20335: fadd
+    20336: fadd
+    20337: putfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20340: aload_0
+    20341: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20344: dup
+    20345: getfield      #1311              // Field net/minecraft/client/model/ModelRenderer.field_78796_g:F
+    20348: aload_0
+    20349: getfield      #328               // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+    20352: getfield      #1311              // Field net/minecraft/client/model/ModelRenderer.field_78796_g:F
+    20355: fadd
+    20356: putfield      #1311              // Field net/minecraft/client/model/ModelRenderer.field_78796_g:F
+    20359: aload         8
+    20361: invokestatic  #1390              // Method com/tihyo/legends/management/PlayerHelper.isGliding:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    20364: ifeq          20747
+    20367: aload_0
+    20368: getfield      #212               // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+    20371: dup
+    20372: getfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20375: ldc_w         #345               // float 0.5f
+    20378: fsub
+    20379: putfield      #1275              // Field net/minecraft/client/model/ModelRenderer.field_78795_f:F
+    20382: goto          20747
+    20385: aload         8
+    20387: invokestatic  #1960              // Method com/tihyo/legends/management/PlayerHelper.isAimingRightArm:(Lnet/minecraft/entity/player/EntityPlayer;)Z

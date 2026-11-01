@@ -1,0 +1,112 @@
+﻿Compiled from "PlayerDataPacket.java"
+public class com.tihyo.legends.packets.PlayerDataPacket extends com.tihyo.legends.packets.AbstractLegendsPacket<com.tihyo.legends.packets.PlayerDataPacket> {
+  public int id;
+
+  private com.tihyo.legends.management.properties.LegendsProperties key;
+
+  private java.lang.Object value;
+
+  public com.tihyo.legends.packets.PlayerDataPacket();
+    Code:
+       0: aload_0
+       1: invokespecial #19                 // Method com/tihyo/legends/packets/AbstractLegendsPacket."<init>":()V
+       4: return
+
+  public com.tihyo.legends.packets.PlayerDataPacket(net.minecraft.entity.player.EntityPlayer, com.tihyo.legends.management.properties.LegendsProperties, java.lang.Object);
+    Code:
+       0: aload_0
+       1: invokespecial #19                 // Method com/tihyo/legends/packets/AbstractLegendsPacket."<init>":()V
+       4: aload_0
+       5: aload_1
+       6: invokevirtual #28                 // Method net/minecraft/entity/player/EntityPlayer.func_145782_y:()I
+       9: putfield      #30                 // Field id:I
+      12: aload_0
+      13: aload_2
+      14: putfield      #32                 // Field key:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      17: aload_0
+      18: aload_3
+      19: putfield      #34                 // Field value:Ljava/lang/Object;
+      22: return
+
+  public void fromBytes(io.netty.buffer.ByteBuf);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #45                 // Method io/netty/buffer/ByteBuf.readInt:()I
+       5: putfield      #30                 // Field id:I
+       8: aload_0
+       9: getstatic     #51                 // Field com/tihyo/legends/management/properties/LegendsProperties.REG:Lcom/tihyo/legends/management/properties/LegendsRegistryArith;
+      12: aload_1
+      13: invokevirtual #55                 // Method io/netty/buffer/ByteBuf.readShort:()S
+      16: invokevirtual #61                 // Method com/tihyo/legends/management/properties/LegendsRegistryArith.getObjectById:(I)Lcom/tihyo/legends/management/properties/LegendsDataRegistry;
+      19: checkcast     #47                 // class com/tihyo/legends/management/properties/LegendsProperties
+      22: putfield      #32                 // Field key:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      25: aload_0
+      26: aload_1
+      27: aload_0
+      28: getfield      #32                 // Field key:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      31: getfield      #65                 // Field com/tihyo/legends/management/properties/LegendsProperties.typeClass:Lcom/tihyo/legends/management/properties/DataClassType;
+      34: invokestatic  #70                 // Method com/tihyo/legends/management/properties/LegendsNBTHelper.fromBytes:(Lio/netty/buffer/ByteBuf;Lcom/tihyo/legends/management/properties/DataClassType;)Ljava/lang/Object;
+      37: putfield      #34                 // Field value:Ljava/lang/Object;
+      40: return
+
+  public void toBytes(io.netty.buffer.ByteBuf);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: getfield      #30                 // Field id:I
+       5: invokevirtual #77                 // Method io/netty/buffer/ByteBuf.writeInt:(I)Lio/netty/buffer/ByteBuf;
+       8: pop
+       9: aload_1
+      10: getstatic     #51                 // Field com/tihyo/legends/management/properties/LegendsProperties.REG:Lcom/tihyo/legends/management/properties/LegendsRegistryArith;
+      13: aload_0
+      14: getfield      #32                 // Field key:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      17: invokevirtual #81                 // Method com/tihyo/legends/management/properties/LegendsRegistryArith.getIDForObject:(Lcom/tihyo/legends/management/properties/LegendsDataRegistry;)I
+      20: invokevirtual #84                 // Method io/netty/buffer/ByteBuf.writeShort:(I)Lio/netty/buffer/ByteBuf;
+      23: pop
+      24: aload_1
+      25: aload_0
+      26: getfield      #34                 // Field value:Ljava/lang/Object;
+      29: invokestatic  #87                 // Method com/tihyo/legends/management/properties/LegendsNBTHelper.toBytes:(Lio/netty/buffer/ByteBuf;Ljava/lang/Object;)V
+      32: return
+
+  public void receive() throws com.tihyo.legends.packets.AbstractLegendsPacket$MessageException;
+    Code:
+       0: aload_0
+       1: aload_0
+       2: getfield      #30                 // Field id:I
+       5: invokevirtual #92                 // Method getSender:(I)Lnet/minecraft/entity/player/EntityPlayer;
+       8: astore_1
+       9: aload_0
+      10: getfield      #96                 // Field context:Lcpw/mods/fml/common/network/simpleimpl/MessageContext;
+      13: getfield      #102                // Field cpw/mods/fml/common/network/simpleimpl/MessageContext.side:Lcpw/mods/fml/relauncher/Side;
+      16: invokevirtual #108                // Method cpw/mods/fml/relauncher/Side.isClient:()Z
+      19: ifeq          28
+      22: getstatic     #111                // Field cpw/mods/fml/relauncher/Side.SERVER:Lcpw/mods/fml/relauncher/Side;
+      25: goto          31
+      28: getstatic     #114                // Field cpw/mods/fml/relauncher/Side.CLIENT:Lcpw/mods/fml/relauncher/Side;
+      31: astore_2
+      32: aload_1
+      33: ifnull        78
+      36: aload_0
+      37: getfield      #96                 // Field context:Lcpw/mods/fml/common/network/simpleimpl/MessageContext;
+      40: getfield      #102                // Field cpw/mods/fml/common/network/simpleimpl/MessageContext.side:Lcpw/mods/fml/relauncher/Side;
+      43: invokevirtual #108                // Method cpw/mods/fml/relauncher/Side.isClient:()Z
+      46: ifeq          65
+      49: aload_0
+      50: getfield      #32                 // Field key:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      53: aload_1
+      54: aload_0
+      55: getfield      #34                 // Field value:Ljava/lang/Object;
+      58: invokevirtual #118                // Method com/tihyo/legends/management/properties/LegendsProperties.setWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+      61: pop
+      62: goto          78
+      65: aload_0
+      66: getfield      #32                 // Field key:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      69: aload_1
+      70: aload_0
+      71: getfield      #34                 // Field value:Ljava/lang/Object;
+      74: invokevirtual #122                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+      77: pop
+      78: return
+}

@@ -28,6 +28,7 @@ import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.management.PlayerHelper;
+import com.tihyo.legends.management.properties.LegendsProperties;
 import com.tihyo.legends.morph.MorphHelper;
 import com.tihyo.legends.morph.MorphRegistry;
 
@@ -56,6 +57,7 @@ public abstract class LegacyVampireMixin {
 	/**
 	 * L8 LegacyVampire.isPassive always true → always wall-climb.
 	 * Drink+sneak toggle stores {@link PlayerKeys#WALL_CLIMB}; climb only while that flag is on.
+	 * Preference stays set during mist/morph/transvection so climb resumes automatically on exit.
 	 */
 	@Inject(method = "isPassive", at = @At("HEAD"), cancellable = true)
 	private void bvWallClimbNotPassive(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
@@ -68,8 +70,21 @@ public abstract class LegacyVampireMixin {
 			cir.setReturnValue(Boolean.FALSE);
 			return;
 		}
+		if (wallClimbSuppressed(player)) {
+			cir.setReturnValue(Boolean.FALSE);
+			return;
+		}
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		cir.setReturnValue(Boolean.valueOf(v != null && v.getBoolean(PlayerKeys.WALL_CLIMB)));
+	}
+
+	/** Mist, bat, wolf, demonic beast, true form, or active transvection. */
+	private static boolean wallClimbSuppressed(EntityPlayer player) {
+		if (LegendsAbilityBridge.isMist(player)) return true;
+		if (MorphHelper.isBat(player) || MorphHelper.isWolf(player)) return true;
+		if (MorphHelper.isVampireBeast(player) || MorphHelper.isDraculaTrueForm(player)) return true;
+		Object tv = LegendsProperties.TRANSVECTION.get(player);
+		return tv instanceof Boolean && ((Boolean) tv).booleanValue();
 	}
 
 	/**

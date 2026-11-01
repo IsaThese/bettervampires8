@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.tihyo.legends.management.LegendsHelper;
+import com.tihyo.legends.management.properties.LegendsProperties;
 
+import cpw.mods.fml.common.Loader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockGlass;
@@ -258,6 +260,20 @@ public class PhysicsUtil {
 	public static void ensureMistNoClip(EntityPlayer player) {
 		if (player == null) return;
 		player.noClip = true;
+	}
+
+	/**
+	 * Transvection: sneak alone sinks, jump alone rises. Sneak+jump locks altitude
+	 * so only horizontal movement remains (Legends skips hover lock while sneaking).
+	 */
+	public static void tickTransvectionAltitudeLock(EntityPlayer player) {
+		if (player == null || !Loader.isModLoaded("legends")) return;
+		Boolean active = (Boolean) LegendsProperties.TRANSVECTION.get(player);
+		if (active == null || !active.booleanValue()) return;
+		if (player.capabilities != null && player.capabilities.isFlying) return;
+		if (player.isSneaking() && player.isJumping) {
+			player.motionY = 0.0D;
+		}
 	}
 
 	/** Default human standing height used when bat morph hitbox has not expanded yet. */

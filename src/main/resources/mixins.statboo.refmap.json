@@ -1,11 +1,25 @@
 {
   "mappings": {
+    "com/mrsand/StatBoostChanges/mixins/early/EntityBlazeMixin": {
+      "attackEntity": "Lnet/minecraft/entity/monster/EntityBlaze;func_70785_a(Lnet/minecraft/entity/Entity;F)V"
+    },
+    "com/mrsand/StatBoostChanges/mixins/early/EntityGhastMixin": {
+      "Lnet/minecraft/world/World;getClosestVulnerablePlayerToEntity(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;": "Lnet/minecraft/world/World;func_72856_b(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;",
+      "updateEntityActionState": "Lnet/minecraft/entity/monster/EntityGhast;func_70626_be()V"
+    },
     "com/mrsand/StatBoostChanges/mixins/early/EntitySpiderMixin": {
       "findPlayerToAttack": "Lnet/minecraft/entity/monster/EntitySpider;func_70782_k()Lnet/minecraft/entity/Entity;"
     }
   },
   "data": {
     "searge": {
+      "com/mrsand/StatBoostChanges/mixins/early/EntityBlazeMixin": {
+        "attackEntity": "Lnet/minecraft/entity/monster/EntityBlaze;func_70785_a(Lnet/minecraft/entity/Entity;F)V"
+      },
+      "com/mrsand/StatBoostChanges/mixins/early/EntityGhastMixin": {
+        "Lnet/minecraft/world/World;getClosestVulnerablePlayerToEntity(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;": "Lnet/minecraft/world/World;func_72856_b(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;",
+        "updateEntityActionState": "Lnet/minecraft/entity/monster/EntityGhast;func_70626_be()V"
+      },
       "com/mrsand/StatBoostChanges/mixins/early/EntitySpiderMixin": {
         "findPlayerToAttack": "Lnet/minecraft/entity/monster/EntitySpider;func_70782_k()Lnet/minecraft/entity/Entity;"
       }

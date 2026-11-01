@@ -1,0 +1,85 @@
+﻿Compiled from "UpdateEffectPacket.java"
+public class com.tihyo.legends.packets.UpdateEffectPacket$Handler implements cpw.mods.fml.common.network.simpleimpl.IMessageHandler<com.tihyo.legends.packets.UpdateEffectPacket, cpw.mods.fml.common.network.simpleimpl.IMessage> {
+  public com.tihyo.legends.packets.UpdateEffectPacket$Handler();
+    Code:
+       0: aload_0
+       1: invokespecial #15                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage onMessage(com.tihyo.legends.packets.UpdateEffectPacket, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: aload_1
+       1: invokestatic  #23                 // Method com/tihyo/legends/packets/UpdateEffectPacket.access$000:(Lcom/tihyo/legends/packets/UpdateEffectPacket;)Ljava/util/List;
+       4: astore_3
+       5: aload_1
+       6: invokestatic  #27                 // Method com/tihyo/legends/packets/UpdateEffectPacket.access$100:(Lcom/tihyo/legends/packets/UpdateEffectPacket;)I
+       9: invokestatic  #33                 // Method com/tihyo/legends/abilities/Ability.getEffect:(I)Lcom/tihyo/legends/abilities/Ability;
+      12: astore        4
+      14: aload_1
+      15: invokestatic  #36                 // Method com/tihyo/legends/packets/UpdateEffectPacket.access$200:(Lcom/tihyo/legends/packets/UpdateEffectPacket;)I
+      18: istore        5
+      20: aload_1
+      21: invokestatic  #39                 // Method com/tihyo/legends/packets/UpdateEffectPacket.access$300:(Lcom/tihyo/legends/packets/UpdateEffectPacket;)I
+      24: istore        6
+      26: aload_2
+      27: getfield      #45                 // Field cpw/mods/fml/common/network/simpleimpl/MessageContext.side:Lcpw/mods/fml/relauncher/Side;
+      30: invokevirtual #51                 // Method cpw/mods/fml/relauncher/Side.isClient:()Z
+      33: ifeq          88
+      36: getstatic     #57                 // Field com/tihyo/legends/common/Main.proxy:Lcom/tihyo/legends/proxies/ServerProxy;
+      39: invokevirtual #63                 // Method com/tihyo/legends/proxies/ServerProxy.getPlayer:()Lnet/minecraft/entity/player/EntityPlayer;
+      42: astore        7
+      44: aload         7
+      46: getfield      #69                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      49: aload_1
+      50: getfield      #73                 // Field com/tihyo/legends/packets/UpdateEffectPacket.id:I
+      53: invokevirtual #79                 // Method net/minecraft/world/World.func_73045_a:(I)Lnet/minecraft/entity/Entity;
+      56: astore        8
+      58: aload         8
+      60: instanceof    #81                 // class net/minecraft/entity/EntityLivingBase
+      63: ifeq          85
+      66: aload         8
+      68: checkcast     #81                 // class net/minecraft/entity/EntityLivingBase
+      71: astore        9
+      73: aload         9
+      75: aload_3
+      76: aload         4
+      78: iload         5
+      80: iload         6
+      82: invokestatic  #87                 // Method com/tihyo/legends/abilities/AbilityHelper.setActiveEffectWithoutNotify:(Lnet/minecraft/entity/EntityLivingBase;Ljava/util/List;Lcom/tihyo/legends/abilities/Ability;II)V
+      85: goto          143
+      88: aload_2
+      89: invokevirtual #93                 // Method cpw/mods/fml/common/network/simpleimpl/MessageContext.getServerHandler:()Lnet/minecraft/network/NetHandlerPlayServer;
+      92: getfield      #99                 // Field net/minecraft/network/NetHandlerPlayServer.field_147369_b:Lnet/minecraft/entity/player/EntityPlayerMP;
+      95: astore        7
+      97: aload         7
+      99: ifnull        143
+     102: aload         7
+     104: getfield      #69                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     107: aload_1
+     108: getfield      #73                 // Field com/tihyo/legends/packets/UpdateEffectPacket.id:I
+     111: invokevirtual #79                 // Method net/minecraft/world/World.func_73045_a:(I)Lnet/minecraft/entity/Entity;
+     114: astore        8
+     116: aload         8
+     118: instanceof    #81                 // class net/minecraft/entity/EntityLivingBase
+     121: ifeq          143
+     124: aload         8
+     126: checkcast     #81                 // class net/minecraft/entity/EntityLivingBase
+     129: astore        9
+     131: aload         9
+     133: aload_3
+     134: aload         4
+     136: iload         5
+     138: iload         6
+     140: invokestatic  #102                // Method com/tihyo/legends/abilities/AbilityHelper.setActiveEffect:(Lnet/minecraft/entity/EntityLivingBase;Ljava/util/List;Lcom/tihyo/legends/abilities/Ability;II)V
+     143: aconst_null
+     144: areturn
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage onMessage(cpw.mods.fml.common.network.simpleimpl.IMessage, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: checkcast     #10                 // class com/tihyo/legends/packets/UpdateEffectPacket
+       5: aload_2
+       6: invokevirtual #122                // Method onMessage:(Lcom/tihyo/legends/packets/UpdateEffectPacket;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage;
+       9: areturn
+}

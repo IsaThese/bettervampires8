@@ -119,8 +119,18 @@ processResources {
 }
 
 // Ensures that the encoding of source files is set to UTF-8, see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+// Mixin AP: MCP method names in sources + mcp-srg.srg so IDE and Gradle both resolve targets.
+def forgeVer = "${project.minecraft_version}-${project.forge_version}"
+def mcpSrgFile = new File("${System.getProperty('user.home')}/.gradle/caches/minecraft/net/minecraftforge/forge/${forgeVer}/srgs/mcp-srg.srg")
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    if (mcpSrgFile.exists()) {
+        options.compilerArgs += [
+            "-AreobfSrgFile=${mcpSrgFile.absolutePath}",
+            "-AoutRefMapFile=${project.file('src/main/resources/mixins.statboo.refmap.json').absolutePath}",
+            "-AdefaultObfuscationEnv=searge"
+        ]
+    }
 }
 
 // This task creates a .jar file containing the source code of this mod.

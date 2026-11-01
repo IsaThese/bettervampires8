@@ -77,6 +77,11 @@ public final class HypnosisDebug {
 		log(player, "MASTERY", detail, false);
 	}
 
+	/** Arm-raise pose sync probe (log only). */
+	public static void logAiming(EntityPlayer player, String op, int aimingBefore, boolean isAiming) {
+		log(player, "AIM", op + " before=" + aimingBefore + " isAiming=" + isAiming, false);
+	}
+
 	public static String format(EntityPlayer player, String tag, String detail) {
 		String side = "?";
 		int dim = -999;

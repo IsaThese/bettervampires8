@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.emoniph.witchery.Witchery;
-import com.emoniph.witchery.brewing.potions.PotionEnslaved;
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.common.ExtendedPlayer.VampirePower;
 import com.emoniph.witchery.entity.EntityBolt;
@@ -33,6 +32,7 @@ import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
+import com.mrsand.StatBoostChanges.util.VampireHostility;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.legends.legacy.LegacyHelper;
@@ -54,10 +54,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
-import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
@@ -280,7 +278,6 @@ public class GeneralEventHandler {
 				int y = MathHelper.floor_double(posY);
 				int z = MathHelper.floor_double(posZ);
 
-				boolean isMobAttackOrOtherForm = LegendsUtil.mobAttack(player) || vPlayer.getBoolean(PlayerKeys.OTHERFORM);
 				boolean batBlindStealth = GeneralUtil.hasBatBlindStealth(player);
 
 				if (batBlindStealth) {
@@ -289,31 +286,6 @@ public class GeneralEventHandler {
 
 				for (Entity entity : entities) {
 					if (entity instanceof EntityPlayer) continue;
-
-					if (isMobAttackOrOtherForm) {
-						if (entity instanceof EntityMob && !(PotionEnslaved.isMobEnslavedBy((EntityLiving) entity, player)) && !entity.getEntityData().getBoolean("angry")) {
-							EntityMob mob = (EntityMob) entity;
-
-							if (mob.getAttackTarget() == player || mob.getAITarget() == player) {
-								mob.targetTasks.taskEntries.clear();
-								mob.setAttackTarget(null);
-								mob.setRevengeTarget(null);
-								mob.setTarget(null);
-								mob.tasks.addTask(7, new EntityAILookIdle(mob));
-
-								if (entity instanceof EntityCreeper) {
-									((EntityCreeper) mob).setCreeperState(-1);
-								}
-							}
-							if (entity instanceof EntitySkeleton) {
-								mob.setAttackTarget(null);
-								mob.setRevengeTarget(null);
-								mob.setTarget(null);
-								mob.getNavigator().clearPathEntity(); 
-								mob.targetTasks.taskEntries.clear(); 
-							}
-						}
-					}
 
 					if (entity.getEntityData().getBoolean("tranced") || WitcheryUtil.isThralled((EntityLiving) entity)) {
 						EntityLiving mob = (EntityLiving) entity;
@@ -938,6 +910,29 @@ public class GeneralEventHandler {
 			if (living.getNavigator() != null) {
 				living.getNavigator().clearPathEntity();
 			}
+		}
+	}
+
+	/** Clear aggro when vampire ignore policy applies (normal mobs / lord vs bosses). */
+	@SubscribeEvent
+	public void vampireHostilityClearTarget(LivingSetAttackTargetEvent event) {
+		if (event.entity.worldObj.isRemote || !(event.entity instanceof EntityLiving)) return;
+		if (!(event.target instanceof EntityPlayer)) return;
+
+		EntityLiving living = (EntityLiving) event.entity;
+		EntityPlayer player = (EntityPlayer) event.target;
+		if (!VampireHostility.shouldIgnoreAttacker(living, player)) return;
+
+		living.setAttackTarget(null);
+		living.setRevengeTarget(null);
+		if (living instanceof EntityCreature) {
+			((EntityCreature) living).setTarget(null);
+		}
+		if (living.getNavigator() != null) {
+			living.getNavigator().clearPathEntity();
+		}
+		if (living instanceof EntityCreeper) {
+			((EntityCreeper) living).setCreeperState(-1);
 		}
 	}
 

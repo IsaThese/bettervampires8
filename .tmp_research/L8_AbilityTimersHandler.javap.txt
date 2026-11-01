@@ -1,0 +1,1260 @@
+﻿Compiled from "AbilityTimersHandler.java"
+public class com.tihyo.legends.legacy.AbilityTimersHandler {
+  public com.tihyo.legends.legacy.AbilityTimersHandler();
+    Code:
+       0: aload_0
+       1: invokespecial #22                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public void timers(cpw.mods.fml.common.gameevent.TickEvent$PlayerTickEvent);
+    Code:
+       0: aload_1
+       1: getfield      #31                 // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.player:Lnet/minecraft/entity/player/EntityPlayer;
+       4: getfield      #37                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+       7: invokevirtual #43                 // Method net/minecraft/world/World.func_82736_K:()Lnet/minecraft/world/GameRules;
+      10: astore_2
+      11: aload_1
+      12: getfield      #31                 // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.player:Lnet/minecraft/entity/player/EntityPlayer;
+      15: instanceof    #33                 // class net/minecraft/entity/player/EntityPlayer
+      18: ifeq          1178
+      21: aload_1
+      22: getfield      #31                 // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.player:Lnet/minecraft/entity/player/EntityPlayer;
+      25: astore_3
+      26: aload_1
+      27: getfield      #47                 // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.phase:Lcpw/mods/fml/common/gameevent/TickEvent$Phase;
+      30: getstatic     #50                 // Field cpw/mods/fml/common/gameevent/TickEvent$Phase.END:Lcpw/mods/fml/common/gameevent/TickEvent$Phase;
+      33: if_acmpne     1178
+      36: getstatic     #56                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      39: aload_3
+      40: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      43: checkcast     #62                 // class java/lang/Integer
+      46: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+      49: ifle          80
+      52: getstatic     #69                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      55: aload_3
+      56: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      59: checkcast     #71                 // class java/lang/Boolean
+      62: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+      65: ifne          80
+      68: getstatic     #56                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      71: aload_3
+      72: iconst_m1
+      73: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      76: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+      79: pop
+      80: getstatic     #88                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      83: aload_3
+      84: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      87: checkcast     #62                 // class java/lang/Integer
+      90: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+      93: getstatic     #91                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      96: aload_3
+      97: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     100: checkcast     #62                 // class java/lang/Integer
+     103: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     106: if_icmpge     121
+     109: getstatic     #88                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     112: aload_3
+     113: iconst_1
+     114: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     117: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     120: pop
+     121: getstatic     #94                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     124: aload_3
+     125: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     128: checkcast     #62                 // class java/lang/Integer
+     131: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     134: ifle          165
+     137: getstatic     #97                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     140: aload_3
+     141: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     144: checkcast     #71                 // class java/lang/Boolean
+     147: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     150: ifne          165
+     153: getstatic     #94                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     156: aload_3
+     157: iconst_m1
+     158: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     161: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     164: pop
+     165: getstatic     #100                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     168: aload_3
+     169: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     172: checkcast     #62                 // class java/lang/Integer
+     175: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     178: getstatic     #103                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     181: aload_3
+     182: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     185: checkcast     #62                 // class java/lang/Integer
+     188: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     191: if_icmpge     206
+     194: getstatic     #100                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     197: aload_3
+     198: iconst_1
+     199: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     202: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     205: pop
+     206: getstatic     #106                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     209: aload_3
+     210: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     213: checkcast     #62                 // class java/lang/Integer
+     216: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     219: ifle          250
+     222: getstatic     #109                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     225: aload_3
+     226: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     229: checkcast     #71                 // class java/lang/Boolean
+     232: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     235: ifne          250
+     238: getstatic     #106                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     241: aload_3
+     242: iconst_m1
+     243: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     246: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     249: pop
+     250: getstatic     #112                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     253: aload_3
+     254: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     257: checkcast     #62                 // class java/lang/Integer
+     260: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     263: getstatic     #115                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     266: aload_3
+     267: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     270: checkcast     #62                 // class java/lang/Integer
+     273: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     276: if_icmpge     291
+     279: getstatic     #112                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     282: aload_3
+     283: iconst_1
+     284: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     287: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     290: pop
+     291: getstatic     #118                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     294: aload_3
+     295: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     298: checkcast     #62                 // class java/lang/Integer
+     301: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     304: ifle          335
+     307: getstatic     #121                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     310: aload_3
+     311: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     314: checkcast     #71                 // class java/lang/Boolean
+     317: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     320: ifne          335
+     323: getstatic     #118                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     326: aload_3
+     327: iconst_m1
+     328: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     331: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     334: pop
+     335: getstatic     #124                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     338: aload_3
+     339: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     342: checkcast     #62                 // class java/lang/Integer
+     345: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     348: getstatic     #127                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     351: aload_3
+     352: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     355: checkcast     #62                 // class java/lang/Integer
+     358: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     361: if_icmpge     376
+     364: getstatic     #124                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     367: aload_3
+     368: iconst_1
+     369: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     372: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     375: pop
+     376: getstatic     #130                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     379: aload_3
+     380: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     383: checkcast     #62                 // class java/lang/Integer
+     386: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     389: ifle          420
+     392: getstatic     #133                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     395: aload_3
+     396: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     399: checkcast     #71                 // class java/lang/Boolean
+     402: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     405: ifne          420
+     408: getstatic     #130                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     411: aload_3
+     412: iconst_m1
+     413: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     416: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     419: pop
+     420: getstatic     #136                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     423: aload_3
+     424: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     427: checkcast     #62                 // class java/lang/Integer
+     430: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     433: getstatic     #139                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     436: aload_3
+     437: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     440: checkcast     #62                 // class java/lang/Integer
+     443: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     446: if_icmpge     461
+     449: getstatic     #136                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     452: aload_3
+     453: iconst_1
+     454: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     457: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     460: pop
+     461: getstatic     #142                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     464: aload_3
+     465: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     468: checkcast     #62                 // class java/lang/Integer
+     471: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     474: ifle          505
+     477: getstatic     #145                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     480: aload_3
+     481: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     484: checkcast     #71                 // class java/lang/Boolean
+     487: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     490: ifne          505
+     493: getstatic     #142                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     496: aload_3
+     497: iconst_m1
+     498: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     501: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     504: pop
+     505: getstatic     #148                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     508: aload_3
+     509: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     512: checkcast     #62                 // class java/lang/Integer
+     515: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     518: getstatic     #151                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     521: aload_3
+     522: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     525: checkcast     #62                 // class java/lang/Integer
+     528: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     531: if_icmpge     546
+     534: getstatic     #148                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     537: aload_3
+     538: iconst_1
+     539: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     542: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     545: pop
+     546: getstatic     #154                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     549: aload_3
+     550: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     553: checkcast     #62                 // class java/lang/Integer
+     556: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     559: ifle          590
+     562: getstatic     #157                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     565: aload_3
+     566: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     569: checkcast     #71                 // class java/lang/Boolean
+     572: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     575: ifne          590
+     578: getstatic     #154                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     581: aload_3
+     582: iconst_m1
+     583: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     586: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     589: pop
+     590: getstatic     #160                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     593: aload_3
+     594: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     597: checkcast     #62                 // class java/lang/Integer
+     600: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     603: getstatic     #163                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     606: aload_3
+     607: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     610: checkcast     #62                 // class java/lang/Integer
+     613: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     616: if_icmpge     631
+     619: getstatic     #160                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     622: aload_3
+     623: iconst_1
+     624: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     627: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     630: pop
+     631: getstatic     #166                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     634: aload_3
+     635: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     638: checkcast     #62                 // class java/lang/Integer
+     641: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     644: ifle          675
+     647: getstatic     #169                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     650: aload_3
+     651: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     654: checkcast     #71                 // class java/lang/Boolean
+     657: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     660: ifne          675
+     663: getstatic     #166                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     666: aload_3
+     667: iconst_m1
+     668: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     671: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     674: pop
+     675: getstatic     #172                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     678: aload_3
+     679: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     682: checkcast     #62                 // class java/lang/Integer
+     685: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     688: getstatic     #175                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     691: aload_3
+     692: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     695: checkcast     #62                 // class java/lang/Integer
+     698: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     701: if_icmpge     764
+     704: getstatic     #178                // Field com/tihyo/legends/management/properties/LegendsProperties.SLOW_MOTION:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     707: aload_3
+     708: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     711: checkcast     #62                 // class java/lang/Integer
+     714: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     717: ifgt          764
+     720: getstatic     #181                // Field com/tihyo/legends/management/properties/LegendsProperties.VIBRATING_HAND:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     723: aload_3
+     724: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     727: checkcast     #71                 // class java/lang/Boolean
+     730: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     733: ifne          764
+     736: getstatic     #184                // Field com/tihyo/legends/management/properties/LegendsProperties.FATAL_TOUCH:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     739: aload_3
+     740: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     743: checkcast     #71                 // class java/lang/Boolean
+     746: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     749: ifne          764
+     752: getstatic     #172                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     755: aload_3
+     756: iconst_1
+     757: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     760: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     763: pop
+     764: getstatic     #187                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     767: aload_3
+     768: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     771: checkcast     #62                 // class java/lang/Integer
+     774: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     777: ifle          808
+     780: getstatic     #190                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     783: aload_3
+     784: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     787: checkcast     #71                 // class java/lang/Boolean
+     790: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     793: ifne          808
+     796: getstatic     #187                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     799: aload_3
+     800: iconst_m1
+     801: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     804: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     807: pop
+     808: getstatic     #193                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     811: aload_3
+     812: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     815: checkcast     #62                 // class java/lang/Integer
+     818: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     821: getstatic     #196                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     824: aload_3
+     825: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     828: checkcast     #62                 // class java/lang/Integer
+     831: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     834: if_icmpge     849
+     837: getstatic     #193                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     840: aload_3
+     841: iconst_1
+     842: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     845: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     848: pop
+     849: getstatic     #199                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     852: aload_3
+     853: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     856: checkcast     #62                 // class java/lang/Integer
+     859: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     862: ifle          893
+     865: getstatic     #202                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     868: aload_3
+     869: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     872: checkcast     #71                 // class java/lang/Boolean
+     875: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     878: ifne          893
+     881: getstatic     #199                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     884: aload_3
+     885: iconst_m1
+     886: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     889: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     892: pop
+     893: getstatic     #205                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     896: aload_3
+     897: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     900: checkcast     #62                 // class java/lang/Integer
+     903: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     906: getstatic     #208                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     909: aload_3
+     910: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     913: checkcast     #62                 // class java/lang/Integer
+     916: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     919: if_icmpge     934
+     922: getstatic     #205                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     925: aload_3
+     926: iconst_1
+     927: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     930: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     933: pop
+     934: getstatic     #211                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     937: aload_3
+     938: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     941: checkcast     #62                 // class java/lang/Integer
+     944: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     947: ifle          978
+     950: getstatic     #214                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     953: aload_3
+     954: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     957: checkcast     #71                 // class java/lang/Boolean
+     960: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     963: ifne          978
+     966: getstatic     #211                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_DUR:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     969: aload_3
+     970: iconst_m1
+     971: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     974: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+     977: pop
+     978: getstatic     #217                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     981: aload_3
+     982: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     985: checkcast     #62                 // class java/lang/Integer
+     988: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+     991: getstatic     #220                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     994: aload_3
+     995: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     998: checkcast     #62                 // class java/lang/Integer
+    1001: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+    1004: if_icmpge     1019
+    1007: getstatic     #217                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1010: aload_3
+    1011: iconst_1
+    1012: invokestatic  #79                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+    1015: invokevirtual #83                 // Method com/tihyo/legends/management/properties/LegendsProperties.incrWithoutNotify:(Lnet/minecraft/entity/Entity;Ljava/lang/Object;)Z
+    1018: pop
+    1019: aload_3
+    1020: invokestatic  #226                // Method com/tihyo/legends/legacy/LegacyHelper.isActive:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1023: ifeq          1178
+    1026: getstatic     #229                // Field com/tihyo/legends/management/properties/LegendsProperties.REVERSE_TIME:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1029: aload_3
+    1030: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1033: checkcast     #62                 // class java/lang/Integer
+    1036: invokevirtual #66                 // Method java/lang/Integer.intValue:()I
+    1039: iconst_1
+    1040: if_icmpne     1178
+    1043: getstatic     #88                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1046: aload_3
+    1047: getstatic     #91                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1050: aload_3
+    1051: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1054: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1057: pop
+    1058: getstatic     #100                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1061: aload_3
+    1062: getstatic     #103                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1065: aload_3
+    1066: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1069: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1072: pop
+    1073: getstatic     #112                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1076: aload_3
+    1077: getstatic     #115                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1080: aload_3
+    1081: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1084: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1087: pop
+    1088: getstatic     #124                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1091: aload_3
+    1092: getstatic     #127                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1095: aload_3
+    1096: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1099: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1102: pop
+    1103: getstatic     #136                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1106: aload_3
+    1107: getstatic     #139                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1110: aload_3
+    1111: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1114: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1117: pop
+    1118: getstatic     #148                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1121: aload_3
+    1122: getstatic     #151                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1125: aload_3
+    1126: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1129: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1132: pop
+    1133: getstatic     #160                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1136: aload_3
+    1137: getstatic     #163                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1140: aload_3
+    1141: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1144: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1147: pop
+    1148: getstatic     #205                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1151: aload_3
+    1152: getstatic     #208                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1155: aload_3
+    1156: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1159: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1162: pop
+    1163: getstatic     #217                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_COOLDOWN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1166: aload_3
+    1167: getstatic     #220                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_COOLDOWN_MAX:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1170: aload_3
+    1171: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1174: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1177: pop
+    1178: return
+
+  public void onAbilities(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+    Code:
+       0: aload_1
+       1: getfield      #243                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+       4: getfield      #246                // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+       7: invokevirtual #43                 // Method net/minecraft/world/World.func_82736_K:()Lnet/minecraft/world/GameRules;
+      10: astore_2
+      11: aload_1
+      12: getfield      #243                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+      15: instanceof    #33                 // class net/minecraft/entity/player/EntityPlayer
+      18: ifeq          1693
+      21: aload_1
+      22: getfield      #243                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+      25: checkcast     #33                 // class net/minecraft/entity/player/EntityPlayer
+      28: astore_3
+      29: aload_3
+      30: invokestatic  #226                // Method com/tihyo/legends/legacy/LegacyHelper.isActive:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      33: ifeq          1693
+      36: aload_3
+      37: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+      40: aload_3
+      41: invokevirtual #256                // Method com/tihyo/legends/legacy/LegendsLegacy.setDefaultAbilities:(Lnet/minecraft/entity/player/EntityPlayer;)V
+      44: aload_3
+      45: iconst_1
+      46: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+      49: ifnull        61
+      52: aload_3
+      53: iconst_1
+      54: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+      57: aload_3
+      58: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+      61: aload_3
+      62: iconst_2
+      63: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+      66: ifnull        78
+      69: aload_3
+      70: iconst_2
+      71: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+      74: aload_3
+      75: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+      78: aload_3
+      79: iconst_3
+      80: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+      83: ifnull        95
+      86: aload_3
+      87: iconst_3
+      88: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+      91: aload_3
+      92: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+      95: aload_3
+      96: iconst_4
+      97: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     100: ifnull        112
+     103: aload_3
+     104: iconst_4
+     105: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     108: aload_3
+     109: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     112: aload_3
+     113: iconst_5
+     114: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     117: ifnull        129
+     120: aload_3
+     121: iconst_5
+     122: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     125: aload_3
+     126: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     129: aload_3
+     130: bipush        6
+     132: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     135: ifnull        148
+     138: aload_3
+     139: bipush        6
+     141: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     144: aload_3
+     145: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     148: aload_3
+     149: bipush        7
+     151: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     154: ifnull        167
+     157: aload_3
+     158: bipush        7
+     160: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     163: aload_3
+     164: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     167: aload_3
+     168: bipush        8
+     170: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     173: ifnull        186
+     176: aload_3
+     177: bipush        8
+     179: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     182: aload_3
+     183: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     186: aload_3
+     187: bipush        10
+     189: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     192: ifnull        205
+     195: aload_3
+     196: bipush        10
+     198: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     201: aload_3
+     202: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     205: aload_3
+     206: bipush        12
+     208: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     211: ifnull        224
+     214: aload_3
+     215: bipush        12
+     217: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     220: aload_3
+     221: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     224: aload_3
+     225: bipush        13
+     227: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     230: ifnull        243
+     233: aload_3
+     234: bipush        13
+     236: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     239: aload_3
+     240: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     243: aload_3
+     244: invokestatic  #269                // Method com/tihyo/legends/legacy/LegacyHelper.getLearnedPowers:(Lnet/minecraft/entity/player/EntityPlayer;)Ljava/util/List;
+     247: invokeinterface #275,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     252: astore        4
+     254: aload         4
+     256: invokeinterface #280,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     261: ifeq          297
+     264: aload         4
+     266: invokeinterface #284,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     271: checkcast     #262                // class com/tihyo/legends/legacy/LegacyPower
+     274: astore        5
+     276: aload         5
+     278: aload_3
+     279: invokevirtual #288                // Method com/tihyo/legends/legacy/LegacyPower.getType:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/PowerType;
+     282: getstatic     #294                // Field com/tihyo/legends/legacy/PowerType.passive:Lcom/tihyo/legends/legacy/PowerType;
+     285: if_acmpne     294
+     288: aload         5
+     290: aload_3
+     291: invokevirtual #265                // Method com/tihyo/legends/legacy/LegacyPower.execute:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     294: goto          254
+     297: aload_3
+     298: getfield      #37                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     301: getfield      #298                // Field net/minecraft/world/World.field_72995_K:Z
+     304: ifeq          1693
+     307: aload_3
+     308: invokestatic  #304                // Method net/minecraft/client/Minecraft.func_71410_x:()Lnet/minecraft/client/Minecraft;
+     311: getfield      #308                // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     314: if_acmpne     1693
+     317: aload_3
+     318: iconst_1
+     319: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     322: ifnull        411
+     325: getstatic     #314                // Field com/tihyo/legends/handlers/KeyHandler.R_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+     328: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+     331: ifeq          411
+     334: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+     337: ifeq          411
+     340: aload_3
+     341: iconst_0
+     342: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+     345: ifeq          411
+     348: aload_3
+     349: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+     352: aload_3
+     353: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     356: ifne          411
+     359: aload_3
+     360: iconst_1
+     361: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     364: aload_3
+     365: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     368: getstatic     #69                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     371: aload_3
+     372: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     375: checkcast     #71                 // class java/lang/Boolean
+     378: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     381: ifne          440
+     384: aload_3
+     385: iconst_1
+     386: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     389: aload_3
+     390: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     393: ifeq          440
+     396: getstatic     #69                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     399: aload_3
+     400: iconst_1
+     401: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     404: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     407: pop
+     408: goto          440
+     411: getstatic     #69                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     414: aload_3
+     415: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     418: checkcast     #71                 // class java/lang/Boolean
+     421: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     424: iconst_1
+     425: if_icmpne     440
+     428: getstatic     #69                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_1_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     431: aload_3
+     432: iconst_0
+     433: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     436: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     439: pop
+     440: aload_3
+     441: iconst_2
+     442: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     445: ifnull        534
+     448: getstatic     #343                // Field com/tihyo/legends/handlers/KeyHandler.F_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+     451: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+     454: ifeq          534
+     457: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+     460: ifeq          534
+     463: aload_3
+     464: iconst_1
+     465: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+     468: ifeq          534
+     471: aload_3
+     472: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+     475: aload_3
+     476: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     479: ifne          534
+     482: aload_3
+     483: iconst_2
+     484: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     487: aload_3
+     488: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     491: getstatic     #97                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     494: aload_3
+     495: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     498: checkcast     #71                 // class java/lang/Boolean
+     501: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     504: ifne          563
+     507: aload_3
+     508: iconst_2
+     509: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     512: aload_3
+     513: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     516: ifeq          563
+     519: getstatic     #97                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     522: aload_3
+     523: iconst_1
+     524: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     527: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     530: pop
+     531: goto          563
+     534: getstatic     #97                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     537: aload_3
+     538: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     541: checkcast     #71                 // class java/lang/Boolean
+     544: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     547: iconst_1
+     548: if_icmpne     563
+     551: getstatic     #97                 // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_2_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     554: aload_3
+     555: iconst_0
+     556: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     559: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     562: pop
+     563: aload_3
+     564: iconst_3
+     565: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     568: ifnull        657
+     571: getstatic     #346                // Field com/tihyo/legends/handlers/KeyHandler.C_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+     574: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+     577: ifeq          657
+     580: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+     583: ifeq          657
+     586: aload_3
+     587: iconst_2
+     588: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+     591: ifeq          657
+     594: aload_3
+     595: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+     598: aload_3
+     599: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     602: ifne          657
+     605: aload_3
+     606: iconst_3
+     607: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     610: aload_3
+     611: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     614: getstatic     #109                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     617: aload_3
+     618: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     621: checkcast     #71                 // class java/lang/Boolean
+     624: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     627: ifne          686
+     630: aload_3
+     631: iconst_3
+     632: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     635: aload_3
+     636: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     639: ifeq          686
+     642: getstatic     #109                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     645: aload_3
+     646: iconst_1
+     647: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     650: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     653: pop
+     654: goto          686
+     657: getstatic     #109                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     660: aload_3
+     661: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     664: checkcast     #71                 // class java/lang/Boolean
+     667: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     670: iconst_1
+     671: if_icmpne     686
+     674: getstatic     #109                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_3_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     677: aload_3
+     678: iconst_0
+     679: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     682: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     685: pop
+     686: aload_3
+     687: iconst_4
+     688: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     691: ifnull        780
+     694: getstatic     #349                // Field com/tihyo/legends/handlers/KeyHandler.V_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+     697: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+     700: ifeq          780
+     703: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+     706: ifeq          780
+     709: aload_3
+     710: iconst_4
+     711: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+     714: ifeq          780
+     717: aload_3
+     718: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+     721: aload_3
+     722: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     725: ifne          780
+     728: aload_3
+     729: iconst_4
+     730: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     733: aload_3
+     734: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     737: getstatic     #121                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     740: aload_3
+     741: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     744: checkcast     #71                 // class java/lang/Boolean
+     747: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     750: ifne          809
+     753: aload_3
+     754: iconst_4
+     755: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     758: aload_3
+     759: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     762: ifeq          809
+     765: getstatic     #121                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     768: aload_3
+     769: iconst_1
+     770: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     773: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     776: pop
+     777: goto          809
+     780: getstatic     #121                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     783: aload_3
+     784: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     787: checkcast     #71                 // class java/lang/Boolean
+     790: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     793: iconst_1
+     794: if_icmpne     809
+     797: getstatic     #121                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_4_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     800: aload_3
+     801: iconst_0
+     802: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     805: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     808: pop
+     809: aload_3
+     810: iconst_5
+     811: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     814: ifnull        903
+     817: getstatic     #352                // Field com/tihyo/legends/handlers/KeyHandler.G_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+     820: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+     823: ifeq          903
+     826: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+     829: ifeq          903
+     832: aload_3
+     833: iconst_5
+     834: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+     837: ifeq          903
+     840: aload_3
+     841: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+     844: aload_3
+     845: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     848: ifne          903
+     851: aload_3
+     852: iconst_5
+     853: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     856: aload_3
+     857: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     860: getstatic     #133                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     863: aload_3
+     864: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     867: checkcast     #71                 // class java/lang/Boolean
+     870: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     873: ifne          932
+     876: aload_3
+     877: iconst_5
+     878: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     881: aload_3
+     882: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     885: ifeq          932
+     888: getstatic     #133                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     891: aload_3
+     892: iconst_1
+     893: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     896: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     899: pop
+     900: goto          932
+     903: getstatic     #133                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     906: aload_3
+     907: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     910: checkcast     #71                 // class java/lang/Boolean
+     913: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     916: iconst_1
+     917: if_icmpne     932
+     920: getstatic     #133                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_5_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     923: aload_3
+     924: iconst_0
+     925: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     928: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+     931: pop
+     932: aload_3
+     933: bipush        6
+     935: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     938: ifnull        1029
+     941: getstatic     #355                // Field com/tihyo/legends/handlers/KeyHandler.X_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+     944: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+     947: ifeq          1029
+     950: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+     953: ifeq          1029
+     956: aload_3
+     957: iconst_3
+     958: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+     961: ifeq          1029
+     964: aload_3
+     965: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+     968: aload_3
+     969: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     972: ifne          1029
+     975: aload_3
+     976: bipush        6
+     978: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+     981: aload_3
+     982: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+     985: getstatic     #145                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     988: aload_3
+     989: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     992: checkcast     #71                 // class java/lang/Boolean
+     995: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+     998: ifne          1058
+    1001: aload_3
+    1002: bipush        6
+    1004: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1007: aload_3
+    1008: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1011: ifeq          1058
+    1014: getstatic     #145                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1017: aload_3
+    1018: iconst_1
+    1019: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1022: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1025: pop
+    1026: goto          1058
+    1029: getstatic     #145                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1032: aload_3
+    1033: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1036: checkcast     #71                 // class java/lang/Boolean
+    1039: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1042: iconst_1
+    1043: if_icmpne     1058
+    1046: getstatic     #145                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_EQUIP_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1049: aload_3
+    1050: iconst_0
+    1051: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1054: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1057: pop
+    1058: aload_3
+    1059: bipush        7
+    1061: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1064: ifnull        1156
+    1067: getstatic     #358                // Field com/tihyo/legends/handlers/KeyHandler.H_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+    1070: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+    1073: ifeq          1156
+    1076: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+    1079: ifeq          1156
+    1082: aload_3
+    1083: bipush        6
+    1085: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+    1088: ifeq          1156
+    1091: aload_3
+    1092: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+    1095: aload_3
+    1096: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1099: ifne          1156
+    1102: aload_3
+    1103: bipush        7
+    1105: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1108: aload_3
+    1109: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+    1112: getstatic     #157                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1115: aload_3
+    1116: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1119: checkcast     #71                 // class java/lang/Boolean
+    1122: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1125: ifne          1185
+    1128: aload_3
+    1129: bipush        7
+    1131: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1134: aload_3
+    1135: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1138: ifeq          1185
+    1141: getstatic     #157                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1144: aload_3
+    1145: iconst_1
+    1146: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1149: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1152: pop
+    1153: goto          1185
+    1156: getstatic     #157                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1159: aload_3
+    1160: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1163: checkcast     #71                 // class java/lang/Boolean
+    1166: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1169: iconst_1
+    1170: if_icmpne     1185
+    1173: getstatic     #157                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_UTILITY_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1176: aload_3
+    1177: iconst_0
+    1178: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1181: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1184: pop
+    1185: aload_3
+    1186: bipush        8
+    1188: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1191: ifnull        1283
+    1194: getstatic     #361                // Field com/tihyo/legends/handlers/KeyHandler.Z_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+    1197: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+    1200: ifeq          1283
+    1203: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+    1206: ifeq          1283
+    1209: aload_3
+    1210: bipush        7
+    1212: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+    1215: ifeq          1283
+    1218: aload_3
+    1219: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+    1222: aload_3
+    1223: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1226: ifne          1283
+    1229: aload_3
+    1230: bipush        8
+    1232: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1235: aload_3
+    1236: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+    1239: getstatic     #169                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1242: aload_3
+    1243: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1246: checkcast     #71                 // class java/lang/Boolean
+    1249: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1252: ifne          1312
+    1255: aload_3
+    1256: bipush        8
+    1258: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1261: aload_3
+    1262: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1265: ifeq          1312
+    1268: getstatic     #169                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1271: aload_3
+    1272: iconst_1
+    1273: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1276: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1279: pop
+    1280: goto          1312
+    1283: getstatic     #169                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1286: aload_3
+    1287: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1290: checkcast     #71                 // class java/lang/Boolean
+    1293: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1296: iconst_1
+    1297: if_icmpne     1312
+    1300: getstatic     #169                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIAL_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1303: aload_3
+    1304: iconst_0
+    1305: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1308: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1311: pop
+    1312: aload_3
+    1313: bipush        10
+    1315: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1318: ifnull        1410
+    1321: getstatic     #364                // Field com/tihyo/legends/handlers/KeyHandler.ARMOR_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+    1324: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+    1327: ifeq          1410
+    1330: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+    1333: ifeq          1410
+    1336: aload_3
+    1337: bipush        10
+    1339: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+    1342: ifeq          1410
+    1345: aload_3
+    1346: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+    1349: aload_3
+    1350: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1353: ifne          1410
+    1356: aload_3
+    1357: bipush        10
+    1359: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1362: aload_3
+    1363: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+    1366: getstatic     #190                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1369: aload_3
+    1370: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1373: checkcast     #71                 // class java/lang/Boolean
+    1376: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1379: ifne          1439
+    1382: aload_3
+    1383: bipush        10
+    1385: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1388: aload_3
+    1389: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1392: ifeq          1439
+    1395: getstatic     #190                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1398: aload_3
+    1399: iconst_1
+    1400: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1403: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1406: pop
+    1407: goto          1439
+    1410: getstatic     #190                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1413: aload_3
+    1414: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1417: checkcast     #71                 // class java/lang/Boolean
+    1420: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1423: iconst_1
+    1424: if_icmpne     1439
+    1427: getstatic     #190                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CUSTOMIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1430: aload_3
+    1431: iconst_0
+    1432: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1435: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1438: pop
+    1439: aload_3
+    1440: bipush        12
+    1442: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1445: ifnull        1537
+    1448: getstatic     #367                // Field com/tihyo/legends/handlers/KeyHandler.CLASS_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+    1451: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+    1454: ifeq          1537
+    1457: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+    1460: ifeq          1537
+    1463: aload_3
+    1464: bipush        12
+    1466: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+    1469: ifeq          1537
+    1472: aload_3
+    1473: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+    1476: aload_3
+    1477: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1480: ifne          1537
+    1483: aload_3
+    1484: bipush        12
+    1486: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1489: aload_3
+    1490: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+    1493: getstatic     #202                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1496: aload_3
+    1497: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1500: checkcast     #71                 // class java/lang/Boolean
+    1503: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1506: ifne          1566
+    1509: aload_3
+    1510: bipush        12
+    1512: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1515: aload_3
+    1516: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1519: ifeq          1566
+    1522: getstatic     #202                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1525: aload_3
+    1526: iconst_1
+    1527: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1530: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1533: pop
+    1534: goto          1566
+    1537: getstatic     #202                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1540: aload_3
+    1541: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1544: checkcast     #71                 // class java/lang/Boolean
+    1547: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1550: iconst_1
+    1551: if_icmpne     1566
+    1554: getstatic     #202                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_CLASS_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1557: aload_3
+    1558: iconst_0
+    1559: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1562: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1565: pop
+    1566: aload_3
+    1567: bipush        13
+    1569: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1572: ifnull        1664
+    1575: getstatic     #370                // Field com/tihyo/legends/handlers/KeyHandler.SPECIALIZATION_KEY:Lcom/tihyo/legends/management/LegendsKeyBinding;
+    1578: invokevirtual #319                // Method com/tihyo/legends/management/LegendsKeyBinding.func_151470_d:()Z
+    1581: ifeq          1664
+    1584: invokestatic  #324                // Method com/tihyo/legends/management/LegendsHelper.isNotInMenu:()Z
+    1587: ifeq          1664
+    1590: aload_3
+    1591: bipush        13
+    1593: invokestatic  #328                // Method com/tihyo/legends/management/LegendsHelper.canUseKey:(Lnet/minecraft/entity/player/EntityPlayer;I)Z
+    1596: ifeq          1664
+    1599: aload_3
+    1600: invokestatic  #250                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+    1603: aload_3
+    1604: invokevirtual #331                // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1607: ifne          1664
+    1610: aload_3
+    1611: bipush        13
+    1613: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1616: aload_3
+    1617: invokevirtual #334                // Method com/tihyo/legends/legacy/LegacyPower.onHold:(Lnet/minecraft/entity/player/EntityPlayer;)V
+    1620: getstatic     #214                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1623: aload_3
+    1624: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1627: checkcast     #71                 // class java/lang/Boolean
+    1630: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1633: ifne          1693
+    1636: aload_3
+    1637: bipush        13
+    1639: invokestatic  #260                // Method com/tihyo/legends/legacy/LegacyHelper.getAbility:(Lnet/minecraft/entity/player/EntityPlayer;I)Lcom/tihyo/legends/legacy/LegacyPower;
+    1642: aload_3
+    1643: invokevirtual #337                // Method com/tihyo/legends/legacy/LegacyPower.canHold:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+    1646: ifeq          1693
+    1649: getstatic     #214                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1652: aload_3
+    1653: iconst_1
+    1654: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1657: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1660: pop
+    1661: goto          1693
+    1664: getstatic     #214                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1667: aload_3
+    1668: invokevirtual #60                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+    1671: checkcast     #71                 // class java/lang/Boolean
+    1674: invokevirtual #75                 // Method java/lang/Boolean.booleanValue:()Z
+    1677: iconst_1
+    1678: if_icmpne     1693
+    1681: getstatic     #214                // Field com/tihyo/legends/management/properties/LegendsProperties.ABILITY_SPECIALIZATION_HOLD:Lcom/tihyo/legends/management/properties/LegendsProperties;
+    1684: aload_3
+    1685: iconst_0
+    1686: invokestatic  #340                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+    1689: invokevirtual #233                // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+    1692: pop
+    1693: return
+}

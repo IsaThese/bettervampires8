@@ -1,0 +1,11 @@
+﻿  public static void aimingRightArm(net.minecraft.entity.player.EntityPlayer, int, int);
+    Code:
+       0: aload_0
+       1: getstatic     #25                 // Field com/tihyo/legends/abilities/Ability.aimingRightArm:Lcom/tihyo/legends/abilities/Ability;
+       4: iload_1
+       5: bipush        20
+       7: imul
+       8: iload_2
+       9: invokestatic  #31                 // Method com/tihyo/legends/abilities/AbilityHelper.addEffectAndSync:(Lnet/minecraft/entity/EntityLivingBase;Lcom/tihyo/legends/abilities/Ability;II)V
+      12: return
+
