@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mrsand.StatBoostChanges.ModCompat; // Imported your new class
 import com.mrsand.StatBoostChanges.StatBoostConfig;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
@@ -16,7 +16,6 @@ import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.tihyo.horror.legacy.suits.LegacyVampireApparelV1;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import de.teamlapen.vampirism.entity.player.VampirePlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -77,15 +76,11 @@ public class LegendsVisualHandler {
             ItemStack[] realArmor = player.inventory.armorInventory;
             this.armorCache.put(player, Arrays.copyOf(realArmor, realArmor.length));
 
-            // Same sunlight helper as BatSkill (light + sun-safe biome + rain), not crude worldTime
-            boolean inSunlight = false;
-            if (ModCompat.VAMPIRISM) {
-                VampirePlayer vp = VampirePlayer.get(player);
-                inSunlight = vp != null && vp.isInSunlight();
-            }
+            // Calendar daytime (+ sun-safe / vampire biomes as night), same as Witchery apparel
+            boolean daytime = VampireSunRules.isDaytime(player);
 
             for (int i = 0; i < realArmor.length; i++) {
-                if (inSunlight) {
+                if (daytime) {
                     realArmor[i] = null;
                 } else {
                     // Performance Fix: Reuses static ItemStacks instead of calling "new" 60+ times a second

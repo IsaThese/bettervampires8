@@ -2,6 +2,7 @@ package com.mrsand.StatBoostChanges.client;
 
 import com.emoniph.witchery.item.ItemVampireClothes;
 import com.mrsand.StatBoostChanges.ModCompat;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.horror.client.models.characters.ModelDracula;
 import com.tihyo.legends.client.models.ModelPlayer;
@@ -9,7 +10,6 @@ import com.tihyo.legends.proxies.ClientProxy;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.teamlapen.vampirism.entity.player.VampirePlayer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,7 +22,8 @@ import net.minecraft.item.ItemStack;
  * Maps Witchery {@code ItemVampireClothes} render to Legends {@link ModelDracula}:
  * chest/coat + cape only (head hidden). Hat/legs/boots stay equipped for set bonuses
  * but use a dedicated hidden ModelBiped. Textures come from resource-pack
- * {@code vampire_apparel_v1}. Lord + full set: coat hides in sunlight.
+ * {@code vampire_apparel_v1}. Lord + full set: coat hides during calendar daytime
+ * (sun-safe / vampire biomes count as night — same as {@link VampireSunRules#isDaytime}).
  */
 @SideOnly(Side.CLIENT)
 public final class WitcheryApparelRender {
@@ -50,10 +51,11 @@ public final class WitcheryApparelRender {
 	}
 
 	/**
-	 * Vampire Lord + full Witchery set hides garments in sunlight (same day/night
-	 * idea as the old free apparel overlay, but only for this eligibility).
+	 * Vampire Lord + full Witchery set: hide coat during calendar daytime.
+	 * Uses {@link VampireSunRules#isDaytime} so sun-safe biomes (vampire forest /
+	 * ominous) keep the coat visible even when the world clock is day.
 	 */
-	private static boolean shouldHideInSunlight(EntityLivingBase entity) {
+	private static boolean shouldHideForDaytime(EntityLivingBase entity) {
 		if (!(entity instanceof EntityPlayer) || !ModCompat.VAMPIRISM) {
 			return false;
 		}
@@ -61,8 +63,7 @@ public final class WitcheryApparelRender {
 		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
 			return false;
 		}
-		VampirePlayer vp = VampirePlayer.get(player);
-		return vp != null && vp.isInSunlight();
+		return VampireSunRules.isDaytime(player);
 	}
 
 	public static boolean wearsWitcheryVampireChest(EntityPlayer player) {
@@ -77,8 +78,8 @@ public final class WitcheryApparelRender {
 		}
 		int armorType = ((ItemArmor) stack.getItem()).armorType;
 
-		// Non-chest always hidden; chest also hidden in sun for Lord + full set
-		if (armorType != 1 || shouldHideInSunlight(entity)) {
+		// Non-chest always hidden; chest also hidden by day for Lord + full set
+		if (armorType != 1 || shouldHideForDaytime(entity)) {
 			return HIDDEN;
 		}
 

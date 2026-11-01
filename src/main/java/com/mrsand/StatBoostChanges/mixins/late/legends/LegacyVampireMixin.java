@@ -54,6 +54,25 @@ public abstract class LegacyVampireMixin {
 	}
 
 	/**
+	 * L8 LegacyVampire.isPassive always true → always wall-climb.
+	 * Drink+sneak toggle stores {@link PlayerKeys#WALL_CLIMB}; climb only while that flag is on.
+	 */
+	@Inject(method = "isPassive", at = @At("HEAD"), cancellable = true)
+	private void bvWallClimbNotPassive(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+		cir.setReturnValue(Boolean.FALSE);
+	}
+
+	@Inject(method = "isClimbing", at = @At("HEAD"), cancellable = true)
+	private void bvWallClimbFlag(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+		if (player == null) {
+			cir.setReturnValue(Boolean.FALSE);
+			return;
+		}
+		VExtendedPlayer v = VExtendedPlayer.get(player);
+		cir.setReturnValue(Boolean.valueOf(v != null && v.getBoolean(PlayerKeys.WALL_CLIMB)));
+	}
+
+	/**
 	 * Legends 8 removed morphVampireBeast from the vampire whitelist.
 	 * Restore it when Demonic Form is unlocked (same morph classic Dracula uses).
 	 * Also whitelist Castlevania True Form when that power is unlocked.

@@ -218,30 +218,45 @@ public class WitcheryUtil {
 		return ePlayer.decreaseBloodPower(finalCost, specific);
 	}
 
-	/** Start hypnosis channel visuals/state. Does not cost blood. */
+	/**
+	 * Start Mesmerize gaze channel (no blood cost). Safe on client or server:
+	 * client syncs to server; server syncs back to tracking clients.
+	 */
 	public static void beginHypnosisChannel(EntityPlayer player) {
-		if (player == null || player.worldObj.isRemote) return;
+		if (player == null || player.worldObj == null) return;
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 		if (vPlayer == null) return;
 		boolean was = vPlayer.getBoolean(PlayerKeys.HYPNOTIZING);
 		if (!was) {
 			vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, true);
-			vPlayer.syncClient();
+			VisualUtil.changeForm(player, true);
+			if (player.worldObj.isRemote) {
+				vPlayer.sync();
+			} else {
+				vPlayer.syncClient();
+			}
 		}
 		if (HypnosisDebug.enabled()) {
 			HypnosisDebug.logChannel(player, "begin", was, vPlayer.getBoolean(PlayerKeys.HYPNOTIZING));
 		}
 	}
 
-	/** End hypnosis channel. Does not cost blood. */
+	/** End Mesmerize gaze channel (no blood cost). */
 	public static void endHypnosisChannel(EntityPlayer player) {
-		if (player == null || player.worldObj.isRemote) return;
+		if (player == null || player.worldObj == null) return;
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 		if (vPlayer == null) return;
 		boolean was = vPlayer.getBoolean(PlayerKeys.HYPNOTIZING);
 		if (was) {
 			vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, false);
-			vPlayer.syncClient();
+			if (!vPlayer.getBoolean(PlayerKeys.IS_STARVING)) {
+				VisualUtil.changeForm(player, false);
+			}
+			if (player.worldObj.isRemote) {
+				vPlayer.sync();
+			} else {
+				vPlayer.syncClient();
+			}
 		}
 		if (HypnosisDebug.enabled()) {
 			HypnosisDebug.logChannel(player, "end", was, vPlayer.getBoolean(PlayerKeys.HYPNOTIZING));

@@ -496,9 +496,11 @@ public class GeneralEventHandler {
 						nbt.setInteger("bvWallClimbToggleTick", now);
 
 						boolean climb = vPlayer.getBoolean(PlayerKeys.WALL_CLIMB);
-						String message = !climb ? "on" : "off";
-						GeneralUtil.sendDebugMessage(player, new ChatComponentText("Wall climbing turned " + message).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-						vPlayer.setBoolean(PlayerKeys.WALL_CLIMB, !climb);
+						boolean newClimb = !climb;
+						String message = newClimb ? "on" : "off";
+						player.addChatComponentMessage(new ChatComponentText("Wall climbing turned " + message)
+								.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+						vPlayer.setBoolean(PlayerKeys.WALL_CLIMB, newClimb);
 						vPlayer.sync();
 					} else if (!player.isSneaking() && isMesmerizeSelected && canUseMesmerize) {
 						if (player.isUsingItem() && event.action != Action.LEFT_CLICK_BLOCK) {
@@ -526,11 +528,14 @@ public class GeneralEventHandler {
 						}
 
 						String message = newHypnoState ? "Your gaze deepens..." : "Your focus loosens...";
-						player.addChatComponentMessage(new ChatComponentText(message).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+						player.addChatComponentMessage(new ChatComponentText(message)
+								.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 
-						vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, newHypnoState);
-						VisualUtil.changeForm(player, newHypnoState); 
-						vPlayer.sync();
+						if (newHypnoState) {
+							WitcheryUtil.beginHypnosisChannel(player);
+						} else {
+							WitcheryUtil.endHypnosisChannel(player);
+						}
 					}
 				}
 			}
