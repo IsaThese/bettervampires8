@@ -34,6 +34,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 			mixins.add("legends.BlockAltarMixin");
 			mixins.add("legends.EntityVampireMixin");
 			mixins.add("legends.HorrorCommonEventHandlerMixin");
+			mixins.add("legends.LegendsAbilitiesPacketMixin");
 			mixins.add("legends.LegacyHelperMixin");
 			mixins.add("legends.ModelDraculaMixin");
 			mixins.add("legends.ModelVampireApparelV1Mixin");

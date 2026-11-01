@@ -1,5 +1,9 @@
 package de.teamlapen.vampirism.entity.player.skills;
 
+import java.util.List;
+
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
+
 import de.teamlapen.vampirism.entity.EntityBlindingBat;
 import de.teamlapen.vampirism.entity.player.VampirePlayer;
 import de.teamlapen.vampirism.util.BALANCE;
@@ -9,13 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
-import java.util.List;
-
 public class FreezeSkill extends DefaultSkill {
 
 	@Override
 	public boolean canBeUsedBy(VampirePlayer vampire, EntityPlayer player) {
-		return vampire.isVampireLord() && !vampire.isInSunlight();
+		return vampire.isVampireLord() && !VampireSunRules.generalPowersBlocked(player);
 	}
 
 	@Override

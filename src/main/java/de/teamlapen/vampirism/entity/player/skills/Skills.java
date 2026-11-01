@@ -26,9 +26,21 @@ public class Skills {
 	 */
 	public static ArrayList<ISkill> getAvailableSkills(VampirePlayer player) {
 		ArrayList<ISkill> sl = new ArrayList<ISkill>();
+		EntityPlayer entity = player != null ? (EntityPlayer) player.getRepresentingEntity() : null;
+		com.mrsand.StatBoostChanges.abilities.VampireSunRules.debugPieSnapshot(entity);
 		for (ISkill s : skills) {
-			if (1 == s.canUse(player, (EntityPlayer) player.getRepresentingEntity())) {
+			int can;
+			try {
+				can = s.canUse(player, entity);
+			} catch (Throwable t) {
+				de.teamlapen.vampirism.util.Logger.e("Skills", "canUse failed for " + s + ": " + t);
+				continue;
+			}
+			if (1 == can) {
 				sl.add(s);
+			} else if (com.mrsand.StatBoostChanges.abilities.VampireSunRules.DEBUG) {
+				de.teamlapen.vampirism.util.Logger.i("Skills", "pie skip " + s.getClass().getSimpleName()
+						+ " canUse=" + can);
 			}
 		}
 		return sl;

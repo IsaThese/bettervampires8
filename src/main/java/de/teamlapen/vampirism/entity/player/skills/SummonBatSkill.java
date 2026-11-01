@@ -5,6 +5,7 @@ import de.teamlapen.vampirism.entity.player.VampirePlayer;
 import de.teamlapen.vampirism.util.BALANCE;
 import de.teamlapen.vampirism.util.REFERENCE;
 
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 
@@ -23,17 +24,8 @@ public class SummonBatSkill extends DefaultSkill {
 
 	@Override
 	public boolean canBeUsedBy(VampirePlayer vampire, EntityPlayer player) {
-		return Loader.isModLoaded("legends") && !player.isInWater();
-	}
-
-	/** Skip DefaultSkill sun gate — this is an escape skill. */
-	@Override
-	public int canUse(VampirePlayer vampire, EntityPlayer player) {
-		if (getMinLevel() == -1)
-			return -1;
-		if (vampire.getLevel() < getMinLevel())
-			return 0;
-		return canBeUsedBy(vampire, player) ? 1 : -2;
+		return Loader.isModLoaded("legends") && !player.isInWater()
+				&& !VampireSunRules.generalPowersBlocked(player);
 	}
 
 	@Override

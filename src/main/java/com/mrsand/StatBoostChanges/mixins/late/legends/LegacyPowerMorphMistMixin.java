@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
@@ -26,7 +27,8 @@ public abstract class LegacyPowerMorphMistMixin {
 	public void execute(EntityPlayer player, CallbackInfo ci) {
 		ci.cancel();
 		if (!LegacyHelper.useAbility(player, getAssignedKey(player))) return;
-		if (LegacyHelper.getLegacyClass(player).getWeaknesses(player) || player.isInWater()) return;
+		// Lords: mist allowed under roof by day even though getWeaknesses is daytime-true
+		if (!VampireSunRules.canStartMist(player) || player.isInWater()) return;
 
 		LegendsUtil.ifMorphedTurnHuman(player);
 		SuspicionUtil.checkForSuspicionWitnesses(player, 500, 10.0D, "", true, false);

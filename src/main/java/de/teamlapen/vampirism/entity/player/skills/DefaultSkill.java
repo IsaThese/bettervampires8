@@ -2,6 +2,10 @@ package de.teamlapen.vampirism.entity.player.skills;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+
+import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
+
 import de.teamlapen.vampirism.entity.player.VampirePlayer;
 import de.teamlapen.vampirism.util.REFERENCE;
 
@@ -30,11 +34,27 @@ public abstract class DefaultSkill implements ISkill {
 	public int canUse(VampirePlayer vampire, EntityPlayer player) {
 		if (getMinLevel() == -1)
 			return -1;
+		if (vampire == null || player == null || player.worldObj == null)
+			return -2;
 		if (vampire.getLevel() < getMinLevel())
 			return 0;
-		// Block all real skills in overworld sunlight (cancel/FakeSkill id is -1)
-		if (getId() >= 0 && vampire.isInSunlight())
-			return -2;
+		// Cancel/FakeSkill id is -1 — skip sun/day gates
+		if (getId() >= 0) {
+			boolean lord = false;
+			try {
+				lord = DaywalkerControl.isVampireLord(player);
+			} catch (Throwable ignored) {
+				lord = vampire.isVampireLord();
+			}
+			if (lord && VampireSunRules.generalPowersBlocked(player)) {
+				// Daytime lords: only weather + mist (those subclasses override / canBeUsedBy)
+				if (!(this instanceof ChangeWeatherSkill) && !(this instanceof InvisibilitySkill)) {
+					return -2;
+				}
+			} else if (!lord && VampireSunRules.isInSunlight(player)) {
+				return -2;
+			}
+		}
 		return (canBeUsedBy(vampire, player) ? 1 : -2);
 	}
 

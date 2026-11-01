@@ -260,16 +260,28 @@ public class PhysicsUtil {
 		player.noClip = true;
 	}
 
+	/** Default human standing height used when bat morph hitbox has not expanded yet. */
+	private static final float HUMAN_WIDTH = 0.6F;
+	private static final float HUMAN_HEIGHT = 1.8F;
+
 	/**
 	 * After mist/bat exit: if embedded, teleport to nearest 2-high air with solid floor.
+	 * Prefer calling after human hitbox is restored (bat is 0.8 tall and fits in 1-high gaps).
 	 * @return true if safe (or not stuck); false if still stuck (kept noClip for retry)
 	 */
-	@SuppressWarnings("unchecked")
 	public static boolean ejectFromSolidsIfNeeded(EntityPlayer player) {
+		return ejectFromSolidsIfNeeded(player, false);
+	}
+
+	/**
+	 * @param forceHumanSize treat as 0.6×1.8 even if entity BB is still bat-sized (post-demorph lag)
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean ejectFromSolidsIfNeeded(EntityPlayer player, boolean forceHumanSize) {
 		if (player == null || player.worldObj == null) return true;
 		World world = player.worldObj;
 
-		if (!needsSolidEject(player)) {
+		if (!needsSolidEject(player, forceHumanSize)) {
 			return true;
 		}
 
@@ -315,18 +327,26 @@ public class PhysicsUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static boolean needsSolidEject(EntityPlayer player) {
+	private static boolean needsSolidEject(EntityPlayer player, boolean forceHumanSize) {
 		if (player.isEntityInsideOpaqueBlock()) return true;
 
 		int fx = MathHelper.floor_double(player.posX);
 		int fy = MathHelper.floor_double(player.posY);
 		int fz = MathHelper.floor_double(player.posZ);
 		World world = player.worldObj;
+		// Always require 2-high standing room for human/post-bat; bat BB alone would miss 1-high gaps.
 		if (!world.isAirBlock(fx, fy, fz) || !world.isAirBlock(fx, fy + 1, fz)) {
 			return true;
 		}
 
-		List colliding = world.getCollidingBoundingBoxes(player, player.boundingBox);
+		AxisAlignedBB box = player.boundingBox;
+		if (forceHumanSize || (box != null && (box.maxY - box.minY) < 1.5D)) {
+			double hw = HUMAN_WIDTH * 0.5D;
+			box = AxisAlignedBB.getBoundingBox(
+					player.posX - hw, player.posY, player.posZ - hw,
+					player.posX + hw, player.posY + HUMAN_HEIGHT, player.posZ + hw);
+		}
+		List colliding = world.getCollidingBoundingBoxes(player, box);
 		return colliding != null && !colliding.isEmpty();
 	}
 

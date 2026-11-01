@@ -1,7 +1,6 @@
 package de.teamlapen.vampirism.entity.player.skills;
 
-import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
-import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 
@@ -30,8 +29,9 @@ public class ChangeWeatherSkill extends DefaultSkill {
 
 	@Override
 	public boolean canBeUsedBy(VampirePlayer vampire, EntityPlayer player) {
-        return vampire.isVampireLord() && !vampire.isInSunlight();
-    }
+		// Lords: night anywhere, or daytime under a roof (not open sky)
+		return vampire.isVampireLord() && VampireSunRules.canStartWeather(player);
+	}
 
 	@Override
 	public int getMinU() {

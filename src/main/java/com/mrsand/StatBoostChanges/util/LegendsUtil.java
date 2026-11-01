@@ -1,6 +1,7 @@
 package com.mrsand.StatBoostChanges.util;
 
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.tihyo.horror.blocks.RegisterBlocksHorror;
@@ -37,15 +38,41 @@ public class LegendsUtil {
 			boolean wasBat = MorphHelper.isBat(player);
 			if (wasBat) {
 				MorphHelper.morph(player, MorphRegistry.bat);
+				// Eject deferred to tick — hitbox is still bat-sized this tick.
+				markBatFormForEject(player);
 			} else if (MorphHelper.isWolf(player)) {
 				MorphHelper.morph(player, MorphRegistry.wolf);
 			} else if (MorphHelper.isVampireBeast(player)) {
 				MorphHelper.morph(player, MorphRegistry.vampireBeast);
-			}
-			if (wasBat) {
-				PhysicsUtil.ejectFromSolidsIfNeeded(player);
+			} else if (MorphHelper.isDraculaTrueForm(player)) {
+				MorphHelper.morph(player, MorphRegistry.draculaTrueForm);
 			}
 		}
+	}
+
+	public static void markBatFormActive(EntityPlayer player) {
+		if (player != null) {
+			player.getEntityData().setBoolean(NBT_WAS_BAT_FORM, true);
+		}
+	}
+
+	/** Keep eject-pending flag after demorph so tick can snap out of solids. */
+	public static void markBatFormForEject(EntityPlayer player) {
+		markBatFormActive(player);
+	}
+
+	public static boolean consumeBatEjectIfSafe(EntityPlayer player) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) return true;
+		if (!player.getEntityData().getBoolean(NBT_WAS_BAT_FORM)) return true;
+		if (MorphHelper.isBat(player)) {
+			return true; // still bat — wait for demorph
+		}
+		// Force human BB — Legends often leaves bat size for 1+ ticks after MorphHelper demorph.
+		if (!PhysicsUtil.ejectFromSolidsIfNeeded(player, true)) {
+			return false; // retry next tick
+		}
+		player.getEntityData().setBoolean(NBT_WAS_BAT_FORM, false);
+		return true;
 	}
 
 	// In LegendsUtil.java
@@ -64,6 +91,11 @@ public class LegendsUtil {
 	public static final String NBT_MIST_DEMIST_TICKS = "statbooMistDemistTicks";
 	/** Delay after exit press before mist actually clears. */
 	public static final int MIST_DEMIST_DELAY_TICKS = 2 * 20;
+	/**
+	 * Set while Legends bat morph is active (any entry path). Cleared after
+	 * post-demorph solid eject succeeds — same pattern as mist {@code IsMistFormSmall}.
+	 */
+	public static final String NBT_WAS_BAT_FORM = "IsBatFormSmall";
 
 	public static boolean isMist(EntityPlayer player) {
 		return LegendsAbilityBridge.isMist(player);
@@ -86,6 +118,7 @@ public class LegendsUtil {
 
 	public static void activateMistForm(EntityPlayer player, int duration) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
+		if (!VampireSunRules.canStartMist(player)) return;
 		PowersHandler.mistForm(player, duration);
 	}
 
@@ -94,6 +127,7 @@ public class LegendsUtil {
 	 */
 	public static void activateMistFormIndefinite(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
+		if (!VampireSunRules.canStartMist(player)) return;
 		cancelMistDemist(player);
 		LegendsAbilityBridge.setMistFormIndefinite(player);
 	}
@@ -207,6 +241,9 @@ public class LegendsUtil {
 		}
 
 		if (transform) {
+			if (VampireSunRules.generalPowersBlocked(player)) {
+				return false;
+			}
 			if (MorphHelper.isBat(player)) {
 				return true;
 			}
@@ -218,14 +255,16 @@ public class LegendsUtil {
 			}
 			SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D);
 			MorphHelper.morph(player, MorphRegistry.bat);
+			markBatFormActive(player);
 			// Do not require isBat() this tick — Legends may sync morph on the next tick
 			return true;
 		}
 
-		// Disable: only demorph if currently bat (MorphHelper.morph toggles)
+		// Disable: only demorph if currently bat (MorphHelper.morph toggles).
+		// Do not eject here — bat hitbox still fits in 1-high gaps; tick ejects after human size.
 		if (MorphHelper.isBat(player)) {
+			markBatFormForEject(player);
 			MorphHelper.morph(player, MorphRegistry.bat);
-			PhysicsUtil.ejectFromSolidsIfNeeded(player);
 		}
 		return true;
 	}
@@ -267,6 +306,11 @@ public class LegendsUtil {
 
 	}
 	public static void morphBeast(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null) return;
+		// Allow demorph while blocked; refuse entering beast
+		if (!isVampireBeast(player) && VampireSunRules.generalPowersBlocked(player)) {
+			return;
+		}
 		SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D);
 		if(player instanceof EntityPlayerMP && !player.worldObj.isRemote) {
 			EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -278,7 +322,6 @@ public class LegendsUtil {
 			}
 		}
 
-		if (!Loader.isModLoaded("legends")) return;
 		if (!isVampireBeast(player))
 			ifMorphedTurnHuman(player);
 		if (!MorphHelper.isVampireBeast(player)) {
@@ -287,6 +330,44 @@ public class LegendsUtil {
 			ifMorphedTurnHuman(player);
 		}
 		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff", 3.0F, 1.0F);
+	}
+
+	/** Toggle Castlevania Dracula True Form morph. */
+	public static void morphTrueForm(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null) return;
+		if (!isDraculaTrueForm(player) && VampireSunRules.generalPowersBlocked(player)) {
+			return;
+		}
+		SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D);
+		if (player instanceof EntityPlayerMP && !player.worldObj.isRemote) {
+			EntityPlayerMP playerMP = (EntityPlayerMP) player;
+			if (Loader.isModLoaded("Morph") && MorphUtil.isPlayerMorphed(playerMP)) {
+				MorphUtil.saveMorph(playerMP);
+				MorphUtil.forceDemorph(playerMP);
+			}
+		}
+
+		boolean entering = !MorphHelper.isDraculaTrueForm(player);
+		if (entering) {
+			ifMorphedTurnHuman(player);
+			MorphHelper.morph(player, MorphRegistry.draculaTrueForm);
+			if (!player.worldObj.isRemote) {
+				player.worldObj.playSoundAtEntity(player, "horror:dracula_trueform", 1.0F, 1.0F);
+			}
+		} else {
+			ifMorphedTurnHuman(player);
+		}
+	}
+
+	public static boolean isDraculaTrueForm(EntityPlayer player) {
+		return Loader.isModLoaded("legends") && player != null && MorphHelper.isDraculaTrueForm(player);
+	}
+
+	/** Castlevania Dracula teleport (Horror tick spawns EntityDraculaTeleport). */
+	public static void draculaTeleport(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.draculaTeleport(player, Math.max(1, durationSeconds));
 	}
 	public static boolean fangs(EntityPlayer player) {
 		return LegendsAbilityBridge.isVampireFangs(player);
@@ -311,6 +392,7 @@ public class LegendsUtil {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return false;
 		if (player.isInWater()) return false;
 		if (MorphHelper.isBat(player)) return true;
+		if (VampireSunRules.generalPowersBlocked(player)) return false;
 
 		if (player.getEntityData().getInteger("isInCombat") == 1 && MorphHelper.isVampireBeast(player)) {
 			GeneralUtil.sendDebugMessage(player, new ChatComponentText("Can't change in combat while in this form")

@@ -7,6 +7,7 @@ import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
+import com.mrsand.StatBoostChanges.util.WebPassDebug;
 import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyPower;
@@ -14,11 +15,7 @@ import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.management.properties.PropertyManager;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockWeb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 
 /**
  * Auto-granted BetterVampires restorations for powers removed in Legends 8.
@@ -27,7 +24,6 @@ public final class VampireRestoredAbilities {
 
 	public static final int DEFAULT_HYPNOSIS_STRENGTH = 100;
 	public static final int DEFAULT_FURY_SECONDS = 15;
-	private static final String NBT_WEB_PHASE = "bvWebPhase";
 
 	private VampireRestoredAbilities() {}
 
@@ -93,13 +89,24 @@ public final class VampireRestoredAbilities {
 				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.hypnosisMastery);
 	}
 
+	/** Cobweb pass-through — Vampirism vampire lords only (shown in Legends, not learnable). */
 	public static boolean hasIntangibility(EntityPlayer player) {
-		return hasRestoredPowers(player);
+		return DaywalkerControl.isVampireLord(player);
 	}
 
 	public static boolean hasDemonicFury(EntityPlayer player) {
 		return hasRestoredPowers(player)
 				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.demonicFury);
+	}
+
+	public static boolean hasTrueForm(EntityPlayer player) {
+		return hasRestoredPowers(player)
+				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.trueForm);
+	}
+
+	public static boolean hasDraculaTeleport(EntityPlayer player) {
+		return hasRestoredPowers(player)
+				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.draculaTeleport);
 	}
 
 	public static int getHypnosisStrength(EntityPlayer player) {
@@ -132,12 +139,26 @@ public final class VampireRestoredAbilities {
 
 	public static void activateDemonicFury(EntityPlayer player, int seconds) {
 		if (player == null || player.worldObj.isRemote || !hasDemonicFury(player)) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		if (v == null) return;
 		int ticks = Math.max(1, seconds) * 20;
 		v.setInteger(PlayerKeys.DEMONIC_FURY_TICKS, Math.max(v.getInteger(PlayerKeys.DEMONIC_FURY_TICKS), ticks));
 		PowersHandler.fury(player, seconds);
 		v.syncClient();
+	}
+
+	/** End fury immediately (sun/daytime strip). */
+	public static void clearDemonicFury(EntityPlayer player) {
+		if (player == null || player.worldObj.isRemote) return;
+		VExtendedPlayer v = VExtendedPlayer.get(player);
+		if (v != null && v.getInteger(PlayerKeys.DEMONIC_FURY_TICKS) > 0) {
+			v.setInteger(PlayerKeys.DEMONIC_FURY_TICKS, 0);
+			v.syncClient();
+		}
+		if (LegendsAbilityBridge.isFury(player)) {
+			com.tihyo.legends.management.properties.LegendsProperties.FURY.set(player, Integer.valueOf(0));
+		}
 	}
 
 	public static void tick(EntityPlayer player) {
@@ -158,7 +179,6 @@ public final class VampireRestoredAbilities {
 
 		tickHypnosisStrengthRegen(player);
 		HypnosisMasteryLogic.tickSessionExpiry(player);
-		tickWebPassThrough(player);
 	}
 
 	/** Legends 5.4: +1 hypnotic strength every 5 ticks while not controlling. */
@@ -170,54 +190,22 @@ public final class VampireRestoredAbilities {
 		addHypnosisStrength(player, 1);
 	}
 
-	/** Passive intangibility: no collision with cobwebs only. */
-	private static void tickWebPassThrough(EntityPlayer player) {
-		if (!hasIntangibility(player) || LegendsUtil.getWeakness(player)) {
-			clearWebPhase(player);
-			return;
-		}
-		// Mist uses its own noClip; don't fight it.
-		if (LegendsAbilityBridge.isMist(player)) {
-			clearWebPhase(player);
-			return;
-		}
-
-		boolean inWeb = isIntersectingWeb(player);
-		if (inWeb) {
-			player.noClip = true;
-			player.getEntityData().setBoolean(NBT_WEB_PHASE, true);
-		} else {
-			clearWebPhase(player);
-		}
+	/**
+	 * Passive intangibility gate (cobwebs only). Works anytime for lords — not sun/day gated.
+	 * Cobwebs use {@code Entity.isInWeb} slowdown, not solid collision.
+	 */
+	public static boolean shouldPassThroughWebs(EntityPlayer player) {
+		return player != null && hasIntangibility(player);
 	}
 
-	private static void clearWebPhase(EntityPlayer player) {
-		if (!player.getEntityData().getBoolean(NBT_WEB_PHASE)) return;
-		player.getEntityData().setBoolean(NBT_WEB_PHASE, false);
-		if (!player.capabilities.isCreativeMode && !LegendsAbilityBridge.isMist(player)) {
-			player.noClip = false;
-		}
-	}
-
-	private static boolean isIntersectingWeb(EntityPlayer player) {
-		World world = player.worldObj;
-		int minX = MathHelper.floor_double(player.boundingBox.minX);
-		int maxX = MathHelper.floor_double(player.boundingBox.maxX);
-		int minY = MathHelper.floor_double(player.boundingBox.minY);
-		int maxY = MathHelper.floor_double(player.boundingBox.maxY);
-		int minZ = MathHelper.floor_double(player.boundingBox.minZ);
-		int maxZ = MathHelper.floor_double(player.boundingBox.maxZ);
-
-		for (int x = minX; x <= maxX; x++) {
-			for (int y = minY; y <= maxY; y++) {
-				for (int z = minZ; z <= maxZ; z++) {
-					Block block = world.getBlock(x, y, z);
-					if (block instanceof BlockWeb) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+	/**
+	 * Client+server fallback: clear {@code isInWeb} via reflection before/around movement.
+	 * Mixins are preferred; this covers cases where early injects miss due to refmap gaps.
+	 */
+	public static void tickWebPassThrough(EntityPlayer player) {
+		if (player == null) return;
+		WebPassDebug.sample(player, "tick");
+		if (!shouldPassThroughWebs(player)) return;
+		WebPassDebug.clearIsInWeb(player);
 	}
 }

@@ -13,6 +13,7 @@ import com.mrsand.StatBoostChanges.util.MistPhaseDebug;
 import com.mrsand.StatBoostChanges.util.MorphUtil;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
+import com.mrsand.StatBoostChanges.util.WebPassDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.morph.MorphHelper;
@@ -234,18 +235,24 @@ public class LegendsEventHandler {
 				VampireRestoredAbilities.tick(player);
 				LegendsUtil.tickMistDemist(player);
 			}
-			// noClip/phasing must run on client too or mist cannot phase through blocks.
+			// Web clear + mist noClip must run on client too (movement is client-predicted).
+			VampireRestoredAbilities.tickWebPassThrough(player);
 			if (LegendsAbilityBridge.isMist(player)) {
 				PhysicsUtil.handleMistPhasing(player);
 				player.getEntityData().setBoolean("IsMistFormSmall", true);
 				MistPhaseDebug.sample(player, "tickSTART");
 			}
+			if (LegendsUtil.isBat(player)) {
+				LegendsUtil.markBatFormActive(player);
+			}
+		} else if (WebPassDebug.enabled()) {
+			VampireRestoredAbilities.tickWebPassThrough(player);
 		}
 
 		boolean isMistActive = LegendsAbilityBridge.isMist(player);
 		boolean wasMisty = player.getEntityData().getBoolean("IsMistFormSmall");
 
-		// --- CASE: ABILITY ENDED ---
+		// --- CASE: MIST ENDED ---
 		if (!isMistActive && wasMisty) {
 			// Snap to solid ground if embedded; retry next tick if none found.
 			if (!PhysicsUtil.ejectFromSolidsIfNeeded(player)) {
@@ -257,17 +264,30 @@ public class LegendsEventHandler {
 				player.noClip = false;
 			}
 		}
+
+		// --- CASE: BAT ENDED (hitbox expands next ticks — eject must retry like mist) ---
+		if (!player.worldObj.isRemote) {
+			LegendsUtil.consumeBatEjectIfSafe(player);
+		}
 	}
 
 	/**
 	 * Legends LivingUpdate clears noClip unless isPhasing/isIntangible.
 	 * Mist is neither — re-assert after Legends so moveEntity still phases.
+	 * Also clear cobweb flag again around LivingUpdate (before moveEntity body).
 	 */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onWebLivingUpdateEarly(LivingEvent.LivingUpdateEvent event) {
+		if (!(event.entityLiving instanceof EntityPlayer)) return;
+		VampireRestoredAbilities.tickWebPassThrough((EntityPlayer) event.entityLiving);
+	}
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onMistLivingUpdate(LivingEvent.LivingUpdateEvent event) {
 		if (!(event.entityLiving instanceof EntityPlayer)) return;
-		if (!Loader.isModLoaded("legends")) return;
 		EntityPlayer player = (EntityPlayer) event.entityLiving;
+		VampireRestoredAbilities.tickWebPassThrough(player);
+		if (!Loader.isModLoaded("legends")) return;
 		if (!LegendsAbilityBridge.isMist(player)) return;
 		// Re-apply full mist physics after Legends (clears noClip + may add flight motionY).
 		PhysicsUtil.handleMistPhasing(player);

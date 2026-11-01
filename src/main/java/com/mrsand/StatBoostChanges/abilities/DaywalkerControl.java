@@ -15,7 +15,8 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Removes Legends Daywalker when {@link StatBoostConfig#removeLegacyDaywalker} is true,
- * and treats Vampirism lords as Daywalker-safe for sun burn checks.
+ * and treats Vampirism lords as Daywalker-safe for <em>sun burn</em> checks only.
+ * Daytime ability limits for lords are in {@link VampireSunRules}.
  */
 public final class DaywalkerControl {
 

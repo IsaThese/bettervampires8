@@ -12,16 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
+import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.tihyo.horror.legacy.LegacyVampire;
 import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.abilities.LegendsImmunities;
-import com.tihyo.legends.abilities.Stat;
-import com.tihyo.legends.abilities.StatHelper;
 import com.tihyo.legends.abilities.status.StatusAbility;
 import com.tihyo.legends.effects.LegendsEffects;
 import com.tihyo.legends.handlers.PowersHandler;
@@ -43,31 +43,36 @@ public abstract class LegacyVampireMixin {
 
 	/**
 	 * Legends 8 stubbed getWeaknesses to always false. With Daywalker removed,
-	 * restore L5-style sunlight weakness so most powers are blocked in the sun.
-	 * Vampirism lords stay unaffected.
+	 * restore ability blocking: non-lords in sunlight; lords all daytime
+	 * (mist/weather under-roof allowlist is handled outside getWeaknesses).
+	 * Sun burn exemption for lords stays in {@link com.mrsand.StatBoostChanges.abilities.BvSunDamage}.
 	 */
 	@Inject(method = "getWeaknesses", at = @At("HEAD"), cancellable = true)
 	private void bvSunWeakness(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
 		if (!DaywalkerControl.isEnabled()) return;
-		if (DaywalkerControl.isVampireLord(player)) {
-			cir.setReturnValue(Boolean.FALSE);
-			return;
-		}
-		cir.setReturnValue(Boolean.valueOf(StatHelper.isAbilityActive(player, Stat.isInSunlight)));
+		cir.setReturnValue(Boolean.valueOf(VampireSunRules.generalPowersBlocked(player)));
 	}
 
 	/**
 	 * Legends 8 removed morphVampireBeast from the vampire whitelist.
-	 * Restore it when Demonic Form is unlocked (same morph Dracula uses).
+	 * Restore it when Demonic Form is unlocked (same morph classic Dracula uses).
+	 * Also whitelist Castlevania True Form when that power is unlocked.
 	 */
 	@Inject(method = "morphs", at = @At("RETURN"))
 	private void allowVampireBeastMorph(EntityPlayer player, CallbackInfoReturnable<List<String>> cir) {
-		if (!VampireRestoredAbilities.hasDemonicForm(player)) return;
 		List<String> morphs = cir.getReturnValue();
 		if (morphs == null) return;
-		String beast = MorphRegistry.vampireBeast.getName();
-		if (!morphs.contains(beast)) {
-			morphs.add(beast);
+		if (VampireRestoredAbilities.hasDemonicForm(player)) {
+			String beast = MorphRegistry.vampireBeast.getName();
+			if (!morphs.contains(beast)) {
+				morphs.add(beast);
+			}
+		}
+		if (VampireRestoredAbilities.hasTrueForm(player)) {
+			String trueForm = MorphRegistry.draculaTrueForm.getName();
+			if (!morphs.contains(trueForm)) {
+				morphs.add(trueForm);
+			}
 		}
 	}
 
@@ -81,11 +86,41 @@ public abstract class LegacyVampireMixin {
 		if (!LegendsAbilityBridge.hasBloodMeter(player)) {
 			PlayerHelper.setBloodMeter(player, 0);
 		}
-		if (LegendsAbilityBridge.isMist(player)) {
+
+		boolean weak = LegacyHelper.getLegacyClass(player) != null
+				&& LegacyHelper.getLegacyClass(player).getWeaknesses(player);
+
+		if (weak) {
+			if (VampireSunRules.shouldForceClearForms(player)) {
+				if (MorphHelper.isMorphed(player)) {
+					LegendsUtil.ifMorphedTurnHuman(player);
+				}
+				VampireRestoredAbilities.clearDemonicFury(player);
+				if (LegendsAbilityBridge.isBloodVision(player)) {
+					PowersHandler.bloodVision(player, false);
+				}
+				// Fangs + vampire bite stay available in sun/day (original BV); do not clear.
+				if (LegendsAbilityBridge.isBloodLust(player)) {
+					LegendsAbilityBridge.clearBloodLust(player);
+				}
+			}
+			if (VampireSunRules.shouldForceClearMist(player) && LegendsAbilityBridge.isMist(player)) {
+				LegendsUtil.clearMistForm(player);
+			}
+			vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, false);
+			if (!vPlayer.getBoolean(PlayerKeys.IS_STARVING)) {
+				VisualUtil.changeForm(player, false);
+			}
+		}
+
+		boolean mistAllowed = LegendsAbilityBridge.isMist(player)
+				&& !VampireSunRules.shouldForceClearMist(player);
+		if (mistAllowed) {
 			LegendsAbilities.flight2(player, 3);
 		}
 
-		if (MorphHelper.isVampireBeast(player) && !PlayerHelper.isClimbing(player) && !PlayerHelper.isClimbingUpsidedown(player)) {
+		if (!weak && MorphHelper.isVampireBeast(player) && !PlayerHelper.isClimbing(player)
+				&& !PlayerHelper.isClimbingUpsidedown(player)) {
 			LegendsAbilities.flightLegacy(player, 3);
 			if (!(player.isPotionActive(Potion.moveSpeed) || player.isPotionActive(Potion.moveSlowdown))) {
 				StatusAbility.speed.run(player, 8, 8);
@@ -96,17 +131,10 @@ public abstract class LegacyVampireMixin {
 			LegendsAbilities.stealth(player, true);
 		}
 
-		if (LegacyHelper.getLegacyClass(player) != null && LegacyHelper.getLegacyClass(player).getWeaknesses(player)) {
-			vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, false);
-			if (!vPlayer.getBoolean(PlayerKeys.IS_STARVING)) {
-				VisualUtil.changeForm(player, false);
-			}
-		}
-
 		// Legends 8 removed LegacyHelper.getRank; gate on active vampire class instead.
 		if (LegacyHelper.isActive(player)
 				&& LegacyHelper.getLegacyClass(player) == LegacyRegistry.vampire
-				&& !LegacyHelper.getLegacyClass(player).getWeaknesses(player)) {
+				&& !weak) {
 
 				ItemStack itemHeld = player.getHeldItem();
 				if (itemHeld == null || !PlayerDataUtil.isWeapon(itemHeld)) {

@@ -11,6 +11,10 @@ public final class BvVampirePowers {
 	public static final LegacyPowerBvHypnosisMastery hypnosisMastery = new LegacyPowerBvHypnosisMastery();
 	public static final LegacyPowerBvDemonicForm demonicForm = new LegacyPowerBvDemonicForm();
 	public static final LegacyPowerBvDemonicFury demonicFury = new LegacyPowerBvDemonicFury();
+	public static final LegacyPowerBvTrueForm trueForm = new LegacyPowerBvTrueForm();
+	public static final LegacyPowerBvDraculaTeleport draculaTeleport = new LegacyPowerBvDraculaTeleport();
+	/** Lord-only passive; registered for UI but not mass-auto-granted via {@link #all()}. */
+	public static final LegacyPowerBvIntangibility intangibility = new LegacyPowerBvIntangibility();
 
 	private static boolean registered;
 
@@ -26,10 +30,14 @@ public final class BvVampirePowers {
 		LegacyRegistry.manager.addPower(hypnosisMastery);
 		LegacyRegistry.manager.addPower(demonicForm);
 		LegacyRegistry.manager.addPower(demonicFury);
+		LegacyRegistry.manager.addPower(trueForm);
+		LegacyRegistry.manager.addPower(draculaTeleport);
+		LegacyRegistry.manager.addPower(intangibility);
 		registered = true;
 	}
 
+	/** Auto-granted restored powers only (excludes lord-only intangibility). */
 	public static LegacyPower[] all() {
-		return new LegacyPower[] { hypnosisMastery, demonicForm, demonicFury };
+		return new LegacyPower[] { hypnosisMastery, demonicForm, demonicFury, trueForm, draculaTeleport };
 	}
 }

@@ -46,6 +46,15 @@ public class VampirismUtil {
 		return Helper.isEntityInVampireBiome(entity);
 	}
 
+	/**
+	 * Sun/ability-safe biomes (vampire forest radius + Ominous Woods).
+	 * Prefer this over {@link #isInVampireBiome} for daytime/sun gates.
+	 */
+	public static boolean isInSunSafeBiome(Entity entity) {
+		if (entity == null) return false;
+		return Helper.isEntityInSunSafeBiome(entity);
+	}
+
 	public static void increaseVampireLevel(EntityPlayer player, int newLevel) {
 		if (VampirePlayer.get(player).getLevel() != 0) return;
 		VampirePlayer.get(player).levelUp();

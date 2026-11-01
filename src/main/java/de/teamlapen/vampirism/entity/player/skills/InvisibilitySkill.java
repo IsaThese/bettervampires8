@@ -1,5 +1,6 @@
 package de.teamlapen.vampirism.entity.player.skills;
 
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 
@@ -11,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Lord mist form (replaces vanilla invisibility). Uses Legends mistForm.
  * Indefinite while active; second pie press starts a 2s demist delay (not instant).
- * Cannot start mist in sunlight; pie still shows while already misted so demist works.
+ * Start blocked in open sun / open daytime for lords; pie stays while misted so demist works anytime.
  */
 public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 
@@ -24,8 +25,8 @@ public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 	}
 
 	/**
-	 * Show in pie while misted (even in sunlight) for demist.
-	 * Do not allow starting mist while {@link VampirePlayer#isInSunlight()} (vampire forest exempt).
+	 * Show in pie while misted (even in open day/sun) for demist.
+	 * Start only when {@link VampireSunRules#canStartMist}.
 	 */
 	@Override
 	public int canUse(VampirePlayer vampire, EntityPlayer player) {
@@ -40,7 +41,7 @@ public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 			return 1;
 		if (player == null || player.worldObj == null)
 			return -2;
-		if (vampire.isInSunlight())
+		if (!VampireSunRules.canStartMist(player))
 			return -2;
 		return 1;
 	}
@@ -87,7 +88,7 @@ public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 		if (player == null || player.worldObj == null || player.worldObj.isRemote || !Loader.isModLoaded("legends")) {
 			return false;
 		}
-		if (vampire.isInSunlight()) {
+		if (!VampireSunRules.canStartMist(player)) {
 			return false;
 		}
 		LegendsUtil.ifMorphedTurnHuman(player);
@@ -114,7 +115,8 @@ public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 
 	@Override
 	public void onReActivated(VampirePlayer vampire, EntityPlayer player) {
-		if (player != null && player.worldObj != null && !player.worldObj.isRemote && Loader.isModLoaded("legends") && !LegendsUtil.isMist(player)) {
+		if (player != null && player.worldObj != null && !player.worldObj.isRemote && Loader.isModLoaded("legends")
+				&& !LegendsUtil.isMist(player) && VampireSunRules.canStartMist(player)) {
 			LegendsUtil.activateMistFormIndefinite(player);
 		}
 	}
@@ -122,6 +124,10 @@ public class InvisibilitySkill extends DefaultSkill implements ILastingSkill {
 	@Override
 	public boolean onUpdate(VampirePlayer vampire, EntityPlayer player) {
 		if (!Loader.isModLoaded("legends")) return true;
+		// Non-lords: force demist in sunlight. Lords keep mist until they exit.
+		if (VampireSunRules.shouldForceClearMist(player)) {
+			return true;
+		}
 		// Demist countdown is ticked globally; end skill once mist is gone
 		return !LegendsUtil.isMist(player);
 	}

@@ -1,0 +1,114 @@
+package com.mrsand.StatBoostChanges.abilities.powers;
+
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.mrsand.StatBoostChanges.util.LegendsUtil;
+import com.tihyo.legends.legacy.LegacyHelper;
+import com.tihyo.legends.legacy.LegacyPower;
+import com.tihyo.legends.legacy.LegacyRegistry;
+import com.tihyo.legends.legacy.LegendsLegacy;
+import com.tihyo.legends.legacy.PowerType;
+import com.tihyo.legends.management.LegendsChatFormat;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
+
+/**
+ * Castlevania Dracula True Form — press to toggle {@code MorphRegistry.draculaTrueForm}.
+ */
+public class LegacyPowerBvTrueForm extends LegacyPower {
+
+	private static final List<LegendsLegacy> legacies = Lists.newArrayList();
+
+	@Override
+	public String getName() {
+		return "bvTrueForm";
+	}
+
+	@Override
+	public String getDisplayName(EntityPlayer player) {
+		return "True Form";
+	}
+
+	@Override
+	public PowerType getType(EntityPlayer player) {
+		return PowerType.assignable;
+	}
+
+	@Override
+	public int getCost(EntityPlayer player) {
+		return 60;
+	}
+
+	@Override
+	public int getAssignedKey(EntityPlayer player) {
+		return LegacyHelper.findAbility(player, getName());
+	}
+
+	@Override
+	public void keyPressed(EntityPlayer player) {
+		int key = getAssignedKey(player);
+		if (key <= 0) return;
+		if (LegacyHelper.getCooldown(player, key) != LegacyHelper.getCooldownMax(player, key)) return;
+		if (LegacyHelper.getLegacyClass(player) == null
+				|| LegacyHelper.getLegacyClass(player).getWeaknesses(player)) {
+			return;
+		}
+		if (player.isInWater()) {
+			warn(player, "Can't transform in water.");
+			return;
+		}
+		if (!player.worldObj.isRemote) {
+			boolean wasTrue = LegendsUtil.isDraculaTrueForm(player);
+			LegendsUtil.morphTrueForm(player);
+			boolean nowTrue = LegendsUtil.isDraculaTrueForm(player);
+			LegacyHelper.setCooldown(player, key, nowTrue ? 200 : 40);
+			if (nowTrue && !wasTrue) {
+				player.addChatMessage(new ChatComponentText(
+						LegendsChatFormat.red + "You assume your true form."));
+			}
+		}
+	}
+
+	@Override
+	public void execute(EntityPlayer player) {
+		// Activation is keyPressed (toggle morph).
+	}
+
+	@Override
+	public void addToLegacy() {
+		LegacyHelper.addPowerToLegacy(this, legacies, LegacyRegistry.vampire);
+	}
+
+	@Override
+	public List<LegendsLegacy> getLegacies() {
+		return legacies;
+	}
+
+	@Override
+	public LegacyPower getParent(EntityPlayer player) {
+		return LegacyRegistry.fangs;
+	}
+
+	@Override
+	public String getDescription(EntityPlayer player) {
+		return "Transform into Castlevania Dracula's True Form. Raises suspicion if witnessed.";
+	}
+
+	@Override
+	public int getXOffset(EntityPlayer player) {
+		return 4;
+	}
+
+	@Override
+	public int getYOffset(EntityPlayer player) {
+		return 1;
+	}
+
+	private static void warn(EntityPlayer player, String msg) {
+		if (!player.worldObj.isRemote) {
+			player.addChatMessage(new ChatComponentText(LegendsChatFormat.red + msg));
+		}
+	}
+}

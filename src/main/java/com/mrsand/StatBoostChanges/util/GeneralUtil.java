@@ -52,10 +52,16 @@ public class GeneralUtil {
 	 * Checks if the blocks between the player and the target (x, z) are passable.
 	 */
 
+	/**
+	 * Calendar day for ability gates. Null-safe.
+	 * Sun-safe biomes (vampire forest / ominous, via {@link VampirismUtil#isInSunSafeBiome})
+	 * always count as night so lords can use powers there by day.
+	 */
 	public static boolean isDay(EntityPlayer player) {
-		long worldTime = player.worldObj.getWorldTime() % 24000L;
-		if(Loader.isModLoaded("vampirism") && VampirismUtil.isInVampireBiome(player))
+		if (player == null || player.worldObj == null) return false;
+		if (Loader.isModLoaded("vampirism") && VampirismUtil.isInSunSafeBiome(player))
 			return false;
+		long worldTime = player.worldObj.getWorldTime() % 24000L;
 		return (worldTime < 12500 || worldTime > 23500);
 	}
 
@@ -64,7 +70,7 @@ public class GeneralUtil {
 		if (entity == null || entity.worldObj == null) return false;
 		World world = entity.worldObj;
 
-		if(Loader.isModLoaded("vampirism") && VampirismUtil.isInVampireBiome(entity))
+		if (Loader.isModLoaded("vampirism") && VampirismUtil.isInSunSafeBiome(entity))
 			return false;
 
 

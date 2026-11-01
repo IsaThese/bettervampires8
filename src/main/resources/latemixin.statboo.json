@@ -24,6 +24,7 @@
       "ItemVampireClothesMixin",
       
       "legends.HorrorCommonEventHandlerMixin",
+      "legends.LegendsAbilitiesPacketMixin",
       "legends.LegacyHelperMixin",
       "legends.LegacyPowerMorphBatMixin",
       "legends.LegacyPowerMorphMistMixin",

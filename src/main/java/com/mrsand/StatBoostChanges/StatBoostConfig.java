@@ -28,8 +28,8 @@ public class StatBoostConfig {
 
 	/**
 	 * When true, Legends Daywalker is removed for vampire legacy players. Sunlight
-	 * weakens them (most Legends powers blocked + sun burn/nausea). Vampirism
-	 * lords are exempt.
+	 * weakens non-lords (powers blocked + sun burn/nausea). Lords skip sun burn but
+	 * still cannot use powers in daytime except rain/mist under a roof.
 	 */
 	public static boolean removeLegacyDaywalker = true;
 
@@ -38,6 +38,12 @@ public class StatBoostConfig {
 	 * fire); lower levels burn even with a helmet; lord+full clothes full skip.
 	 */
 	public static boolean bvAccurateSunDamage = true;
+
+	/**
+	 * When true, Vampirism lord Teleport pie skill uses Castlevania Dracula
+	 * teleport ({@code PowersHandler.draculaTeleport}) instead of the raycast blink.
+	 */
+	public static boolean useCastlevaniaDraculaTeleport = true;
 
 	/** Per-tick WASD push while misted. */
 	public static double mistHorizontalSpeed = 0.14D;
@@ -76,12 +82,17 @@ public class StatBoostConfig {
 				"removeLegacyDaywalker",
 				"legacy",
 				true,
-				"When true, removes Legends Daywalker from vampire legacies. Non-lord vampires are weakened in sunlight (most Legends abilities blocked; sun burn/nausea). Vampirism Vampire Lords are exempt.");
+				"When true, removes Legends Daywalker from vampire legacies. Non-lords: sunlight blocks powers + burn/nausea. Lords: no sun burn, but daytime blocks powers except rain/mist under a roof.");
 		bvAccurateSunDamage = config.getBoolean(
 				"bvAccurateSunDamage",
 				"legacy",
 				true,
 				"When true, use BetterVampires sun rules: Witchery vampire level >= 5 gets debuffs only (no fire); below 5 burns even with a helmet; Vampire Lord + full Witchery clothes skips the sun package. When false, leave Legends 8 helmet soft-fire alone.");
+		useCastlevaniaDraculaTeleport = config.getBoolean(
+				"useCastlevaniaDraculaTeleport",
+				"abilities",
+				true,
+				"When true, Vampirism Vampire Lord Teleport uses Castlevania Dracula teleport instead of the short raycast blink.");
 		// Mist speeds: tune field defaults above for now (skip .cfg override).
 //		mistHorizontalSpeed = config.get(
 //				"mist",

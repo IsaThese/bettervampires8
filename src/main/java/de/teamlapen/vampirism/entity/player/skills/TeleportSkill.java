@@ -1,5 +1,11 @@
 package de.teamlapen.vampirism.entity.player.skills;
 
+import com.mrsand.StatBoostChanges.StatBoostConfig;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
+import com.mrsand.StatBoostChanges.abilities.powers.LegacyPowerBvDraculaTeleport;
+import com.mrsand.StatBoostChanges.util.LegendsUtil;
+
+import cpw.mods.fml.common.Loader;
 import de.teamlapen.vampirism.entity.player.VampirePlayer;
 import de.teamlapen.vampirism.util.BALANCE;
 import de.teamlapen.vampirism.util.Helper;
@@ -13,7 +19,7 @@ public class TeleportSkill extends DefaultSkill {
 
 	@Override
 	public boolean canBeUsedBy(VampirePlayer vampire, EntityPlayer player) {
-		return vampire.isVampireLord() && !vampire.isInSunlight();
+		return vampire.isVampireLord() && !VampireSunRules.generalPowersBlocked(player);
 	}
 
 	@Override
@@ -43,13 +49,24 @@ public class TeleportSkill extends DefaultSkill {
 
 	@Override
 	public boolean onActivated(VampirePlayer vampire, EntityPlayer player) {
+		if (StatBoostConfig.useCastlevaniaDraculaTeleport
+				&& Loader.isModLoaded("legends")
+				&& !player.worldObj.isRemote) {
+			LegendsUtil.draculaTeleport(player, LegacyPowerBvDraculaTeleport.TELEPORT_SECONDS);
+			return true;
+		}
+		return activateRaycastBlink(player);
+	}
+
+	/** Original Vampirism short blink to look-at block. */
+	private static boolean activateRaycastBlink(EntityPlayer player) {
 		MovingObjectPosition pos = Helper.getPlayerLookingSpot(player, BALANCE.VP_SKILLS.TELEPORT_MAX_DISTANCE);
 		double ox = player.posX;
 		double oy = player.posY;
 		double oz = player.posZ;
 		if (pos == null) {
 			player.worldObj.playSoundAtEntity(player, "note.bass", 1.0F, 1.0F);
-			return false;// TODO make something else
+			return false;
 		}
 		int x = pos.blockX;
 		int y = pos.blockY + 1;
@@ -78,7 +95,6 @@ public class TeleportSkill extends DefaultSkill {
 					Logger.d("debug", "CollidingBox not empty or liquid");
 				}
 
-			} else {
 			}
 		}
 

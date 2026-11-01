@@ -167,3 +167,5 @@ bin/
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 !lib/**/*.jar
+
+.tmp_legends_search/
