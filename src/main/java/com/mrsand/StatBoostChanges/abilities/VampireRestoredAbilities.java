@@ -18,7 +18,8 @@ import com.tihyo.legends.management.properties.PropertyManager;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Auto-granted BetterVampires restorations for powers removed in Legends 8.
+ * BetterVampires restorations for powers removed in Legends 8.
+ * All BV powers are Vampirism vampire-lord-only (shown on tree, not purchasable).
  */
 public final class VampireRestoredAbilities {
 
@@ -31,29 +32,34 @@ public final class VampireRestoredAbilities {
 		return player != null && LegacyHelper.getLegacyClass(player) == LegacyRegistry.vampire;
 	}
 
-	/** Ensure unlock flag, learn restored powers, and hypnosis strength baseline. */
+	/**
+	 * Lord baseline + strip BV powers from the learned list (ownership is forced via
+	 * {@code LegacyHelperMixin} for lords; non-lords must not keep stale entries).
+	 */
 	public static void ensureAutoGranted(EntityPlayer player) {
 		if (!isVampire(player) || player.worldObj.isRemote) return;
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		if (v == null) return;
 
 		boolean changed = false;
-		if (!v.getBoolean(PlayerKeys.UNLOCKED_RESTORED_POWERS)) {
-			v.setBoolean(PlayerKeys.UNLOCKED_RESTORED_POWERS, true);
-			changed = true;
-		}
-		if (v.getInteger(PlayerKeys.HYPNOSIS_STRENGTH) <= 0) {
-			v.setInteger(PlayerKeys.HYPNOSIS_STRENGTH, DEFAULT_HYPNOSIS_STRENGTH);
-			changed = true;
+		boolean lord = DaywalkerControl.isVampireLord(player);
+		if (lord) {
+			if (!v.getBoolean(PlayerKeys.UNLOCKED_RESTORED_POWERS)) {
+				v.setBoolean(PlayerKeys.UNLOCKED_RESTORED_POWERS, true);
+				changed = true;
+			}
+			if (v.getInteger(PlayerKeys.HYPNOSIS_STRENGTH) <= 0) {
+				v.setInteger(PlayerKeys.HYPNOSIS_STRENGTH, DEFAULT_HYPNOSIS_STRENGTH);
+				changed = true;
+			}
 		}
 
-		// Mirror learnAllPowers: mutate learned list + PropertyManager sync.
-		// Do NOT use LegacyHelper.learnPower — that sends PurchasePowerPacket (client purchase path).
+		// Do NOT persist BV powers in the learned list — lord ownership is virtual.
+		// Strip stale auto-grants from earlier builds so non-lords lose them.
 		List<LegacyPower> learned = LegacyHelper.getLearnedPowers(player);
 		boolean powersChanged = false;
 		for (LegacyPower power : BvVampirePowers.all()) {
-			if (!LegacyHelper.hasLearnedPower(player, power)) {
-				learned.add(power);
+			if (learned.remove(power)) {
 				powersChanged = true;
 				changed = true;
 			}
@@ -74,19 +80,15 @@ public final class VampireRestoredAbilities {
 	}
 
 	public static boolean hasRestoredPowers(EntityPlayer player) {
-		if (!isVampire(player)) return false;
-		VExtendedPlayer v = VExtendedPlayer.get(player);
-		return v != null && v.getBoolean(PlayerKeys.UNLOCKED_RESTORED_POWERS);
+		return isVampire(player) && DaywalkerControl.isVampireLord(player);
 	}
 
 	public static boolean hasDemonicForm(EntityPlayer player) {
-		return hasRestoredPowers(player)
-				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.demonicForm);
+		return DaywalkerControl.isVampireLord(player);
 	}
 
 	public static boolean hasHypnosisMastery(EntityPlayer player) {
-		return hasRestoredPowers(player)
-				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.hypnosisMastery);
+		return DaywalkerControl.isVampireLord(player);
 	}
 
 	/** Cobweb pass-through — Vampirism vampire lords only (shown in Legends, not learnable). */
@@ -95,18 +97,19 @@ public final class VampireRestoredAbilities {
 	}
 
 	public static boolean hasDemonicFury(EntityPlayer player) {
-		return hasRestoredPowers(player)
-				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.demonicFury);
+		return DaywalkerControl.isVampireLord(player);
 	}
 
 	public static boolean hasTrueForm(EntityPlayer player) {
-		return hasRestoredPowers(player)
-				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.trueForm);
+		return DaywalkerControl.isVampireLord(player);
 	}
 
 	public static boolean hasDraculaTeleport(EntityPlayer player) {
-		return hasRestoredPowers(player)
-				|| LegacyHelper.hasLearnedPower(player, BvVampirePowers.draculaTeleport);
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasHellfire(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
 	}
 
 	public static int getHypnosisStrength(EntityPlayer player) {
@@ -117,7 +120,9 @@ public final class VampireRestoredAbilities {
 	public static void setHypnosisStrength(EntityPlayer player, int amount) {
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		if (v == null || player.worldObj.isRemote) return;
-		v.setInteger(PlayerKeys.HYPNOSIS_STRENGTH, LegendsHelper.limit(amount, 0, DEFAULT_HYPNOSIS_STRENGTH));
+		int next = LegendsHelper.limit(amount, 0, DEFAULT_HYPNOSIS_STRENGTH);
+		if (v.getInteger(PlayerKeys.HYPNOSIS_STRENGTH) == next) return;
+		v.setInteger(PlayerKeys.HYPNOSIS_STRENGTH, next);
 		v.syncClient();
 	}
 

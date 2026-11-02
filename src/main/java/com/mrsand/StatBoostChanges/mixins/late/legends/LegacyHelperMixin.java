@@ -19,7 +19,9 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Daywalker: when removeLegacyDaywalker is on, block learning; treat Vampirism
  * lords as owning Daywalker; force non-lords as not having it.
- * Intangibility: shown on tree, never purchasable; owned only by vampire lords.
+ * BetterVampires restored powers: shown on tree, never purchasable; owned only by
+ * Vampirism vampire lords (Hypnosis Mastery, Demonic Form/Fury, True Form, Teleport,
+ * Hellfire, Intangibility).
  * Transvection: hover must not count as "using an ability" so other keys still fire.
  */
 @Mixin(value = LegacyHelper.class, remap = false)
@@ -28,7 +30,7 @@ public abstract class LegacyHelperMixin {
 	@Inject(method = "hasLearnedPower", at = @At("HEAD"), cancellable = true)
 	private static void bvForcedOwnership(EntityPlayer player, LegacyPower power,
 			CallbackInfoReturnable<Boolean> cir) {
-		if (power == BvVampirePowers.intangibility) {
+		if (BvVampirePowers.isLordOnlyPower(power)) {
 			cir.setReturnValue(Boolean.valueOf(DaywalkerControl.isVampireLord(player)));
 			return;
 		}
@@ -43,7 +45,7 @@ public abstract class LegacyHelperMixin {
 	@Inject(method = "canBeLearned", at = @At("HEAD"), cancellable = true)
 	private static void bvBlockForcedLearn(EntityPlayer player, LegacyPower power,
 			CallbackInfoReturnable<Boolean> cir) {
-		if (power == BvVampirePowers.intangibility) {
+		if (BvVampirePowers.isLordOnlyPower(power)) {
 			cir.setReturnValue(Boolean.FALSE);
 			return;
 		}

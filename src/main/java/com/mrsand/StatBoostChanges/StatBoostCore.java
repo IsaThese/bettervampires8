@@ -67,8 +67,9 @@ public class StatBoostCore implements IEarlyMixinLoader, IFMLLoadingPlugin {
 		}
 		// GTNH IEarlyMixinLoader only applies mixins returned here — JSON "client" arrays are unused.
 		if (FMLLaunchHandler.side() == Side.CLIENT) {
-			// Bat/wolf FP arm: replace vanilla RenderPlayer.renderFirstPersonArm (Legends morph path often missed).
+			// Fallback if a plain RenderPlayer is used for FP arm.
 			mixins.add("RenderPlayerMorphHandMixin");
+			// RenderPlayerHand morph FP arm is a late mixin (Legends class; early hook never applied).
 			// Witchery vampire clothes: keep FP arm visible if armor getArmorModel left showModel false
 			mixins.add("RenderPlayerWitcheryHandFixMixin");
 			if (Boolean.parseBoolean(System.getProperty("statboo.debugHandRender", "false"))) {

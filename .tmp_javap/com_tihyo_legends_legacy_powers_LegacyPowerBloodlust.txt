@@ -1,0 +1,142 @@
+﻿Compiled from "LegacyPowerBloodlust.java"
+public class com.tihyo.legends.legacy.powers.LegacyPowerBloodlust extends com.tihyo.legends.legacy.LegacyPower {
+  private static java.util.List<com.tihyo.legends.legacy.LegendsLegacy> legacies;
+
+  public com.tihyo.legends.legacy.powers.LegacyPowerBloodlust();
+    Code:
+       0: aload_0
+       1: invokespecial #12                 // Method com/tihyo/legends/legacy/LegacyPower."<init>":()V
+       4: return
+
+  public java.lang.String getName();
+    Code:
+       0: ldc           #18                 // String bloodLust
+       2: areturn
+
+  public java.lang.String getDisplayName(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: ldc           #22                 // String Bloodlust
+       2: areturn
+
+  public com.tihyo.legends.legacy.PowerType getType(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: getstatic     #32                 // Field com/tihyo/legends/legacy/PowerType.assignable:Lcom/tihyo/legends/legacy/PowerType;
+       3: areturn
+
+  public int getCost(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: bipush        30
+       2: ireturn
+
+  public int getAssignedKey(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokevirtual #37                 // Method getName:()Ljava/lang/String;
+       5: invokestatic  #43                 // Method com/tihyo/legends/legacy/LegacyHelper.findAbility:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+       8: ireturn
+
+  public void keyPressed(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: aload_1
+       3: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+       6: invokestatic  #51                 // Method com/tihyo/legends/legacy/LegacyHelper.getCooldown:(Lnet/minecraft/entity/player/EntityPlayer;I)I
+       9: aload_1
+      10: aload_0
+      11: aload_1
+      12: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      15: invokestatic  #54                 // Method com/tihyo/legends/legacy/LegacyHelper.getCooldownMax:(Lnet/minecraft/entity/player/EntityPlayer;I)I
+      18: if_icmpne     128
+      21: aload_1
+      22: invokestatic  #60                 // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      25: ifeq          35
+      28: aload_1
+      29: invokestatic  #64                 // Method com/tihyo/legends/morph/MorphHelper.isVampireBeast:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      32: ifeq          86
+      35: getstatic     #70                 // Field com/tihyo/legends/management/properties/LegendsProperties.MIST_FORM:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      38: aload_1
+      39: invokevirtual #74                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      42: checkcast     #76                 // class java/lang/Integer
+      45: invokevirtual #80                 // Method java/lang/Integer.intValue:()I
+      48: ifgt          86
+      51: aload_1
+      52: getfield      #86                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      55: getfield      #92                 // Field net/minecraft/world/World.field_72995_K:Z
+      58: ifne          66
+      61: aload_1
+      62: iconst_5
+      63: invokestatic  #97                 // Method com/tihyo/legends/handlers/PowersHandler.bloodLust:(Lnet/minecraft/entity/player/EntityPlayer;I)V
+      66: aload_1
+      67: aload_0
+      68: aload_1
+      69: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      72: sipush        500
+      75: invokestatic  #101                // Method com/tihyo/legends/legacy/LegacyHelper.setCooldown:(Lnet/minecraft/entity/player/EntityPlayer;II)V
+      78: aload_1
+      79: iconst_1
+      80: invokestatic  #105                // Method com/tihyo/legends/handlers/PowersHandler.vampireFangs:(Lnet/minecraft/entity/player/EntityPlayer;Z)V
+      83: goto          128
+      86: aload_1
+      87: getfield      #86                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      90: getfield      #92                 // Field net/minecraft/world/World.field_72995_K:Z
+      93: ifne          128
+      96: aload_1
+      97: new           #107                // class net/minecraft/util/ChatComponentText
+     100: dup
+     101: new           #109                // class java/lang/StringBuilder
+     104: dup
+     105: invokespecial #110                // Method java/lang/StringBuilder."<init>":()V
+     108: getstatic     #116                // Field com/tihyo/legends/management/LegendsChatFormat.red:Ljava/lang/String;
+     111: invokevirtual #120                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     114: ldc           #122                // String Can't use ability when morphed.
+     116: invokevirtual #120                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     119: invokevirtual #125                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     122: invokespecial #128                // Method net/minecraft/util/ChatComponentText."<init>":(Ljava/lang/String;)V
+     125: invokevirtual #132                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     128: return
+
+  public void execute(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void addToLegacy();
+    Code:
+       0: aload_0
+       1: getstatic     #136                // Field legacies:Ljava/util/List;
+       4: getstatic     #142                // Field com/tihyo/legends/legacy/LegacyRegistry.vampire:Lcom/tihyo/legends/legacy/LegendsLegacy;
+       7: invokestatic  #146                // Method com/tihyo/legends/legacy/LegacyHelper.addPowerToLegacy:(Lcom/tihyo/legends/legacy/LegacyPower;Ljava/util/List;Lcom/tihyo/legends/legacy/LegendsLegacy;)V
+      10: return
+
+  public java.util.List<com.tihyo.legends.legacy.LegendsLegacy> getLegacies();
+    Code:
+       0: getstatic     #136                // Field legacies:Ljava/util/List;
+       3: areturn
+
+  public com.tihyo.legends.legacy.LegacyPower getParent(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: getstatic     #154                // Field com/tihyo/legends/legacy/LegacyRegistry.batSwarming:Lcom/tihyo/legends/legacy/powers/LegacyPowerBatSwarming;
+       3: areturn
+
+  public java.lang.String getDescription(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: ldc           #157                // String Your craving for blood spikes your adrenaline, increasing your speed and damage as you thrash out for blood. Each slash fills your blood meter while grounding your opponent for 5 seconds. Deals around 20 damage.
+       2: areturn
+
+  public int getXOffset(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: bipush        -3
+       2: ireturn
+
+  public int getYOffset(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iconst_5
+       1: ireturn
+
+  static {};
+    Code:
+       0: invokestatic  #166                // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+       3: putstatic     #136                // Field legacies:Ljava/util/List;
+       6: return
+}

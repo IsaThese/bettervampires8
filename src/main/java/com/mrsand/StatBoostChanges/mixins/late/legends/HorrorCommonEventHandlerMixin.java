@@ -3,7 +3,9 @@ package com.mrsand.StatBoostChanges.mixins.late.legends;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mrsand.StatBoostChanges.abilities.BvSunDamage;
@@ -16,10 +18,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 /**
- * Legends 8 Horror hooks: BV sun fire tiers + thinner mist smoke in first person.
+ * Legends 8 Horror hooks: BV sun fire tiers + thinner mist smoke in first person
+ * + L5-parity vampire bite mob damage.
  */
 @Mixin(value = HorrorCommonEventHandler.class, remap = false)
 public abstract class HorrorCommonEventHandlerMixin {
+
+	/** L5 stock mob bite damage (L8 ships 1.0F). */
+	private static final float L5_BITE_MOB_DAMAGE = 5.0F;
 
 	@Redirect(method = "onPlayerUpdate", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/entity/player/EntityPlayer;func_70015_d(I)V"))
@@ -70,5 +76,32 @@ public abstract class HorrorCommonEventHandlerMixin {
 			return;
 		}
 		LegendsParticles.spawnParticle(type, x, y, z, mx, my, mz);
+	}
+
+	/**
+	 * Buff L8 vampire-bite mob damage (6th DamageHelper.attack in the bite block) from 1.0F to 5.0F.
+	 * Player bleeding hit (ordinal 2) stays at 1.0F like Legends 5.
+	 */
+	@ModifyArg(
+			method = "onAbilities",
+			slice = @Slice(
+					from = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;VAMPIRE_BITE:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					),
+					to = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;VAMPIRIZATION:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					)
+			),
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/DamageHelper;attack(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/DamageSource;F)V",
+					ordinal = 5
+			),
+			index = 3
+	)
+	private float bvBuffVampireBiteMobDamage(float damage) {
+		return L5_BITE_MOB_DAMAGE;
 	}
 }

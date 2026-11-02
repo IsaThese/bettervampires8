@@ -1,0 +1,123 @@
+﻿Compiled from "LegendsRegistryArith.java"
+public class com.tihyo.legends.management.properties.LegendsRegistryArith<T extends com.tihyo.legends.management.properties.LegendsDataRegistry<T>> extends com.tihyo.legends.management.properties.LegendsRegistryBase<T> {
+  protected net.minecraft.util.ObjectIntIdentityMap map;
+
+  protected int nextId;
+
+  public com.tihyo.legends.management.properties.LegendsRegistryArith(java.lang.String, java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokespecial #14                 // Method com/tihyo/legends/management/properties/LegendsRegistryBase."<init>":(Ljava/lang/String;Ljava/lang/String;)V
+       6: aload_0
+       7: new           #16                 // class net/minecraft/util/ObjectIntIdentityMap
+      10: dup
+      11: invokespecial #19                 // Method net/minecraft/util/ObjectIntIdentityMap."<init>":()V
+      14: putfield      #21                 // Field map:Lnet/minecraft/util/ObjectIntIdentityMap;
+      17: aload_0
+      18: iconst_m1
+      19: putfield      #23                 // Field nextId:I
+      22: return
+
+  public int getIDForObject(T);
+    Code:
+       0: aload_0
+       1: getfield      #21                 // Field map:Lnet/minecraft/util/ObjectIntIdentityMap;
+       4: aload_1
+       5: invokevirtual #35                 // Method net/minecraft/util/ObjectIntIdentityMap.func_148747_b:(Ljava/lang/Object;)I
+       8: ireturn
+
+  public T getObjectById(int);
+    Code:
+       0: aload_0
+       1: getfield      #21                 // Field map:Lnet/minecraft/util/ObjectIntIdentityMap;
+       4: iload_1
+       5: invokevirtual #44                 // Method net/minecraft/util/ObjectIntIdentityMap.func_148745_a:(I)Ljava/lang/Object;
+       8: checkcast     #46                 // class com/tihyo/legends/management/properties/LegendsDataRegistry
+      11: areturn
+
+  public void putObject(java.lang.String, T);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #53                 // Method containsKey:(Ljava/lang/String;)Z
+       5: ifeq          22
+       8: aload_0
+       9: aload_0
+      10: aload_2
+      11: invokevirtual #55                 // Method getIDForObject:(Lcom/tihyo/legends/management/properties/LegendsDataRegistry;)I
+      14: aload_1
+      15: aload_2
+      16: invokevirtual #59                 // Method addObject:(ILjava/lang/String;Lcom/tihyo/legends/management/properties/LegendsDataRegistry;)V
+      19: goto          39
+      22: aload_0
+      23: aload_0
+      24: dup
+      25: getfield      #23                 // Field nextId:I
+      28: iconst_1
+      29: iadd
+      30: dup_x1
+      31: putfield      #23                 // Field nextId:I
+      34: aload_1
+      35: aload_2
+      36: invokevirtual #59                 // Method addObject:(ILjava/lang/String;Lcom/tihyo/legends/management/properties/LegendsDataRegistry;)V
+      39: return
+
+  public java.util.Iterator<T> iterator();
+    Code:
+       0: aload_0
+       1: getfield      #21                 // Field map:Lnet/minecraft/util/ObjectIntIdentityMap;
+       4: invokevirtual #63                 // Method net/minecraft/util/ObjectIntIdentityMap.iterator:()Ljava/util/Iterator;
+       7: areturn
+
+  public void addObject(int, java.lang.String, T);
+    Code:
+       0: aload_0
+       1: getfield      #21                 // Field map:Lnet/minecraft/util/ObjectIntIdentityMap;
+       4: aload_3
+       5: iload_1
+       6: invokevirtual #67                 // Method net/minecraft/util/ObjectIntIdentityMap.func_148746_a:(Ljava/lang/Object;I)V
+       9: aload_0
+      10: aload_2
+      11: aload_3
+      12: invokespecial #69                 // Method com/tihyo/legends/management/properties/LegendsRegistryBase.putObject:(Ljava/lang/String;Lcom/tihyo/legends/management/properties/LegendsDataRegistry;)V
+      15: return
+
+  public boolean containsId(int);
+    Code:
+       0: aload_0
+       1: getfield      #21                 // Field map:Lnet/minecraft/util/ObjectIntIdentityMap;
+       4: iload_1
+       5: invokevirtual #74                 // Method net/minecraft/util/ObjectIntIdentityMap.func_148744_b:(I)Z
+       8: ireturn
+
+  public T lookup(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #53                 // Method containsKey:(Ljava/lang/String;)Z
+       5: ifeq          14
+       8: aload_0
+       9: aload_1
+      10: invokevirtual #81                 // Method getObject:(Ljava/lang/String;)Lcom/tihyo/legends/management/properties/LegendsDataRegistry;
+      13: areturn
+      14: aload_1
+      15: invokestatic  #87                 // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+      18: istore_2
+      19: aload_0
+      20: iload_2
+      21: invokevirtual #89                 // Method containsId:(I)Z
+      24: ifeq          33
+      27: aload_0
+      28: iload_2
+      29: invokevirtual #91                 // Method getObjectById:(I)Lcom/tihyo/legends/management/properties/LegendsDataRegistry;
+      32: areturn
+      33: goto          37
+      36: astore_2
+      37: aconst_null
+      38: areturn
+    Exception table:
+       from    to  target type
+          14    32    36   Class java/lang/NumberFormatException
+}

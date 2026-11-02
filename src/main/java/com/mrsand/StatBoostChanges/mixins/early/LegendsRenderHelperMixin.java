@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.tihyo.legends.management.LegendsRenderHelper;
+import com.tihyo.legends.morph.MorphHelper;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
  * Early mixin: LegendsRenderHelper loads before late mixins can apply.
  * Witchery vampire chest is not on Legends' FP-hand whitelist — allow it so
  * {@code RenderPlayerHand} does not early-return with no hand drawn.
+ * Also force-open the path for bat/wolf morphs (same hole).
  */
 @Mixin(value = LegendsRenderHelper.class, remap = false)
 public abstract class LegendsRenderHelperMixin {
@@ -24,7 +26,7 @@ public abstract class LegendsRenderHelperMixin {
 	@Inject(method = "shouldUseLegendsRender", at = @At("HEAD"), cancellable = true)
 	private static void betterVampires$witcheryVampireClothes(Entity entity,
 			CallbackInfoReturnable<Boolean> cir) {
-		if (wearsWitcheryVampireChest(entity)) {
+		if (isBatOrWolfMorph(entity) || wearsWitcheryVampireChest(entity)) {
 			cir.setReturnValue(true);
 		}
 	}
@@ -32,8 +34,18 @@ public abstract class LegendsRenderHelperMixin {
 	@Inject(method = "shouldRenderHand", at = @At("HEAD"), cancellable = true)
 	private static void betterVampires$witcheryShouldRenderHand(EntityPlayer player,
 			CallbackInfoReturnable<Boolean> cir) {
-		if (wearsWitcheryVampireChest(player)) {
+		if (isBatOrWolfMorph(player) || wearsWitcheryVampireChest(player)) {
 			cir.setReturnValue(true);
+		}
+	}
+
+	private static boolean isBatOrWolfMorph(Entity entity) {
+		if (!(entity instanceof EntityPlayer)) return false;
+		EntityPlayer player = (EntityPlayer) entity;
+		try {
+			return MorphHelper.isBat(player) || MorphHelper.isWolf(player);
+		} catch (Throwable ignored) {
+			return false;
 		}
 	}
 

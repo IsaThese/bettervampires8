@@ -1,0 +1,370 @@
+﻿Compiled from "LegendsPropertiesHandler.java"
+public final class com.tihyo.legends.handlers.LegendsPropertiesHandler extends java.lang.Enum<com.tihyo.legends.handlers.LegendsPropertiesHandler> {
+  public static final com.tihyo.legends.handlers.LegendsPropertiesHandler INSTANCE;
+
+  public static float renderTick;
+
+  private java.util.List<net.minecraft.entity.player.EntityPlayer> playersToSync;
+
+  private static final com.tihyo.legends.handlers.LegendsPropertiesHandler[] $VALUES;
+
+  public static com.tihyo.legends.handlers.LegendsPropertiesHandler[] values();
+    Code:
+       0: getstatic     #45                 // Field $VALUES:[Lcom/tihyo/legends/handlers/LegendsPropertiesHandler;
+       3: invokevirtual #50                 // Method "[Lcom/tihyo/legends/handlers/LegendsPropertiesHandler;".clone:()Ljava/lang/Object;
+       6: checkcast     #46                 // class "[Lcom/tihyo/legends/handlers/LegendsPropertiesHandler;"
+       9: areturn
+
+  public static com.tihyo.legends.handlers.LegendsPropertiesHandler valueOf(java.lang.String);
+    Code:
+       0: ldc           #2                  // class com/tihyo/legends/handlers/LegendsPropertiesHandler
+       2: aload_0
+       3: invokestatic  #55                 // Method java/lang/Enum.valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
+       6: checkcast     #2                  // class com/tihyo/legends/handlers/LegendsPropertiesHandler
+       9: areturn
+
+  private com.tihyo.legends.handlers.LegendsPropertiesHandler();
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: invokespecial #61                 // Method java/lang/Enum."<init>":(Ljava/lang/String;I)V
+       6: aload_0
+       7: new           #63                 // class java/util/ArrayList
+      10: dup
+      11: invokespecial #66                 // Method java/util/ArrayList."<init>":()V
+      14: putfield      #68                 // Field playersToSync:Ljava/util/List;
+      17: return
+
+  public void onJoin(net.minecraftforge.event.entity.EntityJoinWorldEvent);
+    Code:
+       0: aload_1
+       1: getfield      #78                 // Field net/minecraftforge/event/entity/EntityJoinWorldEvent.entity:Lnet/minecraft/entity/Entity;
+       4: astore_2
+       5: aload_2
+       6: getfield      #84                 // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+       9: astore_3
+      10: aload_2
+      11: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      14: ifeq          55
+      17: aload_2
+      18: checkcast     #86                 // class net/minecraft/entity/player/EntityPlayer
+      21: astore        4
+      23: aload_3
+      24: getfield      #92                 // Field net/minecraft/world/World.field_72995_K:Z
+      27: ifne          55
+      30: aload         4
+      32: ifnull        55
+      35: aload_0
+      36: getfield      #68                 // Field playersToSync:Ljava/util/List;
+      39: aload         4
+      41: invokeinterface #98,  2           // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      46: pop
+      47: aload         4
+      49: getstatic     #104                // Field com/tihyo/legends/management/achievements/LegendsAchievements.origin:Lnet/minecraft/stats/Achievement;
+      52: invokevirtual #108                // Method net/minecraft/entity/player/EntityPlayer.func_71029_a:(Lnet/minecraft/stats/StatBase;)V
+      55: return
+
+  public void startTracking(net.minecraftforge.event.entity.player.PlayerEvent$StartTracking);
+    Code:
+       0: aload_1
+       1: getfield      #118                // Field net/minecraftforge/event/entity/player/PlayerEvent$StartTracking.entityPlayer:Lnet/minecraft/entity/player/EntityPlayer;
+       4: astore_2
+       5: aload_2
+       6: ifnull        81
+       9: aload_2
+      10: getfield      #119                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      13: getfield      #92                 // Field net/minecraft/world/World.field_72995_K:Z
+      16: ifne          81
+      19: aload_1
+      20: getfield      #122                // Field net/minecraftforge/event/entity/player/PlayerEvent$StartTracking.target:Lnet/minecraft/entity/Entity;
+      23: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      26: ifeq          81
+      29: aload_1
+      30: getfield      #122                // Field net/minecraftforge/event/entity/player/PlayerEvent$StartTracking.target:Lnet/minecraft/entity/Entity;
+      33: checkcast     #86                 // class net/minecraft/entity/player/EntityPlayer
+      36: astore_3
+      37: aload_2
+      38: checkcast     #124                // class net/minecraft/entity/player/EntityPlayerMP
+      41: astore        4
+      43: aload_3
+      44: checkcast     #124                // class net/minecraft/entity/player/EntityPlayerMP
+      47: astore        5
+      49: getstatic     #130                // Field com/tihyo/legends/packets/PacketsHandler.NETWORK:Lcpw/mods/fml/common/network/simpleimpl/SimpleNetworkWrapper;
+      52: new           #132                // class com/tihyo/legends/packets/BroadcastStatePacket
+      55: dup
+      56: aload_2
+      57: invokespecial #135                // Method com/tihyo/legends/packets/BroadcastStatePacket."<init>":(Lnet/minecraft/entity/player/EntityPlayer;)V
+      60: aload         5
+      62: invokevirtual #141                // Method cpw/mods/fml/common/network/simpleimpl/SimpleNetworkWrapper.sendTo:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+      65: getstatic     #130                // Field com/tihyo/legends/packets/PacketsHandler.NETWORK:Lcpw/mods/fml/common/network/simpleimpl/SimpleNetworkWrapper;
+      68: new           #132                // class com/tihyo/legends/packets/BroadcastStatePacket
+      71: dup
+      72: aload_3
+      73: invokespecial #135                // Method com/tihyo/legends/packets/BroadcastStatePacket."<init>":(Lnet/minecraft/entity/player/EntityPlayer;)V
+      76: aload         4
+      78: invokevirtual #141                // Method cpw/mods/fml/common/network/simpleimpl/SimpleNetworkWrapper.sendTo:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;Lnet/minecraft/entity/player/EntityPlayerMP;)V
+      81: return
+
+  public void onEntityConstruct(net.minecraftforge.event.entity.EntityEvent$EntityConstructing);
+    Code:
+       0: aload_1
+       1: getfield      #149                // Field net/minecraftforge/event/entity/EntityEvent$EntityConstructing.entity:Lnet/minecraft/entity/Entity;
+       4: instanceof    #151                // class net/minecraft/entity/EntityLivingBase
+       7: ifeq          27
+      10: aload_1
+      11: getfield      #149                // Field net/minecraftforge/event/entity/EntityEvent$EntityConstructing.entity:Lnet/minecraft/entity/Entity;
+      14: ldc           #153                // String LegendsEntity
+      16: new           #155                // class com/tihyo/legends/management/properties/LegendsEntityProperties
+      19: dup
+      20: invokespecial #156                // Method com/tihyo/legends/management/properties/LegendsEntityProperties."<init>":()V
+      23: invokevirtual #160                // Method net/minecraft/entity/Entity.registerExtendedProperties:(Ljava/lang/String;Lnet/minecraftforge/common/IExtendedEntityProperties;)Ljava/lang/String;
+      26: pop
+      27: aload_1
+      28: getfield      #149                // Field net/minecraftforge/event/entity/EntityEvent$EntityConstructing.entity:Lnet/minecraft/entity/Entity;
+      31: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      34: ifeq          54
+      37: aload_1
+      38: getfield      #149                // Field net/minecraftforge/event/entity/EntityEvent$EntityConstructing.entity:Lnet/minecraft/entity/Entity;
+      41: ldc           #162                // String LegendsPlayer
+      43: new           #164                // class com/tihyo/legends/management/properties/LegendsPlayerProperties
+      46: dup
+      47: invokespecial #165                // Method com/tihyo/legends/management/properties/LegendsPlayerProperties."<init>":()V
+      50: invokevirtual #160                // Method net/minecraft/entity/Entity.registerExtendedProperties:(Ljava/lang/String;Lnet/minecraftforge/common/IExtendedEntityProperties;)Ljava/lang/String;
+      53: pop
+      54: return
+
+  public void onClonePlayer(net.minecraftforge.event.entity.player.PlayerEvent$Clone);
+    Code:
+       0: aload_1
+       1: getfield      #169                // Field net/minecraftforge/event/entity/player/PlayerEvent$Clone.entityPlayer:Lnet/minecraft/entity/player/EntityPlayer;
+       4: invokestatic  #173                // Method com/tihyo/legends/management/properties/LegendsPlayerProperties.getData:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/management/properties/LegendsPlayerProperties;
+       7: aload_1
+       8: getfield      #176                // Field net/minecraftforge/event/entity/player/PlayerEvent$Clone.original:Lnet/minecraft/entity/player/EntityPlayer;
+      11: invokestatic  #173                // Method com/tihyo/legends/management/properties/LegendsPlayerProperties.getData:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/management/properties/LegendsPlayerProperties;
+      14: invokevirtual #180                // Method com/tihyo/legends/management/properties/LegendsPlayerProperties.copy:(Lcom/tihyo/legends/management/properties/LegendsPlayerProperties;)V
+      17: aload_1
+      18: getfield      #169                // Field net/minecraftforge/event/entity/player/PlayerEvent$Clone.entityPlayer:Lnet/minecraft/entity/player/EntityPlayer;
+      21: invokestatic  #183                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.getData:(Lnet/minecraft/entity/EntityLivingBase;)Lcom/tihyo/legends/management/properties/LegendsEntityProperties;
+      24: aload_1
+      25: getfield      #176                // Field net/minecraftforge/event/entity/player/PlayerEvent$Clone.original:Lnet/minecraft/entity/player/EntityPlayer;
+      28: invokestatic  #183                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.getData:(Lnet/minecraft/entity/EntityLivingBase;)Lcom/tihyo/legends/management/properties/LegendsEntityProperties;
+      31: invokevirtual #186                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.copy:(Lcom/tihyo/legends/management/properties/LegendsEntityProperties;)V
+      34: return
+
+  public void onSync(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+    Code:
+       0: aload_1
+       1: getfield      #193                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entityLiving:Lnet/minecraft/entity/EntityLivingBase;
+       4: astore_2
+       5: aload_2
+       6: invokestatic  #183                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.getData:(Lnet/minecraft/entity/EntityLivingBase;)Lcom/tihyo/legends/management/properties/LegendsEntityProperties;
+       9: astore_3
+      10: aload_3
+      11: invokevirtual #196                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.onUpdate:()V
+      14: aload_2
+      15: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      18: ifeq          92
+      21: aload_1
+      22: getfield      #197                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+      25: checkcast     #86                 // class net/minecraft/entity/player/EntityPlayer
+      28: astore        4
+      30: aload         4
+      32: getfield      #119                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      35: getfield      #92                 // Field net/minecraft/world/World.field_72995_K:Z
+      38: ifne          84
+      41: aload_0
+      42: getfield      #68                 // Field playersToSync:Ljava/util/List;
+      45: invokeinterface #201,  1          // InterfaceMethod java/util/List.size:()I
+      50: ifle          84
+      53: aload_0
+      54: getfield      #68                 // Field playersToSync:Ljava/util/List;
+      57: aload         4
+      59: invokeinterface #204,  2          // InterfaceMethod java/util/List.contains:(Ljava/lang/Object;)Z
+      64: ifeq          84
+      67: aload         4
+      69: invokestatic  #209                // Method com/tihyo/legends/management/properties/PropertyManager.updatePlayerWithServerInfo:(Lnet/minecraft/entity/player/EntityPlayer;)V
+      72: aload_0
+      73: getfield      #68                 // Field playersToSync:Ljava/util/List;
+      76: aload         4
+      78: invokeinterface #212,  2          // InterfaceMethod java/util/List.remove:(Ljava/lang/Object;)Z
+      83: pop
+      84: aload         4
+      86: invokestatic  #173                // Method com/tihyo/legends/management/properties/LegendsPlayerProperties.getData:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/management/properties/LegendsPlayerProperties;
+      89: invokevirtual #213                // Method com/tihyo/legends/management/properties/LegendsPlayerProperties.onUpdate:()V
+      92: aload_2
+      93: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      96: ifne          190
+      99: iconst_0
+     100: istore        4
+     102: iload         4
+     104: aload_3
+     105: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+     108: invokeinterface #201,  1          // InterfaceMethod java/util/List.size:()I
+     113: if_icmpge     187
+     116: aload_3
+     117: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+     120: iload         4
+     122: invokeinterface #220,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+     127: checkcast     #222                // class com/tihyo/legends/abilities/StatusEffect
+     130: astore        5
+     132: iconst_0
+     133: istore        6
+     135: aload         5
+     137: getfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     140: ldc           #227                // int 1000000
+     142: if_icmpeq     156
+     145: aload         5
+     147: dup
+     148: getfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     151: iconst_1
+     152: isub
+     153: putfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     156: aload         5
+     158: getfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     161: ifle          169
+     164: iload         6
+     166: ifeq          181
+     169: aload_3
+     170: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+     173: iload         4
+     175: invokeinterface #229,  2          // InterfaceMethod java/util/List.remove:(I)Ljava/lang/Object;
+     180: pop
+     181: iinc          4, 1
+     184: goto          102
+     187: goto          283
+     190: aload_2
+     191: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+     194: ifeq          283
+     197: iconst_0
+     198: istore        4
+     200: iload         4
+     202: aload_3
+     203: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+     206: invokeinterface #201,  1          // InterfaceMethod java/util/List.size:()I
+     211: if_icmpge     283
+     214: aload_3
+     215: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+     218: iload         4
+     220: invokeinterface #220,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+     225: checkcast     #222                // class com/tihyo/legends/abilities/StatusEffect
+     228: astore        5
+     230: iconst_0
+     231: istore        6
+     233: aload         5
+     235: invokevirtual #233                // Method com/tihyo/legends/abilities/StatusEffect.isMaxDuration:()Z
+     238: ifne          252
+     241: aload         5
+     243: dup
+     244: getfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     247: iconst_1
+     248: isub
+     249: putfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     252: aload         5
+     254: getfield      #226                // Field com/tihyo/legends/abilities/StatusEffect.duration:I
+     257: ifle          265
+     260: iload         6
+     262: ifeq          277
+     265: aload_3
+     266: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+     269: iload         4
+     271: invokeinterface #229,  2          // InterfaceMethod java/util/List.remove:(I)Ljava/lang/Object;
+     276: pop
+     277: iinc          4, 1
+     280: goto          200
+     283: return
+
+  public void onDeath(net.minecraftforge.event.entity.living.LivingDeathEvent);
+    Code:
+       0: aload_1
+       1: getfield      #245                // Field net/minecraftforge/event/entity/living/LivingDeathEvent.entityLiving:Lnet/minecraft/entity/EntityLivingBase;
+       4: invokestatic  #183                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.getData:(Lnet/minecraft/entity/EntityLivingBase;)Lcom/tihyo/legends/management/properties/LegendsEntityProperties;
+       7: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+      10: invokeinterface #248,  1          // InterfaceMethod java/util/List.clear:()V
+      15: aload_1
+      16: getfield      #249                // Field net/minecraftforge/event/entity/living/LivingDeathEvent.entity:Lnet/minecraft/entity/Entity;
+      19: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      22: ifeq          49
+      25: aload_1
+      26: getfield      #249                // Field net/minecraftforge/event/entity/living/LivingDeathEvent.entity:Lnet/minecraft/entity/Entity;
+      29: checkcast     #86                 // class net/minecraft/entity/player/EntityPlayer
+      32: astore_2
+      33: aload_2
+      34: invokestatic  #254                // Method com/tihyo/legends/management/properties/LegendsProperties.onDeath:(Lnet/minecraft/entity/Entity;)V
+      37: aload_2
+      38: invokestatic  #183                // Method com/tihyo/legends/management/properties/LegendsEntityProperties.getData:(Lnet/minecraft/entity/EntityLivingBase;)Lcom/tihyo/legends/management/properties/LegendsEntityProperties;
+      41: getfield      #216                // Field com/tihyo/legends/management/properties/LegendsEntityProperties.activeEffects:Ljava/util/List;
+      44: invokeinterface #248,  1          // InterfaceMethod java/util/List.clear:()V
+      49: return
+
+  public void onDeezNuts(cpw.mods.fml.common.gameevent.TickEvent$PlayerTickEvent);
+    Code:
+       0: aload_1
+       1: getfield      #259                // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.player:Lnet/minecraft/entity/player/EntityPlayer;
+       4: getfield      #119                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+       7: invokevirtual #263                // Method net/minecraft/world/World.func_82736_K:()Lnet/minecraft/world/GameRules;
+      10: astore_2
+      11: aload_1
+      12: getfield      #259                // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.player:Lnet/minecraft/entity/player/EntityPlayer;
+      15: instanceof    #86                 // class net/minecraft/entity/player/EntityPlayer
+      18: ifeq          119
+      21: aload_1
+      22: getfield      #259                // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.player:Lnet/minecraft/entity/player/EntityPlayer;
+      25: astore_3
+      26: aload_3
+      27: invokestatic  #269                // Method com/tihyo/legends/management/LegendsHelper.getCharacter:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/management/characters/LegendsCharacter;
+      30: astore        4
+      32: aload_1
+      33: getfield      #273                // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.side:Lcpw/mods/fml/relauncher/Side;
+      36: invokevirtual #278                // Method cpw/mods/fml/relauncher/Side.isClient:()Z
+      39: ifeq          119
+      42: aload_1
+      43: getfield      #282                // Field cpw/mods/fml/common/gameevent/TickEvent$PlayerTickEvent.phase:Lcpw/mods/fml/common/gameevent/TickEvent$Phase;
+      46: getstatic     #285                // Field cpw/mods/fml/common/gameevent/TickEvent$Phase.START:Lcpw/mods/fml/common/gameevent/TickEvent$Phase;
+      49: if_acmpne     119
+      52: getstatic     #289                // Field com/tihyo/legends/management/properties/LegendsProperties.LOG_IN:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      55: aload_3
+      56: invokevirtual #292                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      59: checkcast     #294                // class java/lang/Integer
+      62: invokevirtual #297                // Method java/lang/Integer.intValue:()I
+      65: ifle          119
+      68: aload         4
+      70: ifnull        119
+      73: aload_3
+      74: invokestatic  #303                // Method com/tihyo/legends/management/PlayerHelper.getLCHRS:(Lnet/minecraft/entity/player/EntityPlayer;)Ljava/util/ArrayList;
+      77: aload         4
+      79: invokevirtual #309                // Method com/tihyo/legends/management/characters/LegendsCharacter.getName:()Ljava/lang/String;
+      82: invokevirtual #310                // Method java/util/ArrayList.contains:(Ljava/lang/Object;)Z
+      85: ifeq          119
+      88: getstatic     #313                // Field com/tihyo/legends/management/properties/LegendsProperties.IS_VERIFIED2:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      91: aload_3
+      92: invokevirtual #292                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      95: checkcast     #315                // class java/lang/Boolean
+      98: invokevirtual #318                // Method java/lang/Boolean.booleanValue:()Z
+     101: ifne          113
+     104: aload         4
+     106: iconst_1
+     107: invokevirtual #322                // Method com/tihyo/legends/management/characters/LegendsCharacter.setLocked:(Z)V
+     110: goto          119
+     113: aload         4
+     115: iconst_0
+     116: invokevirtual #322                // Method com/tihyo/legends/management/characters/LegendsCharacter.setLocked:(Z)V
+     119: return
+
+  static {};
+    Code:
+       0: new           #2                  // class com/tihyo/legends/handlers/LegendsPropertiesHandler
+       3: dup
+       4: ldc_w         #331                // String INSTANCE
+       7: iconst_0
+       8: invokespecial #332                // Method "<init>":(Ljava/lang/String;I)V
+      11: putstatic     #334                // Field INSTANCE:Lcom/tihyo/legends/handlers/LegendsPropertiesHandler;
+      14: iconst_1
+      15: anewarray     #2                  // class com/tihyo/legends/handlers/LegendsPropertiesHandler
+      18: dup
+      19: iconst_0
+      20: getstatic     #334                // Field INSTANCE:Lcom/tihyo/legends/handlers/LegendsPropertiesHandler;
+      23: aastore
+      24: putstatic     #45                 // Field $VALUES:[Lcom/tihyo/legends/handlers/LegendsPropertiesHandler;
+      27: return
+}

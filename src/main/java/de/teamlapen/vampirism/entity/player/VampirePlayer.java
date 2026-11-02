@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.mrsand.StatBoostChanges.util.BatFormDebug;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
@@ -318,6 +319,9 @@ public class VampirePlayer implements ISyncableExtendedProperties, IMinionLord {
 	private boolean vampireLord = false;
 
 	private boolean batTransformed = false;
+
+	/** World time of last bat onSkillToggled (Legends debounce). -1 = never. */
+	private long lastBatToggleTick = -1L;
 
 	private int ticksInSun = 0;
 
@@ -857,6 +861,16 @@ public class VampirePlayer implements ISyncableExtendedProperties, IMinionLord {
 		ISkill s = Skills.getSkill(i);
 		if (s == null)
 			return;
+		boolean legendsBat = s == Skills.batMode && Loader.isModLoaded("legends");
+		if (legendsBat && player.worldObj != null) {
+			long now = player.worldObj.getTotalWorldTime();
+			// Gate on >= 0 so first toggle works (Long.MIN_VALUE overflow made every press debounce).
+			if (lastBatToggleTick >= 0 && now - lastBatToggleTick <= 5) {
+				BatFormDebug.log(player, "debounce", "skillTimer=" + skillTimer[i] + " dt=" + (now - lastBatToggleTick));
+				return;
+			}
+			lastBatToggleTick = now;
+		}
 		int t = skillTimer[i];
 		if (t > 0) {// Running, only for lasting skills
 			// Mist: second press starts 2s demist (or cancels demist); not instant off
@@ -865,8 +879,16 @@ public class VampirePlayer implements ISyncableExtendedProperties, IMinionLord {
 				dirty = true;
 				return;
 			}
-			skillTimer[i] = Math.min((-s.getCooldown()) + t, 0);
+			if (legendsBat) {
+				// Stock Math.min((-cd)+t,0) → 0 when duration is huge; second packet re-enters.
+				skillTimer[i] = -10;
+			} else {
+				skillTimer[i] = Math.min((-s.getCooldown()) + t, 0);
+			}
 			((ILastingSkill) s).onDeactivated(this, player);
+			if (legendsBat) {
+				BatFormDebug.log(player, "toggleOff", "skillTimer=" + skillTimer[i]);
+			}
 		} else if (t == 0) {// Ready
 			int r = s.canUse(this, player);
 			if (r == -1) {
@@ -881,18 +903,30 @@ public class VampirePlayer implements ISyncableExtendedProperties, IMinionLord {
 					} else {
 						skillTimer[i] = -s.getCooldown();
 					}
+					if (legendsBat) {
+						BatFormDebug.log(player, "toggleOn", "skillTimer=" + skillTimer[i]);
+					}
 				}
 
 			}
 		} else {// In cooldown
+			if (legendsBat) {
+				BatFormDebug.log(player, "cooldown", "skillTimer=" + skillTimer[i]);
+			}
 			player.addChatMessage(new ChatComponentTranslation("text.vampirism.skill.cooldown_not_over"));
 		}
-		// Apply bat hitbox immediately on toggle (keeps batTransformed in sync so onUpdate won't double-apply)
+		// Apply bat hitbox immediately on toggle (keeps batTransformed in sync so onUpdate won't double-apply).
+		// With Legends, MorphHelper owns the model — setPlayerBat causes hand flicker / double bat.
 		if (s == Skills.batMode) {
 			boolean active = skillTimer[i] > 0;
 			if (batTransformed != active) {
 				batTransformed = active;
-				VampirismMod.proxy.setPlayerBat(player, batTransformed);
+				if (Loader.isModLoaded("legends")) {
+					BatFormDebug.log(player, "setPlayerBat", "skipped bat=" + batTransformed);
+				} else {
+					BatFormDebug.log(player, "setPlayerBat", "call bat=" + batTransformed);
+					VampirismMod.proxy.setPlayerBat(player, batTransformed);
+				}
 			}
 		}
 		dirty = true;
@@ -1032,7 +1066,12 @@ public class VampirePlayer implements ISyncableExtendedProperties, IMinionLord {
 
 		if (batTransformed != this.isSkillActive(Skills.batMode)) {
 			batTransformed = !batTransformed;
-			VampirismMod.proxy.setPlayerBat(player, batTransformed);
+			if (Loader.isModLoaded("legends")) {
+				BatFormDebug.log(player, "setPlayerBat", "skipped-onUpdate bat=" + batTransformed);
+			} else {
+				BatFormDebug.log(player, "setPlayerBat", "call-onUpdate bat=" + batTransformed);
+				VampirismMod.proxy.setPlayerBat(player, batTransformed);
+			}
 		}
 
 		/**

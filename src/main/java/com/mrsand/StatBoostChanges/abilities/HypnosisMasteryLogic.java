@@ -10,8 +10,11 @@ import com.emoniph.witchery.entity.EntityWitchHunter;
 import com.emoniph.witchery.util.SoundEffect;
 import com.emoniph.witchery.util.TimeUtil;
 import com.mrsand.StatBoostChanges.abilities.powers.BvVampirePowers;
+import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
+import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
+import com.mrsand.StatBoostChanges.util.VampireEyesDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.effects.LegendsEffects;
@@ -67,6 +70,8 @@ public final class HypnosisMasteryLogic {
 
 	private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<UUID, Session>();
 	private static final String BV_AIM_OWNED_TAG = "bvHypnosisAimOwned";
+	/** Mastery raised {@code HYPNOTIZING}; do not clear a mesmerize toggle we did not start. */
+	private static final String BV_EYES_OWNED_TAG = "bvHypnosisEyesOwned";
 
 	private HypnosisMasteryLogic() {}
 
@@ -91,7 +96,12 @@ public final class HypnosisMasteryLogic {
 		Integer aimingObj = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
 		int aimingBefore = aimingObj == null ? 0 : aimingObj.intValue();
 
-		player.getEntityData().setBoolean(BV_AIM_OWNED_TAG, true);
+		// Same raise wind-up as L8 base Hypnosis (PowersHandler.hypnosis → setAnimationTicks).
+		NBTTagCompound data = player.getEntityData();
+		if (!data.getBoolean(BV_AIM_OWNED_TAG)) {
+			PlayerHelper.setAnimationTicks(player, 0.0F, 9.0F, 4.0F);
+		}
+		data.setBoolean(BV_AIM_OWNED_TAG, true);
 
 		if (player.worldObj.isRemote) {
 			LegendsProperties.AIMING_RIGHT.setWithoutNotify(player, Integer.valueOf(20));
@@ -109,10 +119,28 @@ public final class HypnosisMasteryLogic {
 			LegendsProperties.AIMING_RIGHT.sync(player);
 			LegendsProperties.AIMING_RIGHT_TYPE.sync(player);
 		}
+		// Powers-only eyes: claim HYPNOTIZING once on server (beginHypnosisChannel → syncClient).
+		beginMasteryEyesIfNeeded(player);
 		if (HypnosisDebug.enabled() && LegendsHelper.getTicks(player) % 10 == 0) {
 			HypnosisDebug.logAiming(player, wouldNoOp ? "server-forceSync" : "server-set",
 					aimingBefore, PlayerHelper.isAimingRightArm(player));
 		}
+	}
+
+	/** Server-only: one begin for mastery-owned eyes; skip if mesmerize already owns the flag. */
+	private static void beginMasteryEyesIfNeeded(EntityPlayer player) {
+		if (player.worldObj.isRemote) return;
+		NBTTagCompound data = player.getEntityData();
+		if (data.getBoolean(BV_EYES_OWNED_TAG)) return;
+		VExtendedPlayer v = VExtendedPlayer.get(player);
+		if (v == null) return;
+		if (v.getBoolean(PlayerKeys.HYPNOTIZING)) {
+			VampireEyesDebug.logState(player, "mastery-eyes-skip-owned-elsewhere");
+			return;
+		}
+		WitcheryUtil.beginHypnosisChannel(player);
+		data.setBoolean(BV_EYES_OWNED_TAG, true);
+		VampireEyesDebug.logState(player, "mastery-eyes-begin");
 	}
 
 	/**
@@ -122,21 +150,34 @@ public final class HypnosisMasteryLogic {
 	public static void clearAimingPose(EntityPlayer player) {
 		if (player == null || player.worldObj == null) return;
 		NBTTagCompound data = player.getEntityData();
-		if (!data.getBoolean(BV_AIM_OWNED_TAG)) return;
-		data.removeTag(BV_AIM_OWNED_TAG);
+		boolean clearedAim = data.getBoolean(BV_AIM_OWNED_TAG);
+		boolean clearedEyes = data.getBoolean(BV_EYES_OWNED_TAG);
+		if (!clearedAim && !clearedEyes) return;
 
-		Integer aimingObj = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
-		int aiming = aimingObj == null ? 0 : aimingObj.intValue();
+		if (clearedAim) {
+			data.removeTag(BV_AIM_OWNED_TAG);
+			Integer aimingObj = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
+			int aiming = aimingObj == null ? 0 : aimingObj.intValue();
 
-		if (player.worldObj.isRemote) {
-			LegendsProperties.AIMING_RIGHT.setWithoutNotify(player, Integer.valueOf(0));
-			LegendsProperties.AIMING_RIGHT_TYPE.setWithoutNotify(player, Integer.valueOf(0));
-		} else {
-			LegendsProperties.AIMING_RIGHT.set(player, Integer.valueOf(0));
-			LegendsProperties.AIMING_RIGHT_TYPE.set(player, Integer.valueOf(0));
+			if (player.worldObj.isRemote) {
+				LegendsProperties.AIMING_RIGHT.setWithoutNotify(player, Integer.valueOf(0));
+				LegendsProperties.AIMING_RIGHT_TYPE.setWithoutNotify(player, Integer.valueOf(0));
+			} else {
+				LegendsProperties.AIMING_RIGHT.set(player, Integer.valueOf(0));
+				LegendsProperties.AIMING_RIGHT_TYPE.set(player, Integer.valueOf(0));
+			}
+			if (HypnosisDebug.enabled()) {
+				HypnosisDebug.logAiming(player, "clear", aiming, PlayerHelper.isAimingRightArm(player));
+			}
 		}
-		if (HypnosisDebug.enabled()) {
-			HypnosisDebug.logAiming(player, "clear", aiming, PlayerHelper.isAimingRightArm(player));
+
+		// Only drop HYPNOTIZING when mastery started it (leave mesmerize toggle alone).
+		if (clearedEyes) {
+			data.removeTag(BV_EYES_OWNED_TAG);
+			if (!player.worldObj.isRemote) {
+				WitcheryUtil.endHypnosisChannel(player);
+				VampireEyesDebug.logState(player, "mastery-eyes-end");
+			}
 		}
 	}
 

@@ -241,28 +241,17 @@ public class LegendsUtil {
 		}
 
 		if (transform) {
-			if (VampireSunRules.generalPowersBlocked(player)) {
-				return false;
-			}
 			if (MorphHelper.isBat(player)) {
+				BatFormDebug.log(player, "morphBat(true)", "already");
 				return true;
 			}
-			if (MorphHelper.isMorphed(player)) {
-				ifMorphedTurnHuman(player);
-			}
-			if (Loader.isModLoaded("witchery") && !WitcheryUtil.hasBloodPower(player, 0, .05F)) {
-				return false;
-			}
-			SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D);
-			MorphHelper.morph(player, MorphRegistry.bat);
-			markBatFormActive(player);
-			// Do not require isBat() this tick — Legends may sync morph on the next tick
-			return true;
+			// toggleBatForm enters; do not require isBat() this tick (Legends sync lag).
+			return toggleBatForm(player);
 		}
 
-		// Disable: only demorph if currently bat (MorphHelper.morph toggles).
-		// Do not eject here — bat hitbox still fits in 1-high gaps; tick ejects after human size.
+		// Disable: always allowed (day/sun must not trap the player as bat).
 		if (MorphHelper.isBat(player)) {
+			BatFormDebug.log(player, "morphBat(false)", "exit");
 			markBatFormForEject(player);
 			MorphHelper.morph(player, MorphRegistry.bat);
 		}
@@ -270,40 +259,62 @@ public class LegendsUtil {
 	}
 
 
+	/** Witchery pie / shared toggle — single enter or exit, never both. */
 	public static void morphBat(EntityPlayer player) {
-		player.worldObj.playSoundAtEntity((Entity)player, "mob.bat.takeoff", 3.0F, 1.0F);
-		//		if(!MorphHelper.isBat(player))
-		//			LegendsUtil.ifMorphedTurnHuman(player);
-		if(player instanceof EntityPlayerMP && !player.worldObj.isRemote) {
+		toggleBatForm(player);
+	}
+
+	/**
+	 * Toggle Legends bat once. Exit always allowed; enter refused during calendar daytime
+	 * (sun-safe biomes count as night). Returns true if now bat or successfully demorphed.
+	 */
+	public static boolean toggleBatForm(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return false;
+		if (player.worldObj.isRemote) {
+			BatFormDebug.log(player, "skip", "remote");
+			return MorphHelper.isBat(player);
+		}
+
+		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff", 3.0F, 1.0F);
+
+		if (player instanceof EntityPlayerMP && Loader.isModLoaded("Morph")) {
 			EntityPlayerMP playerMP = (EntityPlayerMP) player;
-			if (Loader.isModLoaded("Morph")) {
-				if (MorphUtil.isPlayerMorphed(playerMP)) {
-					MorphUtil.saveMorph(playerMP);
-					MorphUtil.forceDemorph(playerMP);
-				} else if (isBat(playerMP)) {
-					MorphUtil.reMorphIntoLast(playerMP);
-				}
+			if (MorphUtil.isPlayerMorphed(playerMP) && !MorphHelper.isBat(player)) {
+				MorphUtil.saveMorph(playerMP);
+				MorphUtil.forceDemorph(playerMP);
 			}
 		}
 
-		if(Loader.isModLoaded("witchery")) {
-			if(!MorphHelper.isBat(player)) {
-				if(WitcheryUtil.hasBloodPower(player, 0, .05F)) {
-					SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D);
-					MorphHelper.morph(player, MorphRegistry.bat);
-					//					LegacyPower
-					//					LegacyRegistry.morphBat.execute(player);
-				}
-			} else {
-				LegendsUtil.ifMorphedTurnHuman(player);
+		if (MorphHelper.isBat(player)) {
+			BatFormDebug.log(player, "exit", "wasBat");
+			markBatFormForEject(player);
+			ifMorphedTurnHuman(player);
+			return true;
+		}
+
+		if (VampireSunRules.batFormBlocked(player)) {
+			BatFormDebug.log(player, "refuse", "daytime");
+			GeneralUtil.sendDebugMessage(player, new ChatComponentText("Can't take bat form during the day")
+					.setChatStyle(new ChatStyle().setBold(true).setColor(EnumChatFormatting.RED)));
+			return false;
+		}
+
+		if (MorphHelper.isMorphed(player)) {
+			ifMorphedTurnHuman(player);
+		}
+
+		if (Loader.isModLoaded("witchery")) {
+			if (!WitcheryUtil.hasBloodPower(player, 0, .05F)) {
+				BatFormDebug.log(player, "refuse", "noBlood");
+				return false;
 			}
-
-
-		}
-		else {
-			MorphHelper.morph(player, MorphRegistry.bat);
 		}
 
+		SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D);
+		MorphHelper.morph(player, MorphRegistry.bat);
+		markBatFormActive(player);
+		BatFormDebug.log(player, "enter", "ok");
+		return true;
 	}
 	public static void morphBeast(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return;
@@ -369,6 +380,13 @@ public class LegendsUtil {
 		if (VampireSunRules.generalPowersBlocked(player)) return;
 		PowersHandler.draculaTeleport(player, Math.max(1, durationSeconds));
 	}
+
+	/** Castlevania Dracula Hellfire (Horror tick spawns EntityHellfire volleys). */
+	public static void hellfire(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.hellfire(player, Math.max(1, durationSeconds));
+	}
 	public static boolean fangs(EntityPlayer player) {
 		return LegendsAbilityBridge.isVampireFangs(player);
 	}
@@ -392,7 +410,7 @@ public class LegendsUtil {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return false;
 		if (player.isInWater()) return false;
 		if (MorphHelper.isBat(player)) return true;
-		if (VampireSunRules.generalPowersBlocked(player)) return false;
+		if (VampireSunRules.batFormBlocked(player)) return false;
 
 		if (player.getEntityData().getInteger("isInCombat") == 1 && MorphHelper.isVampireBeast(player)) {
 			GeneralUtil.sendDebugMessage(player, new ChatComponentText("Can't change in combat while in this form")
@@ -448,20 +466,34 @@ public class LegendsUtil {
 	public static void setStepAssist(EntityPlayer player, int howMuchPlus1) {
 		LegendsAbilities.stepAssist(player, howMuchPlus1);
 	}
-	//Give Altar if new vampire
-	public static void increaseVampireLevel(EntityPlayer player, int vampireLevel) {
-		if (LegacyHelper.getLegacyClass(player) == null) {
-			LegacyHelper.setClass(LegacyRegistry.vampire, player);
+	/**
+	 * Assign Legends vampire legacy when the player has no legacy yet.
+	 * Used when Witchery / Vampirism converts the player.
+	 */
+	public static void ensureVampireLegacy(EntityPlayer player) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) return;
+		if (!Loader.isModLoaded("legends")) return;
+		if (LegacyRegistry.vampire == null) return;
+		if (LegacyHelper.getLegacyClass(player) != null) return;
+		LegacyHelper.setClass(LegacyRegistry.vampire, player);
 
-			if (!player.worldObj.isRemote) {
-				Item altarItemType = Item.getItemFromBlock(RegisterBlocksHorror.altar);
-
-				if (altarItemType != null) {
-					ItemStack altarItem = new ItemStack(altarItemType, 1);
-					GeneralUtil.givePlayerItem(player, altarItem);
-				}
-			}
+		Item altarItemType = Item.getItemFromBlock(RegisterBlocksHorror.altar);
+		if (altarItemType != null) {
+			ItemStack altarItem = new ItemStack(altarItemType, 1);
+			GeneralUtil.givePlayerItem(player, altarItem);
 		}
+	}
+
+	/** Give Altar if new vampire (delegates to {@link #ensureVampireLegacy}). */
+	public static void increaseVampireLevel(EntityPlayer player, int vampireLevel) {
+		ensureVampireLegacy(player);
+	}
+
+	/** Flat skill-point reward for vampire kill / drink-to-death style events. */
+	public static void addVampireKillSkillPoints(EntityPlayer player) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) return;
+		if (!Loader.isModLoaded("legends")) return;
+		LegacyHelper.addSkillPoints(player, 60);
 	}
 	public static boolean getWeakness(EntityPlayer player) {
 		if(player == null) return true;

@@ -13,6 +13,7 @@ import com.mrsand.StatBoostChanges.util.MistPhaseDebug;
 import com.mrsand.StatBoostChanges.util.MorphUtil;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
+import com.mrsand.StatBoostChanges.util.VampirismUtil;
 import com.mrsand.StatBoostChanges.util.WebPassDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.legends.management.LegendsHelper;
@@ -88,14 +89,14 @@ public class LegendsEventHandler {
 					WitcheryUtil.increaseBloodPower(player, (int) (WitcheryUtil.getMaxBloodPower(player)));
 					WitcheryUtil.villagerDied(player, false);
 					if (isVampireBeast && GeneralUtil.getClosestVillage(entity, 128) != null) {
-						player.addExperience(1069);
+						LegendsUtil.addVampireKillSkillPoints(player);
 					}
 				} else {
 					WitcheryUtil.increaseBloodPower(player, (int) (WitcheryUtil.getMaxBloodPower(player) * 0.1F * multiplier));
 				}
 			} else if (isGuard) {
 				WitcheryUtil.increaseBloodPower(player, (int) (WitcheryUtil.getMaxBloodPower(player) * 0.1F) * multiplier);
-				if (isVampireBeast) player.addExperience(1069);
+				if (isVampireBeast) LegendsUtil.addVampireKillSkillPoints(player);
 			}
 		}
 	}
@@ -116,13 +117,13 @@ public class LegendsEventHandler {
 								//								if(WitcheryUtil.getBloodLevel(player) == WitcheryUtil.getMaxBloodPower(player))
 								//									increase = true;
 
-								player.addExperience(1000);
+								LegendsUtil.addVampireKillSkillPoints(player);
 							}
 							else if(WitcheryUtil.isGuard(entity)) {
 								WitcheryUtil.increaseBlood(player, 0, .4F);
 								if(WitcheryUtil.getBloodLevel(player) == WitcheryUtil.getMaxBloodPower(player))
 									increase = true;
-								player.addExperience(1000);
+								LegendsUtil.addVampireKillSkillPoints(player);
 							}
 							else if (entity.getHealth() != 0) {
 								//							target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)event.entityPlayer), 1000.0F);
@@ -135,7 +136,7 @@ public class LegendsEventHandler {
 							//							}
 						}
 						else if(entity instanceof EntityVillager) {
-							player.addExperience(1000);
+							LegendsUtil.addVampireKillSkillPoints(player);
 						}
 					}
 				}
@@ -201,22 +202,36 @@ public class LegendsEventHandler {
 		
 		if (event.side == Side.SERVER && event.phase == Phase.START && !player.worldObj.isRemote) {
 			EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
-			VExtendedPlayer vPlayer =  VExtendedPlayer.get(serverPlayer);
-			int counter = vPlayer.getInteger(PlayerKeys.COUNTER_MORPH);
-			if(Loader.isModLoaded("Morph")) { 
-				if(MorphUtil.getMorphTime(serverPlayer) == .0125F){
+			VExtendedPlayer vPlayer = VExtendedPlayer.get(serverPlayer);
+			if (Loader.isModLoaded("Morph") && vPlayer != null) {
+				int before = vPlayer.getInteger(PlayerKeys.COUNTER_MORPH);
+				int counter = before;
+				if (MorphUtil.getMorphTime(serverPlayer) == .0125F) {
 					counter = 85;
 				}
-				if(counter == 1 && MorphUtil.isPlayerMorphed(serverPlayer)) {
+				if (counter == 1 && MorphUtil.isPlayerMorphed(serverPlayer)) {
 					LegendsUtil.ifMorphedTurnHuman(serverPlayer);
 				}
-				
-				if(counter > 0) {
+				if (counter > 0) {
 					counter--;
 				}
-//				GeneralUtil.sendDebugMessage(serverPlayer, "counter: " + counter);
-				vPlayer.setInteger(PlayerKeys.COUNTER_MORPH, counter);
-				vPlayer.syncClient();
+				// Never syncClient every tick — full IEEP flood thrashes HYPNOTIZING / eyes / ReplayMod.
+				if (counter != before) {
+					vPlayer.setInteger(PlayerKeys.COUNTER_MORPH, counter);
+					vPlayer.syncClient();
+				}
+			}
+			// Catch-up: Witchery / Vampirism vampires with no Legends legacy yet.
+			if (player.ticksExisted % 40 == 0 && !LegendsUtil.isVampire(player)) {
+				boolean otherModVampire = false;
+				if (Loader.isModLoaded("witchery") && WitcheryUtil.isVampire(player)) {
+					otherModVampire = true;
+				} else if (Loader.isModLoaded("vampirism") && VampirismUtil.isVampire(player)) {
+					otherModVampire = true;
+				}
+				if (otherModVampire) {
+					LegendsUtil.ensureVampireLegacy(player);
+				}
 			}
 		}
 

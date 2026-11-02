@@ -13,15 +13,18 @@ import com.emoniph.witchery.common.ExtendedPlayer.VampirePower;
 import com.emoniph.witchery.common.ExtendedPlayer.VampireUltimate;
 import com.emoniph.witchery.item.ItemGeneral;
 import com.emoniph.witchery.util.Config;
-import com.emoniph.witchery.util.CreatureUtil;
 import com.emoniph.witchery.util.SoundEffect;
 import com.emoniph.witchery.util.TransformCreature;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
+import com.mrsand.StatBoostChanges.util.BatFormDebug;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
+
+import de.teamlapen.vampirism.entity.player.VampirePlayer;
+import de.teamlapen.vampirism.entity.player.skills.Skills;
 
 import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,10 +86,7 @@ public abstract class ExtendedPlayerMixin {
 				GeneralUtil.villagerDied(player);
 				if(vampireLevel == 9) {
 					increaseVampireLevel();
-					if (GeneralUtil.getClosestVillage(player, 96) != null)
-						player.addExperience(4788);
-					else
-						player.addExperience(1069);
+					LegendsUtil.addVampireKillSkillPoints(player);
 					player.addPotionEffect(new PotionEffect(Potion.regeneration.id, 10000, 1));
 					player.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 10000, 2));
 					player.addPotionEffect(new PotionEffect(Potion.damageBoost.id, 10000, 2));
@@ -177,10 +177,23 @@ public abstract class ExtendedPlayerMixin {
 
 	@Shadow
 	public abstract void setVampireLevel(int level); //Some reason this code doesn't work nvm, token doesn't work?
+
+	@Shadow
+	public abstract int getVampireLevel();
+
 	@Inject(method = "increaseVampireLevel", at = @At("HEAD"), cancellable = true)
 	private void increaseLegendsVampire(CallbackInfo ci) {
 		ci.cancel();
 		WitcheryUtil.increaseLegendsVampire(player);
+	}
+
+	/** Cover rites / paths that set level without calling increaseVampireLevel. */
+	@Inject(method = "setVampireLevel", at = @At("RETURN"))
+	private void bvEnsureLegendsVampireOnSetLevel(int level, CallbackInfo ci) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) return;
+		if (level > 0 && Loader.isModLoaded("legends")) {
+			LegendsUtil.ensureVampireLegacy(player);
+		}
 	}
 
 	@Shadow private int vampireUltimateCharges;
@@ -196,8 +209,12 @@ public abstract class ExtendedPlayerMixin {
 
 		if (power == VampirePower.BAT && Loader.isModLoaded("legends")) {
 			ci.cancel();
-			if(!CreatureUtil.isInSunlight(player))
-				LegendsUtil.morphBat(player);
+			// Same BatSkill controller as Vampirism pie / Legends key. Debounce + cancel
+			// cooldown in VampirePlayer.onSkillToggled absorb dual-fire on one key release.
+			BatFormDebug.log(player, "witcheryPie", "BAT");
+			if (Skills.batMode != null) {
+				VampirePlayer.get(player).onSkillToggled(Skills.batMode.getId());
+			}
 		}
 		if(power == VampirePower.SPEED) {
 			ci.cancel();

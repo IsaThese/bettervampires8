@@ -19,6 +19,7 @@ import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
+import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.horror.legacy.LegacyVampire;
 import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.abilities.LegendsImmunities;
@@ -124,6 +125,12 @@ public abstract class LegacyVampireMixin {
 		boolean weak = LegacyHelper.getLegacyClass(player) != null
 				&& LegacyHelper.getLegacyClass(player).getWeaknesses(player);
 
+		// Bat: strip on calendar daytime even in shade (non-lords aren't "weak" there).
+		if (MorphHelper.isBat(player) && VampireSunRules.shouldForceClearBat(player)) {
+			com.mrsand.StatBoostChanges.util.BatFormDebug.log(player, "forceClear", "daytime");
+			LegendsUtil.ifMorphedTurnHuman(player);
+		}
+
 		if (weak) {
 			if (VampireSunRules.shouldForceClearForms(player)) {
 				if (MorphHelper.isMorphed(player)) {
@@ -141,8 +148,10 @@ public abstract class LegacyVampireMixin {
 			if (VampireSunRules.shouldForceClearMist(player) && LegendsAbilityBridge.isMist(player)) {
 				LegendsUtil.clearMistForm(player);
 			}
-			vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, false);
-			if (!vPlayer.getBoolean(PlayerKeys.IS_STARVING)) {
+			if (vPlayer.getBoolean(PlayerKeys.HYPNOTIZING)) {
+				WitcheryUtil.endHypnosisChannel(player);
+				player.getEntityData().removeTag("bvHypnosisEyesOwned");
+			} else if (!vPlayer.getBoolean(PlayerKeys.IS_STARVING)) {
 				VisualUtil.changeForm(player, false);
 			}
 		}

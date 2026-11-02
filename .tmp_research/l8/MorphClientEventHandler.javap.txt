@@ -1,0 +1,969 @@
+﻿Compiled from "MorphClientEventHandler.java"
+public class com.tihyo.legends.morph.MorphClientEventHandler {
+  private com.tihyo.legends.client.models.ModelPlayerBat modelBat;
+
+  net.minecraft.client.renderer.entity.Render renderBat;
+
+  private com.tihyo.legends.client.models.ModelPlayerWolf modelWolf;
+
+  net.minecraft.client.renderer.entity.Render renderWolf;
+
+  static com.tihyo.horror.client.models.legacy.ModelVampireBeast modelVampireBeast;
+
+  static com.tihyo.horror.client.models.legacy.ModelVampireBeastPOV modelVampireBeastPOV;
+
+  net.minecraft.client.renderer.entity.Render renderVampireBeast;
+
+  private com.tihyo.superheroes.client.models.legacy.ModelSymbiote modelSymbiote;
+
+  private com.tihyo.superheroes.client.models.legacy.ModelSymbioteVenom modelVenom;
+
+  private com.tihyo.legends.client.models.characters.ModelVenomUltimate modelUltimateVenom;
+
+  private com.tihyo.legends.client.models.characters.ModelVenomLeePrice modelVenomLeePrice;
+
+  private com.tihyo.legends.client.models.characters.ModelVenom2099 modelVenom2099;
+
+  static com.tihyo.superheroes.client.models.legacy.ModelSymbiotePOV modelSymbiotePOV;
+
+  static com.tihyo.superheroes.client.models.legacy.ModelSymbioteVenomPOV modelSymbioteVenomPOV;
+
+  static com.tihyo.legends.client.models.characters.ModelVenomUltimatePOV modelVenomUltimatePOV;
+
+  static com.tihyo.legends.client.models.characters.ModelVenomLeePricePOV modelVenomLeePricePOV;
+
+  static com.tihyo.legends.client.models.characters.ModelVenom2099POV modelVenom2099POV;
+
+  private com.tihyo.superheroes.client.models.legacy.ModelSymbioteFang modelSymbioteFang;
+
+  static com.tihyo.superheroes.client.models.ModelMartianForm modelMartianForm;
+
+  static com.tihyo.superheroes.client.models.ModelMartianFormPOV modelMartianFormPOV;
+
+  static com.tihyo.superheroes.client.models.ModelMartianSnake modelMartianSnake;
+
+  static com.tihyo.superheroes.client.models.ModelMartianSnakeJusticeLords modelMartianSnakeJL;
+
+  static com.tihyo.superheroes.client.models.ModelMartianSnakePOV modelMartianSnakePOV;
+
+  net.minecraft.client.renderer.entity.Render renderSymbiote;
+
+  net.minecraft.client.renderer.entity.Render renderVenom;
+
+  net.minecraft.client.renderer.entity.Render renderVenomUltimate;
+
+  net.minecraft.client.renderer.entity.Render renderVenomLeePrice;
+
+  net.minecraft.client.renderer.entity.Render renderVenom2099;
+
+  net.minecraft.client.renderer.entity.Render renderSymbioteFang;
+
+  net.minecraft.client.renderer.entity.Render renderMartianForm;
+
+  net.minecraft.client.renderer.entity.Render renderMartianSnake;
+
+  net.minecraft.client.renderer.entity.Render renderMartianSnakeJL;
+
+  static com.tihyo.horror.client.models.characters.ModelDraculaTrueForm modelDraculaTrueForm;
+
+  net.minecraft.client.renderer.entity.Render renderDraculaTrueForm;
+
+  static com.tihyo.legends.client.models.legacy.ModelWerewolf modelWerewolf;
+
+  static com.tihyo.legends.client.models.legacy.ModelWerewolfPOV modelWerewolfPOV;
+
+  net.minecraft.client.renderer.entity.Render renderWerewolf;
+
+  public com.tihyo.legends.morph.MorphClientEventHandler();
+    Code:
+       0: aload_0
+       1: invokespecial #93                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: new           #95                 // class com/tihyo/legends/client/models/ModelPlayerBat
+       8: dup
+       9: invokespecial #96                 // Method com/tihyo/legends/client/models/ModelPlayerBat."<init>":()V
+      12: putfield      #98                 // Field modelBat:Lcom/tihyo/legends/client/models/ModelPlayerBat;
+      15: aload_0
+      16: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+      19: dup
+      20: aload_0
+      21: getfield      #98                 // Field modelBat:Lcom/tihyo/legends/client/models/ModelPlayerBat;
+      24: ldc           #102                // String minecraft:textures/entity/bat.png
+      26: fconst_1
+      27: iconst_0
+      28: iconst_0
+      29: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+      32: putfield      #107                // Field renderBat:Lnet/minecraft/client/renderer/entity/Render;
+      35: aload_0
+      36: new           #109                // class com/tihyo/legends/client/models/ModelPlayerWolf
+      39: dup
+      40: invokespecial #110                // Method com/tihyo/legends/client/models/ModelPlayerWolf."<init>":()V
+      43: putfield      #112                // Field modelWolf:Lcom/tihyo/legends/client/models/ModelPlayerWolf;
+      46: aload_0
+      47: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+      50: dup
+      51: aload_0
+      52: getfield      #112                // Field modelWolf:Lcom/tihyo/legends/client/models/ModelPlayerWolf;
+      55: ldc           #114                // String minecraft:textures/entity/wolf/wolf.png
+      57: fconst_1
+      58: iconst_0
+      59: iconst_0
+      60: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+      63: putfield      #116                // Field renderWolf:Lnet/minecraft/client/renderer/entity/Render;
+      66: aload_0
+      67: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+      70: dup
+      71: getstatic     #118                // Field modelVampireBeast:Lcom/tihyo/horror/client/models/legacy/ModelVampireBeast;
+      74: ldc           #120                // String legends:textures/models/legacy/vampire_beast.png
+      76: fconst_1
+      77: iconst_1
+      78: iconst_0
+      79: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+      82: putfield      #122                // Field renderVampireBeast:Lnet/minecraft/client/renderer/entity/Render;
+      85: aload_0
+      86: new           #124                // class com/tihyo/superheroes/client/models/legacy/ModelSymbiote
+      89: dup
+      90: invokespecial #125                // Method com/tihyo/superheroes/client/models/legacy/ModelSymbiote."<init>":()V
+      93: putfield      #127                // Field modelSymbiote:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbiote;
+      96: aload_0
+      97: new           #129                // class com/tihyo/superheroes/client/models/legacy/ModelSymbioteVenom
+     100: dup
+     101: invokespecial #130                // Method com/tihyo/superheroes/client/models/legacy/ModelSymbioteVenom."<init>":()V
+     104: putfield      #132                // Field modelVenom:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbioteVenom;
+     107: aload_0
+     108: new           #134                // class com/tihyo/legends/client/models/characters/ModelVenomUltimate
+     111: dup
+     112: invokespecial #135                // Method com/tihyo/legends/client/models/characters/ModelVenomUltimate."<init>":()V
+     115: putfield      #137                // Field modelUltimateVenom:Lcom/tihyo/legends/client/models/characters/ModelVenomUltimate;
+     118: aload_0
+     119: new           #139                // class com/tihyo/legends/client/models/characters/ModelVenomLeePrice
+     122: dup
+     123: invokespecial #140                // Method com/tihyo/legends/client/models/characters/ModelVenomLeePrice."<init>":()V
+     126: putfield      #142                // Field modelVenomLeePrice:Lcom/tihyo/legends/client/models/characters/ModelVenomLeePrice;
+     129: aload_0
+     130: new           #144                // class com/tihyo/legends/client/models/characters/ModelVenom2099
+     133: dup
+     134: invokespecial #145                // Method com/tihyo/legends/client/models/characters/ModelVenom2099."<init>":()V
+     137: putfield      #147                // Field modelVenom2099:Lcom/tihyo/legends/client/models/characters/ModelVenom2099;
+     140: aload_0
+     141: new           #149                // class com/tihyo/superheroes/client/models/legacy/ModelSymbioteFang
+     144: dup
+     145: invokespecial #150                // Method com/tihyo/superheroes/client/models/legacy/ModelSymbioteFang."<init>":()V
+     148: putfield      #152                // Field modelSymbioteFang:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbioteFang;
+     151: aload_0
+     152: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     155: dup
+     156: aload_0
+     157: getfield      #127                // Field modelSymbiote:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbiote;
+     160: ldc           #154                // String legends:textures/models/legacy/symbiotes/black/default.png
+     162: fconst_1
+     163: iconst_1
+     164: iconst_0
+     165: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     168: putfield      #156                // Field renderSymbiote:Lnet/minecraft/client/renderer/entity/Render;
+     171: aload_0
+     172: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     175: dup
+     176: aload_0
+     177: getfield      #132                // Field modelVenom:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbioteVenom;
+     180: ldc           #158                // String legends:textures/models/legacy/symbiotes/venom/default.png
+     182: fconst_1
+     183: iconst_1
+     184: iconst_0
+     185: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     188: putfield      #160                // Field renderVenom:Lnet/minecraft/client/renderer/entity/Render;
+     191: aload_0
+     192: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     195: dup
+     196: aload_0
+     197: getfield      #137                // Field modelUltimateVenom:Lcom/tihyo/legends/client/models/characters/ModelVenomUltimate;
+     200: ldc           #162                // String legends:textures/models/legacy/symbiotes/venom/ultimate/default.png
+     202: fconst_1
+     203: iconst_1
+     204: iconst_0
+     205: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     208: putfield      #164                // Field renderVenomUltimate:Lnet/minecraft/client/renderer/entity/Render;
+     211: aload_0
+     212: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     215: dup
+     216: aload_0
+     217: getfield      #142                // Field modelVenomLeePrice:Lcom/tihyo/legends/client/models/characters/ModelVenomLeePrice;
+     220: ldc           #166                // String legends:textures/models/legacy/symbiotes/venom/leeprice/default.png
+     222: fconst_1
+     223: iconst_1
+     224: iconst_0
+     225: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     228: putfield      #168                // Field renderVenomLeePrice:Lnet/minecraft/client/renderer/entity/Render;
+     231: aload_0
+     232: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     235: dup
+     236: aload_0
+     237: getfield      #147                // Field modelVenom2099:Lcom/tihyo/legends/client/models/characters/ModelVenom2099;
+     240: ldc           #170                // String legends:textures/models/legacy/symbiotes/venom/2099/default.png
+     242: fconst_1
+     243: iconst_1
+     244: iconst_0
+     245: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     248: putfield      #172                // Field renderVenom2099:Lnet/minecraft/client/renderer/entity/Render;
+     251: aload_0
+     252: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     255: dup
+     256: aload_0
+     257: getfield      #152                // Field modelSymbioteFang:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbioteFang;
+     260: ldc           #174                // String legends:textures/models/legacy/symbiotes/black/fang.png
+     262: fconst_1
+     263: iconst_1
+     264: iconst_0
+     265: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     268: putfield      #176                // Field renderSymbioteFang:Lnet/minecraft/client/renderer/entity/Render;
+     271: aload_0
+     272: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     275: dup
+     276: getstatic     #178                // Field modelMartianForm:Lcom/tihyo/superheroes/client/models/ModelMartianForm;
+     279: ldc           #180                // String sum:textures/models/mobs/martian_form/martian_form.png
+     281: fconst_1
+     282: iconst_0
+     283: iconst_0
+     284: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     287: putfield      #182                // Field renderMartianForm:Lnet/minecraft/client/renderer/entity/Render;
+     290: aload_0
+     291: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     294: dup
+     295: getstatic     #184                // Field modelMartianSnake:Lcom/tihyo/superheroes/client/models/ModelMartianSnake;
+     298: ldc           #186                // String sum:textures/models/mobs/martian_snake/martian_snake.png
+     300: fconst_1
+     301: iconst_0
+     302: iconst_0
+     303: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     306: putfield      #188                // Field renderMartianSnake:Lnet/minecraft/client/renderer/entity/Render;
+     309: aload_0
+     310: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     313: dup
+     314: getstatic     #190                // Field modelMartianSnakeJL:Lcom/tihyo/superheroes/client/models/ModelMartianSnakeJusticeLords;
+     317: ldc           #192                // String sum:textures/models/mobs/martian_snake/martian_snake_jl.png
+     319: fconst_1
+     320: iconst_0
+     321: iconst_0
+     322: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     325: putfield      #194                // Field renderMartianSnakeJL:Lnet/minecraft/client/renderer/entity/Render;
+     328: aload_0
+     329: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     332: dup
+     333: getstatic     #196                // Field modelDraculaTrueForm:Lcom/tihyo/horror/client/models/characters/ModelDraculaTrueForm;
+     336: ldc           #198                // String horror:textures/models/armors/dracula_castlevania/default/true_form.png
+     338: fconst_1
+     339: iconst_1
+     340: iconst_0
+     341: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     344: putfield      #200                // Field renderDraculaTrueForm:Lnet/minecraft/client/renderer/entity/Render;
+     347: aload_0
+     348: new           #100                // class com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer
+     351: dup
+     352: getstatic     #202                // Field modelWerewolf:Lcom/tihyo/legends/client/models/legacy/ModelWerewolf;
+     355: ldc           #204                // String horror:textures/models/legacy/werewolf/black.png
+     357: fconst_1
+     358: iconst_1
+     359: iconst_0
+     360: invokespecial #105                // Method com/tihyo/legends/client/renders/player/RenderCustomModelAsPlayer."<init>":(Lnet/minecraft/client/model/ModelBase;Ljava/lang/String;FZZ)V
+     363: putfield      #206                // Field renderWerewolf:Lnet/minecraft/client/renderer/entity/Render;
+     366: return
+
+  public void onModelChange(net.minecraftforge.client.event.RenderPlayerEvent$Pre);
+    Code:
+       0: aload_1
+       1: getfield      #218                // Field net/minecraftforge/client/event/RenderPlayerEvent$Pre.entity:Lnet/minecraft/entity/Entity;
+       4: instanceof    #220                // class net/minecraft/client/entity/AbstractClientPlayer
+       7: ifeq          233
+      10: aload_1
+      11: getfield      #218                // Field net/minecraftforge/client/event/RenderPlayerEvent$Pre.entity:Lnet/minecraft/entity/Entity;
+      14: checkcast     #222                // class net/minecraft/entity/player/EntityPlayer
+      17: astore_2
+      18: aload_1
+      19: getfield      #226                // Field net/minecraftforge/client/event/RenderPlayerEvent$Pre.renderer:Lnet/minecraft/client/renderer/entity/RenderPlayer;
+      22: getfield      #232                // Field net/minecraft/client/renderer/entity/RenderPlayer.field_77109_a:Lnet/minecraft/client/model/ModelBiped;
+      25: astore_3
+      26: aload_2
+      27: invokestatic  #238                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      30: ifne          52
+      33: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      36: aload_2
+      37: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      40: checkcast     #250                // class java/lang/Float
+      43: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+      46: ldc           #255                // float 0.2f
+      48: fcmpl
+      49: ifgt          59
+      52: aload_2
+      53: invokestatic  #261                // Method com/tihyo/legends/morph/MorphHelper.hasIllegalArmor:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      56: ifeq          134
+      59: aload_3
+      60: getfield      #265                // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+      63: iconst_1
+      64: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      67: aload_3
+      68: getfield      #274                // Field net/minecraft/client/model/ModelBiped.field_78114_d:Lnet/minecraft/client/model/ModelRenderer;
+      71: iconst_1
+      72: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      75: aload_3
+      76: getfield      #277                // Field net/minecraft/client/model/ModelBiped.field_78121_j:Lnet/minecraft/client/model/ModelRenderer;
+      79: iconst_1
+      80: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      83: aload_3
+      84: getfield      #280                // Field net/minecraft/client/model/ModelBiped.field_78115_e:Lnet/minecraft/client/model/ModelRenderer;
+      87: iconst_1
+      88: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      91: aload_3
+      92: getfield      #283                // Field net/minecraft/client/model/ModelBiped.field_78122_k:Lnet/minecraft/client/model/ModelRenderer;
+      95: iconst_1
+      96: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      99: aload_3
+     100: getfield      #286                // Field net/minecraft/client/model/ModelBiped.field_78113_g:Lnet/minecraft/client/model/ModelRenderer;
+     103: iconst_1
+     104: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     107: aload_3
+     108: getfield      #289                // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+     111: iconst_1
+     112: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     115: aload_3
+     116: getfield      #292                // Field net/minecraft/client/model/ModelBiped.field_78124_i:Lnet/minecraft/client/model/ModelRenderer;
+     119: iconst_1
+     120: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     123: aload_3
+     124: getfield      #295                // Field net/minecraft/client/model/ModelBiped.field_78123_h:Lnet/minecraft/client/model/ModelRenderer;
+     127: iconst_1
+     128: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     131: goto          233
+     134: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     137: aload_2
+     138: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     141: checkcast     #250                // class java/lang/Float
+     144: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+     147: ldc_w         #296                // float 0.1f
+     150: fcmpl
+     151: ifle          233
+     154: aload_2
+     155: invokestatic  #238                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     158: ifeq          233
+     161: aload_3
+     162: getfield      #265                // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+     165: iconst_0
+     166: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     169: aload_3
+     170: getfield      #274                // Field net/minecraft/client/model/ModelBiped.field_78114_d:Lnet/minecraft/client/model/ModelRenderer;
+     173: iconst_0
+     174: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     177: aload_3
+     178: getfield      #277                // Field net/minecraft/client/model/ModelBiped.field_78121_j:Lnet/minecraft/client/model/ModelRenderer;
+     181: iconst_0
+     182: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     185: aload_3
+     186: getfield      #280                // Field net/minecraft/client/model/ModelBiped.field_78115_e:Lnet/minecraft/client/model/ModelRenderer;
+     189: iconst_0
+     190: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     193: aload_3
+     194: getfield      #283                // Field net/minecraft/client/model/ModelBiped.field_78122_k:Lnet/minecraft/client/model/ModelRenderer;
+     197: iconst_0
+     198: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     201: aload_3
+     202: getfield      #286                // Field net/minecraft/client/model/ModelBiped.field_78113_g:Lnet/minecraft/client/model/ModelRenderer;
+     205: iconst_0
+     206: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     209: aload_3
+     210: getfield      #289                // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+     213: iconst_0
+     214: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     217: aload_3
+     218: getfield      #292                // Field net/minecraft/client/model/ModelBiped.field_78124_i:Lnet/minecraft/client/model/ModelRenderer;
+     221: iconst_0
+     222: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     225: aload_3
+     226: getfield      #295                // Field net/minecraft/client/model/ModelBiped.field_78123_h:Lnet/minecraft/client/model/ModelRenderer;
+     229: iconst_0
+     230: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     233: return
+
+  public void onModelChange(net.minecraftforge.client.event.RenderPlayerEvent$Post);
+    Code:
+       0: aload_1
+       1: getfield      #303                // Field net/minecraftforge/client/event/RenderPlayerEvent$Post.entity:Lnet/minecraft/entity/Entity;
+       4: instanceof    #220                // class net/minecraft/client/entity/AbstractClientPlayer
+       7: ifeq          233
+      10: aload_1
+      11: getfield      #303                // Field net/minecraftforge/client/event/RenderPlayerEvent$Post.entity:Lnet/minecraft/entity/Entity;
+      14: checkcast     #222                // class net/minecraft/entity/player/EntityPlayer
+      17: astore_2
+      18: aload_1
+      19: getfield      #304                // Field net/minecraftforge/client/event/RenderPlayerEvent$Post.renderer:Lnet/minecraft/client/renderer/entity/RenderPlayer;
+      22: getfield      #232                // Field net/minecraft/client/renderer/entity/RenderPlayer.field_77109_a:Lnet/minecraft/client/model/ModelBiped;
+      25: astore_3
+      26: aload_2
+      27: invokestatic  #238                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      30: ifne          52
+      33: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      36: aload_2
+      37: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      40: checkcast     #250                // class java/lang/Float
+      43: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+      46: ldc           #255                // float 0.2f
+      48: fcmpl
+      49: ifgt          59
+      52: aload_2
+      53: invokestatic  #261                // Method com/tihyo/legends/morph/MorphHelper.hasIllegalArmor:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      56: ifeq          134
+      59: aload_3
+      60: getfield      #265                // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+      63: iconst_1
+      64: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      67: aload_3
+      68: getfield      #274                // Field net/minecraft/client/model/ModelBiped.field_78114_d:Lnet/minecraft/client/model/ModelRenderer;
+      71: iconst_1
+      72: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      75: aload_3
+      76: getfield      #277                // Field net/minecraft/client/model/ModelBiped.field_78121_j:Lnet/minecraft/client/model/ModelRenderer;
+      79: iconst_1
+      80: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      83: aload_3
+      84: getfield      #280                // Field net/minecraft/client/model/ModelBiped.field_78115_e:Lnet/minecraft/client/model/ModelRenderer;
+      87: iconst_1
+      88: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      91: aload_3
+      92: getfield      #283                // Field net/minecraft/client/model/ModelBiped.field_78122_k:Lnet/minecraft/client/model/ModelRenderer;
+      95: iconst_1
+      96: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+      99: aload_3
+     100: getfield      #286                // Field net/minecraft/client/model/ModelBiped.field_78113_g:Lnet/minecraft/client/model/ModelRenderer;
+     103: iconst_1
+     104: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     107: aload_3
+     108: getfield      #289                // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+     111: iconst_1
+     112: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     115: aload_3
+     116: getfield      #292                // Field net/minecraft/client/model/ModelBiped.field_78124_i:Lnet/minecraft/client/model/ModelRenderer;
+     119: iconst_1
+     120: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     123: aload_3
+     124: getfield      #295                // Field net/minecraft/client/model/ModelBiped.field_78123_h:Lnet/minecraft/client/model/ModelRenderer;
+     127: iconst_1
+     128: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     131: goto          233
+     134: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     137: aload_2
+     138: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     141: checkcast     #250                // class java/lang/Float
+     144: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+     147: ldc_w         #296                // float 0.1f
+     150: fcmpl
+     151: ifle          233
+     154: aload_2
+     155: invokestatic  #238                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     158: ifeq          233
+     161: aload_3
+     162: getfield      #265                // Field net/minecraft/client/model/ModelBiped.field_78116_c:Lnet/minecraft/client/model/ModelRenderer;
+     165: iconst_0
+     166: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     169: aload_3
+     170: getfield      #274                // Field net/minecraft/client/model/ModelBiped.field_78114_d:Lnet/minecraft/client/model/ModelRenderer;
+     173: iconst_0
+     174: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     177: aload_3
+     178: getfield      #277                // Field net/minecraft/client/model/ModelBiped.field_78121_j:Lnet/minecraft/client/model/ModelRenderer;
+     181: iconst_0
+     182: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     185: aload_3
+     186: getfield      #280                // Field net/minecraft/client/model/ModelBiped.field_78115_e:Lnet/minecraft/client/model/ModelRenderer;
+     189: iconst_0
+     190: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     193: aload_3
+     194: getfield      #283                // Field net/minecraft/client/model/ModelBiped.field_78122_k:Lnet/minecraft/client/model/ModelRenderer;
+     197: iconst_0
+     198: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     201: aload_3
+     202: getfield      #286                // Field net/minecraft/client/model/ModelBiped.field_78113_g:Lnet/minecraft/client/model/ModelRenderer;
+     205: iconst_0
+     206: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     209: aload_3
+     210: getfield      #289                // Field net/minecraft/client/model/ModelBiped.field_78112_f:Lnet/minecraft/client/model/ModelRenderer;
+     213: iconst_0
+     214: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     217: aload_3
+     218: getfield      #292                // Field net/minecraft/client/model/ModelBiped.field_78124_i:Lnet/minecraft/client/model/ModelRenderer;
+     221: iconst_0
+     222: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     225: aload_3
+     226: getfield      #295                // Field net/minecraft/client/model/ModelBiped.field_78123_h:Lnet/minecraft/client/model/ModelRenderer;
+     229: iconst_0
+     230: putfield      #271                // Field net/minecraft/client/model/ModelRenderer.field_78806_j:Z
+     233: return
+
+  public void onModelChange(net.minecraftforge.client.event.RenderPlayerEvent$Specials$Pre);
+    Code:
+       0: aload_1
+       1: getfield      #309                // Field net/minecraftforge/client/event/RenderPlayerEvent$Specials$Pre.entityPlayer:Lnet/minecraft/entity/player/EntityPlayer;
+       4: astore_2
+       5: aload_1
+       6: getfield      #310                // Field net/minecraftforge/client/event/RenderPlayerEvent$Specials$Pre.renderer:Lnet/minecraft/client/renderer/entity/RenderPlayer;
+       9: getfield      #232                // Field net/minecraft/client/renderer/entity/RenderPlayer.field_77109_a:Lnet/minecraft/client/model/ModelBiped;
+      12: astore_3
+      13: aload_2
+      14: invokestatic  #238                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      17: ifeq          650
+      20: aload_2
+      21: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+      24: ifnull        650
+      27: ldc_w         #315                // float -1.625f
+      30: fstore        4
+      32: invokestatic  #320                // Method org/lwjgl/opengl/GL11.glPushMatrix:()V
+      35: ldc_w         #321                // float 180.0f
+      38: fconst_1
+      39: fconst_0
+      40: fconst_0
+      41: invokestatic  #325                // Method org/lwjgl/opengl/GL11.glRotatef:(FFFF)V
+      44: aload_2
+      45: getfield      #329                // Field net/minecraft/entity/player/EntityPlayer.field_70759_as:F
+      48: f2d
+      49: aload_2
+      50: getfield      #332                // Field net/minecraft/entity/player/EntityPlayer.field_70758_at:F
+      53: f2d
+      54: invokestatic  #338                // Method com/tihyo/legends/management/LegendsRenderHelper.median:(DD)F
+      57: fconst_0
+      58: fconst_1
+      59: fconst_0
+      60: invokestatic  #325                // Method org/lwjgl/opengl/GL11.glRotatef:(FFFF)V
+      63: invokestatic  #320                // Method org/lwjgl/opengl/GL11.glPushMatrix:()V
+      66: aload_2
+      67: invokestatic  #342                // Method com/tihyo/legends/morph/MorphHelper.getMorphedScale:(Lnet/minecraft/entity/player/EntityPlayer;)F
+      70: aload_2
+      71: invokestatic  #342                // Method com/tihyo/legends/morph/MorphHelper.getMorphedScale:(Lnet/minecraft/entity/player/EntityPlayer;)F
+      74: aload_2
+      75: invokestatic  #342                // Method com/tihyo/legends/morph/MorphHelper.getMorphedScale:(Lnet/minecraft/entity/player/EntityPlayer;)F
+      78: invokestatic  #346                // Method org/lwjgl/opengl/GL11.glScalef:(FFF)V
+      81: fconst_0
+      82: aload_2
+      83: invokestatic  #349                // Method com/tihyo/legends/morph/MorphHelper.getMorphedOffset:(Lnet/minecraft/entity/player/EntityPlayer;)F
+      86: fconst_0
+      87: invokestatic  #352                // Method org/lwjgl/opengl/GL11.glTranslatef:(FFF)V
+      90: fconst_1
+      91: fconst_1
+      92: fconst_1
+      93: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      96: aload_2
+      97: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     100: checkcast     #250                // class java/lang/Float
+     103: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+     106: invokestatic  #355                // Method org/lwjgl/opengl/GL11.glColor4f:(FFFF)V
+     109: aload_2
+     110: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     113: instanceof    #357                // class com/tihyo/legends/morph/MorphBat
+     116: ifeq          143
+     119: aload_0
+     120: getfield      #107                // Field renderBat:Lnet/minecraft/client/renderer/entity/Render;
+     123: aload_2
+     124: dconst_0
+     125: fload         4
+     127: ldc_w         #296                // float 0.1f
+     130: fadd
+     131: f2d
+     132: dconst_0
+     133: fconst_0
+     134: ldc_w         #358                // float 0.0625f
+     137: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     140: goto          639
+     143: aload_2
+     144: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     147: instanceof    #366                // class com/tihyo/legends/morph/MorphWolf
+     150: ifeq          177
+     153: aload_0
+     154: getfield      #116                // Field renderWolf:Lnet/minecraft/client/renderer/entity/Render;
+     157: aload_2
+     158: dconst_0
+     159: fload         4
+     161: ldc_w         #296                // float 0.1f
+     164: fadd
+     165: f2d
+     166: dconst_0
+     167: fconst_0
+     168: ldc_w         #358                // float 0.0625f
+     171: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     174: goto          639
+     177: aload_2
+     178: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     181: instanceof    #368                // class com/tihyo/legends/morph/MorphVampireBeast
+     184: ifeq          211
+     187: aload_0
+     188: getfield      #122                // Field renderVampireBeast:Lnet/minecraft/client/renderer/entity/Render;
+     191: aload_2
+     192: dconst_0
+     193: fload         4
+     195: ldc_w         #296                // float 0.1f
+     198: fadd
+     199: f2d
+     200: dconst_0
+     201: fconst_0
+     202: ldc_w         #358                // float 0.0625f
+     205: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     208: goto          639
+     211: aload_2
+     212: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     215: instanceof    #370                // class com/tihyo/legends/morph/MorphSymbiote
+     218: ifeq          422
+     221: getstatic     #373                // Field com/tihyo/legends/management/properties/LegendsProperties.SYMBIOTE_FANG:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     224: aload_2
+     225: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     228: checkcast     #375                // class java/lang/Integer
+     231: invokevirtual #379                // Method java/lang/Integer.intValue:()I
+     234: ifle          261
+     237: aload_0
+     238: getfield      #176                // Field renderSymbioteFang:Lnet/minecraft/client/renderer/entity/Render;
+     241: aload_2
+     242: dconst_0
+     243: fload         4
+     245: ldc_w         #296                // float 0.1f
+     248: fadd
+     249: f2d
+     250: dconst_0
+     251: fconst_0
+     252: ldc_w         #358                // float 0.0625f
+     255: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     258: goto          639
+     261: aload_2
+     262: invokestatic  #383                // Method com/tihyo/legends/morph/MorphHelper.getSymbioteType:(Lnet/minecraft/entity/Entity;)Ljava/lang/String;
+     265: ldc_w         #385                // String venom
+     268: invokevirtual #391                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     271: ifne          281
+     274: aload_2
+     275: invokestatic  #396                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingVenom:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     278: ifeq          398
+     281: aload_2
+     282: invokestatic  #399                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingVenomUltimate:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     285: ifeq          312
+     288: aload_0
+     289: getfield      #164                // Field renderVenomUltimate:Lnet/minecraft/client/renderer/entity/Render;
+     292: aload_2
+     293: dconst_0
+     294: fload         4
+     296: ldc_w         #296                // float 0.1f
+     299: fadd
+     300: f2d
+     301: dconst_0
+     302: fconst_0
+     303: ldc_w         #358                // float 0.0625f
+     306: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     309: goto          639
+     312: aload_2
+     313: invokestatic  #402                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingVenomLeePrice:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     316: ifeq          343
+     319: aload_0
+     320: getfield      #168                // Field renderVenomLeePrice:Lnet/minecraft/client/renderer/entity/Render;
+     323: aload_2
+     324: dconst_0
+     325: fload         4
+     327: ldc_w         #296                // float 0.1f
+     330: fadd
+     331: f2d
+     332: dconst_0
+     333: fconst_0
+     334: ldc_w         #358                // float 0.0625f
+     337: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     340: goto          639
+     343: aload_2
+     344: invokestatic  #405                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingVenom2099:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     347: ifeq          374
+     350: aload_0
+     351: getfield      #172                // Field renderVenom2099:Lnet/minecraft/client/renderer/entity/Render;
+     354: aload_2
+     355: dconst_0
+     356: fload         4
+     358: ldc_w         #296                // float 0.1f
+     361: fadd
+     362: f2d
+     363: dconst_0
+     364: fconst_0
+     365: ldc_w         #358                // float 0.0625f
+     368: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     371: goto          639
+     374: aload_0
+     375: getfield      #160                // Field renderVenom:Lnet/minecraft/client/renderer/entity/Render;
+     378: aload_2
+     379: dconst_0
+     380: fload         4
+     382: ldc_w         #296                // float 0.1f
+     385: fadd
+     386: f2d
+     387: dconst_0
+     388: fconst_0
+     389: ldc_w         #358                // float 0.0625f
+     392: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     395: goto          639
+     398: aload_0
+     399: getfield      #156                // Field renderSymbiote:Lnet/minecraft/client/renderer/entity/Render;
+     402: aload_2
+     403: dconst_0
+     404: fload         4
+     406: ldc_w         #296                // float 0.1f
+     409: fadd
+     410: f2d
+     411: dconst_0
+     412: fconst_0
+     413: ldc_w         #358                // float 0.0625f
+     416: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     419: goto          639
+     422: aload_2
+     423: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     426: instanceof    #407                // class com/tihyo/legends/morph/MorphDraculaTrueForm
+     429: ifeq          506
+     432: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     435: aload_2
+     436: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     439: checkcast     #250                // class java/lang/Float
+     442: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+     445: fconst_1
+     446: fcmpg
+     447: ifge          482
+     450: aload_2
+     451: getfield      #411                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     454: aload_2
+     455: getfield      #415                // Field net/minecraft/entity/player/EntityPlayer.field_70165_t:D
+     458: aload_2
+     459: getfield      #418                // Field net/minecraft/entity/player/EntityPlayer.field_70163_u:D
+     462: ldc2_w        #419                // double 0.5d
+     465: dadd
+     466: aload_2
+     467: ldc_w         #421                // float 1.2f
+     470: invokestatic  #425                // Method com/tihyo/legends/management/LegendsRenderHelper.getProperPlayerTranslation:(Lnet/minecraft/entity/player/EntityPlayer;F)F
+     473: f2d
+     474: dadd
+     475: aload_2
+     476: getfield      #428                // Field net/minecraft/entity/player/EntityPlayer.field_70161_v:D
+     479: invokestatic  #434                // Method com/tihyo/legends/management/LegendsHelper.doDraculaTrueFormParticles:(Lnet/minecraft/world/World;DDD)V
+     482: aload_0
+     483: getfield      #200                // Field renderDraculaTrueForm:Lnet/minecraft/client/renderer/entity/Render;
+     486: aload_2
+     487: dconst_0
+     488: fload         4
+     490: ldc_w         #296                // float 0.1f
+     493: fadd
+     494: f2d
+     495: dconst_0
+     496: fconst_0
+     497: ldc_w         #358                // float 0.0625f
+     500: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     503: goto          639
+     506: aload_2
+     507: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     510: instanceof    #436                // class com/tihyo/legends/morph/MorphWerewolf
+     513: ifeq          540
+     516: aload_0
+     517: getfield      #206                // Field renderWerewolf:Lnet/minecraft/client/renderer/entity/Render;
+     520: aload_2
+     521: dconst_0
+     522: fload         4
+     524: ldc_w         #296                // float 0.1f
+     527: fadd
+     528: f2d
+     529: dconst_0
+     530: fconst_0
+     531: ldc_w         #358                // float 0.0625f
+     534: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     537: goto          639
+     540: aload_2
+     541: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     544: instanceof    #438                // class com/tihyo/legends/morph/MorphMartianForm
+     547: ifeq          574
+     550: aload_0
+     551: getfield      #182                // Field renderMartianForm:Lnet/minecraft/client/renderer/entity/Render;
+     554: aload_2
+     555: dconst_0
+     556: fload         4
+     558: ldc_w         #296                // float 0.1f
+     561: fadd
+     562: f2d
+     563: dconst_0
+     564: fconst_0
+     565: ldc_w         #358                // float 0.0625f
+     568: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     571: goto          639
+     574: aload_2
+     575: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     578: instanceof    #440                // class com/tihyo/legends/morph/MorphMartianSnake
+     581: ifeq          608
+     584: aload_0
+     585: getfield      #188                // Field renderMartianSnake:Lnet/minecraft/client/renderer/entity/Render;
+     588: aload_2
+     589: dconst_0
+     590: fload         4
+     592: ldc_w         #296                // float 0.1f
+     595: fadd
+     596: f2d
+     597: dconst_0
+     598: fconst_0
+     599: ldc_w         #358                // float 0.0625f
+     602: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     605: goto          639
+     608: aload_2
+     609: invokestatic  #314                // Method com/tihyo/legends/morph/MorphHelper.getMorphClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/morph/Morph;
+     612: instanceof    #442                // class com/tihyo/legends/morph/MorphMartianSnakeJL
+     615: ifeq          639
+     618: aload_0
+     619: getfield      #194                // Field renderMartianSnakeJL:Lnet/minecraft/client/renderer/entity/Render;
+     622: aload_2
+     623: dconst_0
+     624: fload         4
+     626: ldc_w         #296                // float 0.1f
+     629: fadd
+     630: f2d
+     631: dconst_0
+     632: fconst_0
+     633: ldc_w         #358                // float 0.0625f
+     636: invokevirtual #364                // Method net/minecraft/client/renderer/entity/Render.func_76986_a:(Lnet/minecraft/entity/Entity;DDDFF)V
+     639: invokestatic  #445                // Method org/lwjgl/opengl/GL11.glPopMatrix:()V
+     642: invokestatic  #445                // Method org/lwjgl/opengl/GL11.glPopMatrix:()V
+     645: aload_1
+     646: iconst_1
+     647: invokevirtual #449                // Method net/minecraftforge/client/event/RenderPlayerEvent$Specials$Pre.setCanceled:(Z)V
+     650: return
+
+  public void renderLiving(net.minecraftforge.client.event.RenderLivingEvent$Pre);
+    Code:
+       0: aload_1
+       1: getfield      #460                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.entity:Lnet/minecraft/entity/EntityLivingBase;
+       4: instanceof    #222                // class net/minecraft/entity/player/EntityPlayer
+       7: ifeq          85
+      10: aload_1
+      11: getfield      #460                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.entity:Lnet/minecraft/entity/EntityLivingBase;
+      14: checkcast     #222                // class net/minecraft/entity/player/EntityPlayer
+      17: astore_2
+      18: aload_2
+      19: invokestatic  #465                // Method com/tihyo/legends/legacy/LegacyHelper.isActive:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      22: ifeq          85
+      25: aload_2
+      26: invokestatic  #469                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+      29: instanceof    #471                // class com/tihyo/legends/management/interfaces/IMorph
+      32: ifeq          85
+      35: aload_2
+      36: invokestatic  #476                // Method com/tihyo/legends/management/PlayerHelper.isTransparent:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      39: ifne          85
+      42: invokestatic  #320                // Method org/lwjgl/opengl/GL11.glPushMatrix:()V
+      45: sipush        770
+      48: sipush        771
+      51: invokestatic  #480                // Method org/lwjgl/opengl/GL11.glBlendFunc:(II)V
+      54: sipush        3042
+      57: invokestatic  #484                // Method org/lwjgl/opengl/GL11.glEnable:(I)V
+      60: sipush        2929
+      63: invokestatic  #484                // Method org/lwjgl/opengl/GL11.glEnable:(I)V
+      66: fconst_1
+      67: fconst_1
+      68: fconst_1
+      69: getstatic     #244                // Field com/tihyo/legends/management/properties/LegendsProperties.MORPH_TIMER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      72: aload_2
+      73: invokevirtual #248                // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      76: checkcast     #250                // class java/lang/Float
+      79: invokevirtual #254                // Method java/lang/Float.floatValue:()F
+      82: invokestatic  #355                // Method org/lwjgl/opengl/GL11.glColor4f:(FFFF)V
+      85: return
+
+  public void renderLivingPost(net.minecraftforge.client.event.RenderLivingEvent$Post);
+    Code:
+       0: aload_1
+       1: getfield      #488                // Field net/minecraftforge/client/event/RenderLivingEvent$Post.entity:Lnet/minecraft/entity/EntityLivingBase;
+       4: instanceof    #222                // class net/minecraft/entity/player/EntityPlayer
+       7: ifeq          45
+      10: aload_1
+      11: getfield      #488                // Field net/minecraftforge/client/event/RenderLivingEvent$Post.entity:Lnet/minecraft/entity/EntityLivingBase;
+      14: checkcast     #222                // class net/minecraft/entity/player/EntityPlayer
+      17: astore_2
+      18: aload_2
+      19: invokestatic  #465                // Method com/tihyo/legends/legacy/LegacyHelper.isActive:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      22: ifeq          45
+      25: aload_2
+      26: invokestatic  #469                // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+      29: instanceof    #471                // class com/tihyo/legends/management/interfaces/IMorph
+      32: ifeq          45
+      35: aload_2
+      36: invokestatic  #476                // Method com/tihyo/legends/management/PlayerHelper.isTransparent:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      39: ifne          45
+      42: invokestatic  #445                // Method org/lwjgl/opengl/GL11.glPopMatrix:()V
+      45: return
+
+  public void nameTagUpdate(net.minecraftforge.client.event.RenderLivingEvent$Specials$Pre);
+    Code:
+       0: aload_1
+       1: getfield      #492                // Field net/minecraftforge/client/event/RenderLivingEvent$Specials$Pre.entity:Lnet/minecraft/entity/EntityLivingBase;
+       4: instanceof    #222                // class net/minecraft/entity/player/EntityPlayer
+       7: ifeq          30
+      10: aload_1
+      11: getfield      #492                // Field net/minecraftforge/client/event/RenderLivingEvent$Specials$Pre.entity:Lnet/minecraft/entity/EntityLivingBase;
+      14: checkcast     #222                // class net/minecraft/entity/player/EntityPlayer
+      17: astore_2
+      18: aload_2
+      19: invokestatic  #238                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      22: ifeq          30
+      25: aload_1
+      26: iconst_1
+      27: invokevirtual #493                // Method net/minecraftforge/client/event/RenderLivingEvent$Specials$Pre.setCanceled:(Z)V
+      30: return
+
+  static {};
+    Code:
+       0: new           #497                // class com/tihyo/horror/client/models/legacy/ModelVampireBeast
+       3: dup
+       4: invokespecial #498                // Method com/tihyo/horror/client/models/legacy/ModelVampireBeast."<init>":()V
+       7: putstatic     #118                // Field modelVampireBeast:Lcom/tihyo/horror/client/models/legacy/ModelVampireBeast;
+      10: new           #500                // class com/tihyo/horror/client/models/legacy/ModelVampireBeastPOV
+      13: dup
+      14: invokespecial #501                // Method com/tihyo/horror/client/models/legacy/ModelVampireBeastPOV."<init>":()V
+      17: putstatic     #503                // Field modelVampireBeastPOV:Lcom/tihyo/horror/client/models/legacy/ModelVampireBeastPOV;
+      20: new           #505                // class com/tihyo/superheroes/client/models/legacy/ModelSymbiotePOV
+      23: dup
+      24: invokespecial #506                // Method com/tihyo/superheroes/client/models/legacy/ModelSymbiotePOV."<init>":()V
+      27: putstatic     #508                // Field modelSymbiotePOV:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbiotePOV;
+      30: new           #510                // class com/tihyo/superheroes/client/models/legacy/ModelSymbioteVenomPOV
+      33: dup
+      34: invokespecial #511                // Method com/tihyo/superheroes/client/models/legacy/ModelSymbioteVenomPOV."<init>":()V
+      37: putstatic     #513                // Field modelSymbioteVenomPOV:Lcom/tihyo/superheroes/client/models/legacy/ModelSymbioteVenomPOV;
+      40: new           #515                // class com/tihyo/legends/client/models/characters/ModelVenomUltimatePOV
+      43: dup
+      44: invokespecial #516                // Method com/tihyo/legends/client/models/characters/ModelVenomUltimatePOV."<init>":()V
+      47: putstatic     #518                // Field modelVenomUltimatePOV:Lcom/tihyo/legends/client/models/characters/ModelVenomUltimatePOV;
+      50: new           #520                // class com/tihyo/legends/client/models/characters/ModelVenomLeePricePOV
+      53: dup
+      54: invokespecial #521                // Method com/tihyo/legends/client/models/characters/ModelVenomLeePricePOV."<init>":()V
+      57: putstatic     #523                // Field modelVenomLeePricePOV:Lcom/tihyo/legends/client/models/characters/ModelVenomLeePricePOV;
+      60: new           #525                // class com/tihyo/legends/client/models/characters/ModelVenom2099POV
+      63: dup
+      64: invokespecial #526                // Method com/tihyo/legends/client/models/characters/ModelVenom2099POV."<init>":()V
+      67: putstatic     #528                // Field modelVenom2099POV:Lcom/tihyo/legends/client/models/characters/ModelVenom2099POV;
+      70: new           #530                // class com/tihyo/superheroes/client/models/ModelMartianForm
+      73: dup
+      74: invokespecial #531                // Method com/tihyo/superheroes/client/models/ModelMartianForm."<init>":()V
+      77: putstatic     #178                // Field modelMartianForm:Lcom/tihyo/superheroes/client/models/ModelMartianForm;
+      80: new           #533                // class com/tihyo/superheroes/client/models/ModelMartianFormPOV
+      83: dup
+      84: invokespecial #534                // Method com/tihyo/superheroes/client/models/ModelMartianFormPOV."<init>":()V
+      87: putstatic     #536                // Field modelMartianFormPOV:Lcom/tihyo/superheroes/client/models/ModelMartianFormPOV;
+      90: new           #538                // class com/tihyo/superheroes/client/models/ModelMartianSnake
+      93: dup
+      94: invokespecial #539                // Method com/tihyo/superheroes/client/models/ModelMartianSnake."<init>":()V
+      97: putstatic     #184                // Field modelMartianSnake:Lcom/tihyo/superheroes/client/models/ModelMartianSnake;
+     100: new           #541                // class com/tihyo/superheroes/client/models/ModelMartianSnakeJusticeLords
+     103: dup
+     104: invokespecial #542                // Method com/tihyo/superheroes/client/models/ModelMartianSnakeJusticeLords."<init>":()V
+     107: putstatic     #190                // Field modelMartianSnakeJL:Lcom/tihyo/superheroes/client/models/ModelMartianSnakeJusticeLords;
+     110: new           #544                // class com/tihyo/superheroes/client/models/ModelMartianSnakePOV
+     113: dup
+     114: invokespecial #545                // Method com/tihyo/superheroes/client/models/ModelMartianSnakePOV."<init>":()V
+     117: putstatic     #547                // Field modelMartianSnakePOV:Lcom/tihyo/superheroes/client/models/ModelMartianSnakePOV;
+     120: new           #549                // class com/tihyo/horror/client/models/characters/ModelDraculaTrueForm
+     123: dup
+     124: invokespecial #550                // Method com/tihyo/horror/client/models/characters/ModelDraculaTrueForm."<init>":()V
+     127: putstatic     #196                // Field modelDraculaTrueForm:Lcom/tihyo/horror/client/models/characters/ModelDraculaTrueForm;
+     130: new           #552                // class com/tihyo/legends/client/models/legacy/ModelWerewolf
+     133: dup
+     134: invokespecial #553                // Method com/tihyo/legends/client/models/legacy/ModelWerewolf."<init>":()V
+     137: putstatic     #202                // Field modelWerewolf:Lcom/tihyo/legends/client/models/legacy/ModelWerewolf;
+     140: new           #555                // class com/tihyo/legends/client/models/legacy/ModelWerewolfPOV
+     143: dup
+     144: invokespecial #556                // Method com/tihyo/legends/client/models/legacy/ModelWerewolfPOV."<init>":()V
+     147: putstatic     #558                // Field modelWerewolfPOV:Lcom/tihyo/legends/client/models/legacy/ModelWerewolfPOV;
+     150: return
+}

@@ -29,7 +29,6 @@ import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
-import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
 import com.mrsand.StatBoostChanges.util.VampireClothesRepair;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
@@ -145,8 +144,6 @@ public abstract class GenericEventsMixin {
 				}
 				if(tick % 60 == 0) {
 					if(LegendsUtil.isVampire(player)) {
-						PlayerDataUtil.decreaseXPMine(player, 8);
-						//						VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 						//Originally was going to do if it wasn't in their hot bar? But was too difficult to implement once sated
 						if(LegendsUtil.hasLearnedBeastForm(player) && vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE) && vPlayer.getBoolean(PlayerKeys.IS_STARVING)
 								&& !LegendsUtil.isVampireBeast(player) && !GeneralUtil.isInLight(player) && !LegendsUtil.isMist(player)) {

@@ -10,7 +10,6 @@ import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.legacy.LegendsLegacy;
 import com.tihyo.legends.legacy.PowerType;
 import com.tihyo.legends.management.LegendsChatFormat;
-import com.tihyo.legends.morph.MorphHelper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
@@ -59,7 +58,7 @@ public class LegacyPowerBvDemonicForm extends LegacyPower {
 		}
 		if (!player.worldObj.isRemote) {
 			LegendsUtil.morphBeast(player);
-			LegacyHelper.setCooldown(player, key, MorphHelper.isVampireBeast(player) ? 40 : 200);
+			// No post-morph cooldown — leave key at cooldownMax (ready).
 		}
 	}
 

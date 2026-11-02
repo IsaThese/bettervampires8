@@ -4,6 +4,7 @@ import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.StringPlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
+import com.mrsand.StatBoostChanges.util.VampireEyesDebug;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -87,15 +88,38 @@ public class VExtendedPlayerPacket implements IMessage {
 				EntityPlayerMP serverPlayer = ctx.getServerHandler().playerEntity;
 				if (serverPlayer != null) {
 					VExtendedPlayer props = VExtendedPlayer.get(serverPlayer);
+					boolean hypnoBefore = props != null && props.getBoolean(PlayerKeys.HYPNOTIZING);
 					handleSync(serverPlayer, props, message.getDataValues(), message.getStringValues(), Side.SERVER);
+					// Mesmerize is client-toggled; rebroadcast only when HYPNOTIZING actually changes.
+					if (props != null) {
+						boolean hypnoAfter = props.getBoolean(PlayerKeys.HYPNOTIZING);
+						if (hypnoBefore != hypnoAfter) {
+							props.syncClient();
+							VampireEyesDebug.logSyncClient(serverPlayer, true, hypnoAfter);
+						}
+					}
 				}
-			} 
+			}
 			else if (ctx.side == Side.CLIENT) {
 
 				EntityPlayer targetPlayer = (EntityPlayer) Minecraft.getMinecraft().theWorld.getEntityByID(message.getPlayerID());
 				if (targetPlayer == null) return null;
 				VExtendedPlayer props = VExtendedPlayer.get(targetPlayer);
+				// Replay spawn order can deliver BV packets before EntityConstructing finishes.
+				if (props == null) {
+					VExtendedPlayer.register(targetPlayer);
+					props = VExtendedPlayer.get(targetPlayer);
+					VampireEyesDebug.logState(targetPlayer, "packet-register-ieep");
+				}
+				if (props == null) return null;
+				boolean hypnoBefore = props.getBoolean(PlayerKeys.HYPNOTIZING);
+				boolean otherBefore = props.getBoolean(PlayerKeys.OTHERFORM);
 				handleSync(targetPlayer, props, message.getDataValues(), message.getStringValues(), Side.CLIENT);
+				boolean hypnoAfter = props.getBoolean(PlayerKeys.HYPNOTIZING);
+				boolean otherAfter = props.getBoolean(PlayerKeys.OTHERFORM);
+				if (hypnoBefore != hypnoAfter || otherBefore != otherAfter) {
+					VampireEyesDebug.logState(targetPlayer, "packet-apply-client");
+				}
 			}
 
 			return null;
@@ -105,11 +129,17 @@ public class VExtendedPlayerPacket implements IMessage {
 			if (props != null && receivedData != null) {
 				PlayerKeys[] keys = PlayerKeys.values();
 				int limit = Math.min(keys.length, receivedData.length);
+				boolean masteryOwnsEyes = side == Side.SERVER
+						&& player.getEntityData().getBoolean("bvHypnosisEyesOwned");
 
 				for (int i = 0; i < limit; i++) {
 					// Updating the IEEP data
 					if (side == Side.SERVER && (keys[i] == PlayerKeys.LOCATION || keys[i] == PlayerKeys.SECONDSLOT)) {
 						continue; // server owns these; ignore client uploads
+					}
+					// Mastery channel owns HYPNOTIZING on the server — don't let a stale client upload clear it.
+					if (masteryOwnsEyes && keys[i] == PlayerKeys.HYPNOTIZING) {
+						continue;
 					}
 					if (VExtendedPlayer.isBooleanKey(keys[i])) {
 						props.setBoolean(keys[i], receivedData[i] != 0);
@@ -137,7 +167,6 @@ public class VExtendedPlayerPacket implements IMessage {
 				}
 				VisualUtil.changeForm(player, hypno);
 			}
-			//    	        GeneralUtil.sendDebugMessage(player, "[BetterVampires] Synced " + keys.length + " keys for " + player.getCommandSenderName());
 		}
 	}
 }

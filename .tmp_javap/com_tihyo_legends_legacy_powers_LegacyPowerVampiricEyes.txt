@@ -1,0 +1,107 @@
+﻿Compiled from "LegacyPowerVampiricEyes.java"
+public class com.tihyo.legends.legacy.powers.LegacyPowerVampiricEyes extends com.tihyo.legends.legacy.LegacyPower {
+  private static java.util.List<com.tihyo.legends.legacy.LegendsLegacy> legacies;
+
+  public com.tihyo.legends.legacy.powers.LegacyPowerVampiricEyes();
+    Code:
+       0: aload_0
+       1: invokespecial #12                 // Method com/tihyo/legends/legacy/LegacyPower."<init>":()V
+       4: return
+
+  public java.lang.String getName();
+    Code:
+       0: ldc           #18                 // String vampiricEyes
+       2: areturn
+
+  public java.lang.String getDisplayName(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: ldc           #22                 // String Vampiric Eyes
+       2: areturn
+
+  public com.tihyo.legends.legacy.PowerType getType(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: getstatic     #32                 // Field com/tihyo/legends/legacy/PowerType.customizable:Lcom/tihyo/legends/legacy/PowerType;
+       3: areturn
+
+  public int getCost(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public int getAssignedKey(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokevirtual #37                 // Method getName:()Ljava/lang/String;
+       5: invokestatic  #43                 // Method com/tihyo/legends/legacy/LegacyHelper.findAbility:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+       8: ireturn
+
+  public void keyPressed(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: aload_1
+       3: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+       6: invokestatic  #51                 // Method com/tihyo/legends/legacy/LegacyHelper.getCooldown:(Lnet/minecraft/entity/player/EntityPlayer;I)I
+       9: aload_1
+      10: aload_0
+      11: aload_1
+      12: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      15: invokestatic  #54                 // Method com/tihyo/legends/legacy/LegacyHelper.getCooldownMax:(Lnet/minecraft/entity/player/EntityPlayer;I)I
+      18: if_icmpne     74
+      21: aload_1
+      22: invokestatic  #59                 // Method com/tihyo/legends/management/PlayerHelper.getVampireEyes:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      25: ifne          43
+      28: getstatic     #65                 // Field com/tihyo/legends/management/properties/LegendsProperties.VAMPIRE_EYES:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      31: aload_1
+      32: iconst_1
+      33: invokestatic  #71                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      36: invokevirtual #75                 // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+      39: pop
+      40: goto          63
+      43: aload_1
+      44: invokestatic  #59                 // Method com/tihyo/legends/management/PlayerHelper.getVampireEyes:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      47: iconst_1
+      48: if_icmpne     63
+      51: getstatic     #65                 // Field com/tihyo/legends/management/properties/LegendsProperties.VAMPIRE_EYES:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      54: aload_1
+      55: iconst_0
+      56: invokestatic  #71                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      59: invokevirtual #75                 // Method com/tihyo/legends/management/properties/LegendsProperties.set:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z
+      62: pop
+      63: aload_1
+      64: aload_0
+      65: aload_1
+      66: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      69: bipush        40
+      71: invokestatic  #79                 // Method com/tihyo/legends/legacy/LegacyHelper.setCooldown:(Lnet/minecraft/entity/player/EntityPlayer;II)V
+      74: return
+
+  public void execute(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void addToLegacy();
+    Code:
+       0: aload_0
+       1: getstatic     #83                 // Field legacies:Ljava/util/List;
+       4: getstatic     #89                 // Field com/tihyo/legends/legacy/LegacyRegistry.vampire:Lcom/tihyo/legends/legacy/LegendsLegacy;
+       7: invokestatic  #93                 // Method com/tihyo/legends/legacy/LegacyHelper.addPowerToLegacy:(Lcom/tihyo/legends/legacy/LegacyPower;Ljava/util/List;Lcom/tihyo/legends/legacy/LegendsLegacy;)V
+      10: return
+
+  public java.util.List<com.tihyo.legends.legacy.LegendsLegacy> getLegacies();
+    Code:
+       0: getstatic     #83                 // Field legacies:Ljava/util/List;
+       3: areturn
+
+  public java.lang.String getDescription(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: ldc           #98                 // String Toggles vampiric eyes.
+       2: areturn
+
+  static {};
+    Code:
+       0: invokestatic  #105                // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+       3: putstatic     #83                 // Field legacies:Ljava/util/List;
+       6: return
+}

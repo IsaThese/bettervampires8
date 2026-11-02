@@ -191,8 +191,9 @@ public class GeneralEventHandler {
 				}
 			}
 
-			if (GeneralUtil.isInLight(player)) {
-				vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, false);
+			if (GeneralUtil.isInLight(player) && vPlayer.getBoolean(PlayerKeys.HYPNOTIZING)) {
+				WitcheryUtil.endHypnosisChannel(player);
+				player.getEntityData().removeTag("bvHypnosisEyesOwned");
 			}
 
 			// Mist/bat/wolf: stop bows, food, and other charged item use
@@ -423,10 +424,17 @@ public class GeneralEventHandler {
 		World world = player.worldObj;
 		ItemStack held = player.getHeldItem();
 
-		// Form matrix: mist/bat block dig; mist/bat/wolf block right-click use
+		// Form matrix: mist/bat block dig; mist/bat/wolf block right-click use.
+		// Exception: Witchery BAT must right-click to toggle exit (PacketSelectPlayerAbility).
 		boolean denyDig = event.action == Action.LEFT_CLICK_BLOCK && LegendsUtil.blocksBlockBreak(player);
 		boolean denyUse = (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK)
 				&& LegendsUtil.blocksItemUse(player);
+		if (denyUse && LegendsUtil.isBat(player)) {
+			ExtendedPlayer batEx = ExtendedPlayer.get(player);
+			if (batEx != null && batEx.getSelectedVampirePower() == VampirePower.BAT) {
+				denyUse = false;
+			}
+		}
 		if (denyDig || denyUse) {
 			if (MorphFormDebug.enabled()) {
 				MorphFormDebug.onFormGate(player, denyDig ? "denyDig" : "denyUse");

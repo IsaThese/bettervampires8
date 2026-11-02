@@ -1,54 +1,35 @@
 package com.mrsand.StatBoostChanges.util;
 
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
 
 public class VisualUtil {
 
-	private static final ResourceLocation OTHER_SKIN = new ResourceLocation("bettervampires", "textures/otherskin.png");
-
+	/**
+	 * Marks power-eyes / hostility otherform without swapping the player skin.
+	 * Eye overlay is drawn by Legends {@code PlayerRenderHelper} under BV eye modes.
+	 */
 	public static void changeForm(EntityPlayer player, Boolean changeToOtherForm) {
-		if (!(player instanceof AbstractClientPlayer)) return;
-		AbstractClientPlayer client = (AbstractClientPlayer)player;
+		if (player == null) return;
 		VExtendedPlayer props = VExtendedPlayer.get(player);
 		if (props == null) return;
-		if(props.getBoolean(PlayerKeys.IS_STARVING) || props.getBoolean(PlayerKeys.HYPNOTIZING) || LegendsUtil.bloodVision(player)) {
+		if (props.getBoolean(PlayerKeys.IS_STARVING) || props.getBoolean(PlayerKeys.HYPNOTIZING)
+				|| LegendsUtil.bloodVision(player)) {
 			changeToOtherForm = true;
 		}
 
-		boolean wasOther = props.getBoolean(PlayerKeys.OTHERFORM);
-
-		if (changeToOtherForm) {
-			ResourceLocation currentSkin = client.getLocationSkin();
-			if (currentSkin != null && !currentSkin.equals(OTHER_SKIN)) {
-				props.setOriginalSkin(currentSkin);
-			}
-			client.func_152121_a(MinecraftProfileTexture.Type.SKIN, OTHER_SKIN);
-			props.setBoolean(PlayerKeys.OTHERFORM, true);
-		} else {
-			ResourceLocation original = props.getOriginalSkin();
-			if (original != null) {
-				client.func_152121_a(MinecraftProfileTexture.Type.SKIN, original);
-				props.setOriginalSkin(null);
-			}
-
-			props.setBoolean(PlayerKeys.OTHERFORM, false);
-		}
-		// Level-10 tick calls this every frame — only upload when OTHERFORM actually flips
-		if (wasOther != props.getBoolean(PlayerKeys.OTHERFORM)) {
-			props.sync();
-		}
+		// Callers sync (begin/endHypnosisChannel, packet handler). Do not sync here —
+		// auto syncClient fought Morph/regen floods and double-fired with those callers.
+		props.setBoolean(PlayerKeys.OTHERFORM, changeToOtherForm.booleanValue());
 	}
+
 	public static void updateVillageSidebar(EntityPlayer player, int distance) {
 	    Scoreboard scoreboard = player.getWorldScoreboard();
 	    

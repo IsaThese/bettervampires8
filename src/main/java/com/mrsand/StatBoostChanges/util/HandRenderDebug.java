@@ -21,8 +21,10 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.RenderHandEvent;
 
 /**
- * Opt-in FP hand render probe. Enable with a JVM argument (not Minecraft "game" args):
+ * Opt-in FP hand render probe. Enable with:
  *   -Dstatboo.debugHandRender=true
+ * or (bat FP correlation only):
+ *   -Dbettervampires.batDebug=true
  * CurseForge: instance → Settings (gear) → Java Settings → Additional Arguments.
  *
  * Symptom this targets: bat/wolf morph ends up showing a vanilla player hand.
@@ -32,7 +34,7 @@ public final class HandRenderDebug {
 
 	public static final Logger LOG = LogManager.getLogger("StatBoo/HandRender");
 
-	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("statboo.debugHandRender", "false"));
+	private static final boolean FULL_ENABLED = Boolean.parseBoolean(System.getProperty("statboo.debugHandRender", "false"));
 	private static long lastPipelineLogMs;
 	private static long lastListenerDumpMs;
 	private static long lastChatMs;
@@ -42,17 +44,22 @@ public final class HandRenderDebug {
 
 	private HandRenderDebug() {}
 
+	/** Full FP pipeline dump, or batDebug-armed bat probe. */
 	public static boolean enabled() {
-		return ENABLED;
+		return FULL_ENABLED || BatFormDebug.enabled();
 	}
 
 	/** Call once from client when the local player is in a world (confirms JVM flag + mod loaded). */
 	public static void announceJvmFlagIfNeeded() {
-		if (!ENABLED || announcedJvmFlag) return;
+		if (!enabled() || announcedJvmFlag) return;
 		Minecraft mc = Minecraft.getMinecraft();
 		if (mc == null || mc.thePlayer == null) return;
 		announcedJvmFlag = true;
-		LOG.info("Hand render debug enabled via -Dstatboo.debugHandRender=true");
+		if (FULL_ENABLED) {
+			LOG.info("Hand render debug enabled via -Dstatboo.debugHandRender=true");
+		} else {
+			LOG.info("Hand render bat probe armed via -Dbettervampires.batDebug=true");
+		}
 		if (!Loader.isModLoaded("legends")) {
 			logImportant("Hand debug ON but Legends not loaded — bat/wolf probe disabled", true);
 			return;
@@ -61,11 +68,15 @@ public final class HandRenderDebug {
 	}
 
 	public static boolean shouldProbe() {
-		if (!ENABLED || !Loader.isModLoaded("legends")) return false;
+		if (!enabled() || !Loader.isModLoaded("legends")) return false;
 		Minecraft mc = Minecraft.getMinecraft();
 		if (mc == null || mc.thePlayer == null || mc.gameSettings.thirdPersonView != 0) return false;
 		EntityPlayer p = mc.thePlayer;
-		return MorphHelper.isBat(p) || MorphHelper.isWolf(p);
+		if (FULL_ENABLED) {
+			return MorphHelper.isBat(p) || MorphHelper.isWolf(p);
+		}
+		// batDebug alone: only bat FP
+		return MorphHelper.isBat(p);
 	}
 
 	public static String morphLabel() {
@@ -76,15 +87,32 @@ public final class HandRenderDebug {
 		return "none";
 	}
 
+	private static String batState(EntityPlayer p) {
+		if (p == null) return "";
+		StringBuilder sb = new StringBuilder();
+		sb.append(" isBat=").append(MorphHelper.isBat(p));
+		try {
+			sb.append(" vampBatSkill=").append(VampirismUtil.isBatMode(p));
+		} catch (Throwable ignored) {
+			sb.append(" vampBatSkill=?");
+		}
+		sb.append(" w=").append(String.format("%.2f", p.width));
+		sb.append(" h=").append(String.format("%.2f", p.height));
+		sb.append(" eye=").append(String.format("%.2f", p.eyeHeight));
+		return sb.toString();
+	}
+
 	public static void log(String msg) {
-		if (!ENABLED) return;
-		LOG.info("[morph={}] {}", morphLabel(), msg);
+		if (!enabled()) return;
+		EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+		LOG.info("[morph={}] {}{}", morphLabel(), msg, batState(p));
 	}
 
 	/** File log + in-game chat (throttled unless {@code forceChat}). */
 	public static void logImportant(String msg, boolean forceChat) {
-		if (!ENABLED) return;
-		LOG.info("[morph={}] {}", morphLabel(), msg);
+		if (!enabled()) return;
+		EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+		LOG.info("[morph={}] {}{}", morphLabel(), msg, batState(p));
 		chat(msg, forceChat);
 	}
 
@@ -99,11 +127,16 @@ public final class HandRenderDebug {
 	public static void onRenderHandBegin(RenderHandEvent event) {
 		if (!shouldProbe()) return;
 		dumpSubscribersOnce(event);
+		long now = System.currentTimeMillis();
+		if (now - lastPipelineLogMs < 500L) return;
 		log("RenderHandEvent BEGIN canceled=" + event.isCanceled());
 	}
 
 	public static void onRenderHandEnd(RenderHandEvent event) {
 		if (!shouldProbe()) return;
+		long now = System.currentTimeMillis();
+		if (now - lastPipelineLogMs < 500L) return;
+		lastPipelineLogMs = now;
 		boolean canceled = event.isCanceled();
 		log("RenderHandEvent END canceled=" + canceled
 				+ " (if true, ItemRenderer was skipped by a listener above)");

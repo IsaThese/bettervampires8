@@ -44,6 +44,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 			mixins.add("legends.ModelVampireTeethMixin");
 			mixins.add("legends.MorphBatMixin");
 			mixins.add("legends.MorphHelperMixin");
+			mixins.add("legends.RenderPlayerHandMorphProbeMixin");
 			mixins.add("legends.PlayerHelperMixin");
 			mixins.add("legends.RegisterBlocksMixin");
 			mixins.add("legends.RegisterHorrorBlocksMixin");

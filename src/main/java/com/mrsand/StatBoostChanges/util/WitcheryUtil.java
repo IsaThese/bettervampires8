@@ -229,6 +229,7 @@ public class WitcheryUtil {
 		boolean was = vPlayer.getBoolean(PlayerKeys.HYPNOTIZING);
 		if (!was) {
 			vPlayer.setBoolean(PlayerKeys.HYPNOTIZING, true);
+			// changeForm may syncClient when OTHERFORM flips; always one authoritative bag sync after.
 			VisualUtil.changeForm(player, true);
 			if (player.worldObj.isRemote) {
 				vPlayer.sync();
@@ -978,16 +979,10 @@ public class WitcheryUtil {
 					increaseLegendsVampire(player);
 				playerEx.resetVampireQuestCounter();
 				playerEx.sync();
-				if (GeneralUtil.getClosestVillage(player, 96) != null)
-					player.addExperience(4788);
-				else
-					player.addExperience(1069);
+				LegendsUtil.addVampireKillSkillPoints(player);
 			}
 			if (playerEx.getVampireLevel() == 10) {
-				if (GeneralUtil.getClosestVillage(player, 96) != null)
-					player.addExperience(8670); //60 
-				else
-					player.addExperience(4788);
+				LegendsUtil.addVampireKillSkillPoints(player);
 				player.addPotionEffect(new PotionEffect(Potion.regeneration.id, 20*30, 1));
 				player.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 20*60*7, 2));
 				player.addPotionEffect(new PotionEffect(Potion.damageBoost.id, 20*60, 2));

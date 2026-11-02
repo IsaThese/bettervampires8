@@ -29,23 +29,26 @@
       "legends.HorrorCommonEventHandlerMixin",
       "legends.LegendsAbilitiesPacketMixin",
       "legends.LegacyHelperMixin",
+      "legends.LegacyPowerEyeSizeMixin",
       "legends.LegacyPowerMorphBatMixin",
       "legends.LegacyPowerMorphMistMixin",
       "legends.LegacyPowerMorphWolfMixin",
+      "legends.LegacyPowerVampiricEyesMixin",
       "legends.LegacyVampireMixin",
       "legends.ModelVampireApparelV1Mixin",
       "legends.ModelVampireTeethMixin",
       "legends.MorphBatMixin",
       "legends.MorphHelperMixin",
       "legends.MorphWolfMixin",
+      "legends.RenderPlayerHandMorphProbeMixin",
       "legends.PlayerHelperMixin",
       "legends.PlayerRenderHelperHypnosisAimMixin",
+      "legends.PlayerRenderHelperVampireEyesMixin",
       "legends.PowersHandlerMixin",
       "legends.RegisterBlocksMixin",
       "legends.RegisterHorrorBlocksMixin",
       
       "RenderHandlerMixin",
-      /*"RenderPlayerHandMixin", */
       
       "ShapeshiftMixin",
       "VampirePlayerMixin"

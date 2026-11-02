@@ -2,6 +2,7 @@ package com.mrsand.StatBoostChanges.util;
 
 import org.lwjgl.opengl.GL11;
 
+import com.tihyo.legends.management.LegendsRenderHelper;
 import com.tihyo.legends.morph.Morph;
 import com.tihyo.legends.morph.MorphHelper;
 
@@ -9,20 +10,25 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Draws morph FP arms inside the matrix Legends/vanilla ItemRenderer already set up
- * (same approach as original MorphBat/MorphWolf mixins — redraw the current hand only).
+ * Draws morph FP arms. Legends 5/8 style: bat_hand / wolf texture on bipedRightArm.
+ * Call from Morph.renderRightHand after ItemRenderer + RenderPlayerHand have positioned the hand.
  */
 @SideOnly(Side.CLIENT)
 public final class MorphHandRender {
 
 	public static final ResourceLocation BAT_HAND = new ResourceLocation("legends", "textures/skins/bat_hand.png");
 	public static final ResourceLocation WOLF_HAND = new ResourceLocation("bettervampires", "textures/wolf_hand.png");
+
+	/** Dedicated FP arm — do not depend on RenderPlayerHand.modelBipedMain / parent. */
+	private static final ModelBiped FP_ARM = new ModelBiped(0.0F);
+
+	private static boolean loggedBatDraw;
 
 	private MorphHandRender() {}
 
@@ -38,7 +44,6 @@ public final class MorphHandRender {
 		}
 	}
 
-	/** Separate method so MorphHelper is not resolved unless Legends is present. */
 	private static ResourceLocation textureForLegendsMorph(EntityPlayer player) {
 		if (MorphHelper.isBat(player)) return BAT_HAND;
 		if (MorphHelper.isWolf(player)) return WOLF_HAND;
@@ -65,7 +70,7 @@ public final class MorphHandRender {
 		}
 		ResourceLocation texture = textureFor(player);
 		if (texture == null) return false;
-		renderRightArm(mc, player, texture, render);
+		renderRightArm(mc, player, texture);
 		return true;
 	}
 
@@ -79,20 +84,26 @@ public final class MorphHandRender {
 	public static void renderRightArm(Minecraft mc, EntityPlayer player, ResourceLocation texture, RenderPlayer render) {
 		if (mc == null || player == null || texture == null) return;
 
-		if (render == null) {
-			Object obj = RenderManager.instance.getEntityRenderObject(player);
-			if (!(obj instanceof RenderPlayer)) return;
-			render = (RenderPlayer) obj;
+		// L8 shiny/glint passes call Morph.renderRightHand under additive blend + depthMask(false).
+		try {
+			if (LegendsRenderHelper.overrideColor) {
+				return;
+			}
+		} catch (Throwable ignored) {
 		}
-		if (render.modelBipedMain == null) return;
 
 		GL11.glPushMatrix();
 		try {
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			mc.getTextureManager().bindTexture(texture);
-			render.modelBipedMain.onGround = 0.0F;
-			render.modelBipedMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
-			render.modelBipedMain.bipedRightArm.render(0.0625F);
+			FP_ARM.onGround = 0.0F;
+			FP_ARM.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
+			FP_ARM.bipedRightArm.render(0.0625F);
+
+			if (!loggedBatDraw && texture == BAT_HAND && HandRenderDebug.shouldProbe()) {
+				loggedBatDraw = true;
+				HandRenderDebug.logImportant("Morph FP arm DRAW bat_hand (ModelBiped)", true);
+			}
 		} finally {
 			GL11.glPopMatrix();
 		}

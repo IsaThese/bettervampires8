@@ -34,7 +34,7 @@ public class BatSkill extends DefaultSkill implements ILastingSkill {
 
 	/**
 	 * Show while active so bat can be cancelled.
-	 * Block starting when general powers are sun/day blocked.
+	 * Block starting during calendar daytime (sun-safe biomes count as night).
 	 */
 	@Override
 	public int canUse(VampirePlayer vampire, EntityPlayer player) {
@@ -48,7 +48,7 @@ public class BatSkill extends DefaultSkill implements ILastingSkill {
 			return 1;
 		if (player == null || player.worldObj == null)
 			return -2;
-		if (VampireSunRules.generalPowersBlocked(player))
+		if (VampireSunRules.batFormBlocked(player))
 			return -2;
 		return 1;
 	}
@@ -86,10 +86,9 @@ public class BatSkill extends DefaultSkill implements ILastingSkill {
 	@Override
 	public boolean onActivated(VampirePlayer vampire, EntityPlayer player) {
 		if (Loader.isModLoaded("legends")) {
-			// Already bat from SummonBat (skill not active): one press should exit, not arm the skill
+			// Already Legends-bat (Witchery pie / SummonBat): adopt skill, do not remorph/exit.
 			if (LegendsUtil.isBat(player)) {
-				LegendsUtil.morphBat(player, false);
-				return false;
+				return true;
 			}
 			return LegendsUtil.morphBat(player, true);
 		}
@@ -124,7 +123,7 @@ public class BatSkill extends DefaultSkill implements ILastingSkill {
 	@Override
 	public void onReActivated(VampirePlayer vampire, EntityPlayer player) {
 		if (Loader.isModLoaded("legends")) {
-			if (!LegendsUtil.isBat(player) && !VampireSunRules.generalPowersBlocked(player)) {
+			if (!LegendsUtil.isBat(player) && !VampireSunRules.batFormBlocked(player)) {
 				LegendsUtil.morphBat(player, true);
 			}
 			return;
@@ -134,7 +133,7 @@ public class BatSkill extends DefaultSkill implements ILastingSkill {
 
 	@Override
 	public boolean onUpdate(VampirePlayer vampire, EntityPlayer player) {
-		if (!player.worldObj.isRemote && VampireSunRules.shouldForceClearForms(player)) {
+		if (!player.worldObj.isRemote && VampireSunRules.batFormBlocked(player)) {
 			player.addChatMessage(new ChatComponentTranslation("text.vampirism.cant_fly_day"));
 			return true;
 		}

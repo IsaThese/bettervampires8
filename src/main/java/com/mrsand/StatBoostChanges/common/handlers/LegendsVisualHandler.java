@@ -18,14 +18,11 @@ import com.tihyo.horror.legacy.suits.LegacyVampireApparelV1;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 
 public class LegendsVisualHandler {
 
     private final ItemStack[] EMPTY = new ItemStack[0];
-    private static final ResourceLocation RED_EYES_TEXTURE = new ResourceLocation("bettervampires", "textures/overlay_red_eyes.png");
-    private static final ResourceLocation OTHER_SKIN = new ResourceLocation("bettervampires", "textures/otherskin.png");
 
     // Performance Optimization: Cache static instances of armor to stop garbage generation
     private static ItemStack vampireChest;

@@ -31,6 +31,8 @@ public abstract class PlayerRenderHelperHypnosisAimMixin {
 		if (!PlayerHelper.isAimingRightArm(player)) return;
 		if (PlayerHelper.getRightArmAimingType(player) != 0) return;
 		if (player.isSwingInProgress) return;
+		// Let stock L8 type-0 cos raise play (base Hypnosis setAnimationTicks 0→9) before L5 lock.
+		if (PlayerHelper.getAnimationTicks(player) < 9.0F) return;
 
 		ModelRenderer arm = model.bipedRightArm;
 		ModelRenderer head = model.bipedHead;

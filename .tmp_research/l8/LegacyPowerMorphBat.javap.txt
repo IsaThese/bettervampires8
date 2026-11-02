@@ -1,0 +1,169 @@
+﻿Compiled from "LegacyPowerMorphBat.java"
+public class com.tihyo.legends.legacy.powers.LegacyPowerMorphBat extends com.tihyo.legends.legacy.LegacyPower {
+  private static java.util.List<com.tihyo.legends.legacy.LegendsLegacy> legacies;
+
+  public com.tihyo.legends.legacy.powers.LegacyPowerMorphBat();
+    Code:
+       0: aload_0
+       1: invokespecial #12                 // Method com/tihyo/legends/legacy/LegacyPower."<init>":()V
+       4: return
+
+  public java.lang.String getName();
+    Code:
+       0: ldc           #18                 // String morphBat
+       2: areturn
+
+  public java.lang.String getDisplayName(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: ldc           #22                 // String Bat Form
+       2: areturn
+
+  public com.tihyo.legends.legacy.PowerType getType(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: getstatic     #32                 // Field com/tihyo/legends/legacy/PowerType.assignable:Lcom/tihyo/legends/legacy/PowerType;
+       3: areturn
+
+  public int getCost(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: bipush        20
+       2: ireturn
+
+  public int getAssignedKey(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokevirtual #37                 // Method getName:()Ljava/lang/String;
+       5: invokestatic  #43                 // Method com/tihyo/legends/legacy/LegacyHelper.findAbility:(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I
+       8: ireturn
+
+  public void keyPressed(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: aload_1
+       3: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+       6: invokestatic  #51                 // Method com/tihyo/legends/legacy/LegacyHelper.getCooldown:(Lnet/minecraft/entity/player/EntityPlayer;I)I
+       9: aload_1
+      10: aload_0
+      11: aload_1
+      12: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      15: invokestatic  #54                 // Method com/tihyo/legends/legacy/LegacyHelper.getCooldownMax:(Lnet/minecraft/entity/player/EntityPlayer;I)I
+      18: if_icmpne     195
+      21: aload_1
+      22: invokestatic  #58                 // Method com/tihyo/legends/legacy/LegacyHelper.getLegacyClass:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/legacy/LegendsLegacy;
+      25: aload_1
+      26: invokevirtual #64                 // Method com/tihyo/legends/legacy/LegendsLegacy.getWeaknesses:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      29: ifne          195
+      32: aload_1
+      33: invokestatic  #69                 // Method com/tihyo/legends/management/PlayerHelper.isInAnimation:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      36: ifne          153
+      39: aload_1
+      40: invokestatic  #75                 // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      43: ifeq          60
+      46: aload_1
+      47: invokestatic  #75                 // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+      50: ifeq          153
+      53: aload_1
+      54: invokestatic  #78                 // Method com/tihyo/legends/morph/MorphHelper.isBat:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      57: ifeq          153
+      60: getstatic     #84                 // Field com/tihyo/legends/management/properties/LegendsProperties.MIST_FORM:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      63: aload_1
+      64: invokevirtual #88                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      67: checkcast     #90                 // class java/lang/Integer
+      70: invokevirtual #94                 // Method java/lang/Integer.intValue:()I
+      73: ifgt          153
+      76: getstatic     #97                 // Field com/tihyo/legends/management/properties/LegendsProperties.SUPER_FLARE:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      79: aload_1
+      80: invokevirtual #88                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      83: checkcast     #90                 // class java/lang/Integer
+      86: invokevirtual #94                 // Method java/lang/Integer.intValue:()I
+      89: ifgt          153
+      92: getstatic     #100                // Field com/tihyo/legends/management/properties/LegendsProperties.SOLAR_DRAINAGE:Lcom/tihyo/legends/management/properties/LegendsProperties;
+      95: aload_1
+      96: invokevirtual #88                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+      99: checkcast     #90                 // class java/lang/Integer
+     102: invokevirtual #94                 // Method java/lang/Integer.intValue:()I
+     105: ifgt          153
+     108: aload_1
+     109: getfield      #106                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     112: getfield      #112                // Field net/minecraft/world/World.field_72995_K:Z
+     115: ifne          138
+     118: aload_1
+     119: getstatic     #118                // Field com/tihyo/legends/morph/MorphRegistry.bat:Lcom/tihyo/legends/morph/Morph;
+     122: invokestatic  #122                // Method com/tihyo/legends/morph/MorphHelper.morph:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/tihyo/legends/morph/Morph;)V
+     125: aload_1
+     126: getfield      #106                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     129: aload_1
+     130: ldc           #124                // String mob.bat.takeoff
+     132: ldc           #125                // float 3.0f
+     134: fconst_1
+     135: invokevirtual #129                // Method net/minecraft/world/World.func_72956_a:(Lnet/minecraft/entity/Entity;Ljava/lang/String;FF)V
+     138: aload_1
+     139: aload_0
+     140: aload_1
+     141: invokevirtual #47                 // Method getAssignedKey:(Lnet/minecraft/entity/player/EntityPlayer;)I
+     144: sipush        200
+     147: invokestatic  #133                // Method com/tihyo/legends/legacy/LegacyHelper.setCooldown:(Lnet/minecraft/entity/player/EntityPlayer;II)V
+     150: goto          195
+     153: aload_1
+     154: getfield      #106                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     157: getfield      #112                // Field net/minecraft/world/World.field_72995_K:Z
+     160: ifne          195
+     163: aload_1
+     164: new           #135                // class net/minecraft/util/ChatComponentText
+     167: dup
+     168: new           #137                // class java/lang/StringBuilder
+     171: dup
+     172: invokespecial #138                // Method java/lang/StringBuilder."<init>":()V
+     175: getstatic     #144                // Field com/tihyo/legends/management/LegendsChatFormat.red:Ljava/lang/String;
+     178: invokevirtual #148                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     181: ldc           #150                // String Can't morph from current form.
+     183: invokevirtual #148                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     186: invokevirtual #153                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     189: invokespecial #156                // Method net/minecraft/util/ChatComponentText."<init>":(Ljava/lang/String;)V
+     192: invokevirtual #160                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     195: return
+
+  public void execute(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: return
+
+  public void addToLegacy();
+    Code:
+       0: aload_0
+       1: getstatic     #164                // Field legacies:Ljava/util/List;
+       4: getstatic     #170                // Field com/tihyo/legends/legacy/LegacyRegistry.vampire:Lcom/tihyo/legends/legacy/LegendsLegacy;
+       7: invokestatic  #174                // Method com/tihyo/legends/legacy/LegacyHelper.addPowerToLegacy:(Lcom/tihyo/legends/legacy/LegacyPower;Ljava/util/List;Lcom/tihyo/legends/legacy/LegendsLegacy;)V
+      10: return
+
+  public java.util.List<com.tihyo.legends.legacy.LegendsLegacy> getLegacies();
+    Code:
+       0: getstatic     #164                // Field legacies:Ljava/util/List;
+       3: areturn
+
+  public com.tihyo.legends.legacy.LegacyPower getParent(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: getstatic     #182                // Field com/tihyo/legends/legacy/LegacyRegistry.slash:Lcom/tihyo/legends/legacy/powers/LegacyPowerSlash;
+       3: areturn
+
+  public java.lang.String getDescription(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: ldc           #185                // String Transform into a bat, granting yourself the ability to fly at the expense of defense. Can dive through attacks.
+       2: areturn
+
+  public int getXOffset(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public int getYOffset(net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: iconst_5
+       1: ireturn
+
+  static {};
+    Code:
+       0: invokestatic  #194                // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+       3: putstatic     #164                // Field legacies:Ljava/util/List;
+       6: return
+}

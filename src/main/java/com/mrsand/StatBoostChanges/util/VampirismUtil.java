@@ -1,5 +1,6 @@
 package com.mrsand.StatBoostChanges.util;
 
+import cpw.mods.fml.common.Loader;
 import de.teamlapen.vampirism.VampirismMod;
 import de.teamlapen.vampirism.block.BlockCoffin;
 import de.teamlapen.vampirism.entity.player.VampirePlayer;
@@ -38,7 +39,11 @@ public class VampirismUtil {
 		return vPlayer.getLevel() >= BALANCE.VP_SKILLS.BAT_MIN_LEVEL;
 	}
 	public static void setBatMode(EntityPlayer player, boolean mode) {
-		VampirePlayer vPlayer =  VampirePlayer.get(player);
+		if (Loader.isModLoaded("legends")) {
+			BatFormDebug.log(player, "setPlayerBat", "skipped-util bat=" + mode);
+			return;
+		}
+		BatFormDebug.log(player, "setPlayerBat", "call-util bat=" + mode);
 		VampirismMod.proxy.setPlayerBat(player, mode);
 	}
 	public static boolean isInVampireBiome(Entity entity) {

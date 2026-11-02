@@ -146,6 +146,20 @@ public final class VampireSunRules {
 	}
 
 	/**
+	 * Bat form may not start during calendar daytime (sun-safe biomes count as night via
+	 * {@link #isDaytime}). Demorph is never blocked by this.
+	 */
+	public static boolean batFormBlocked(EntityPlayer player) {
+		if (!isEnabled() || player == null) return false;
+		return isDaytime(player);
+	}
+
+	/** Strip bat when daytime outside sun-safe biomes. */
+	public static boolean shouldForceClearBat(EntityPlayer player) {
+		return batFormBlocked(player);
+	}
+
+	/**
 	 * LegendsAbilitiesPacket blocks every key when {@code getWeaknesses} is true.
 	 * Return true to let that key through anyway (fangs / bite / mist under roof).
 	 * <p>
@@ -170,6 +184,10 @@ public final class VampireSunRules {
 				if (DEBUG) {
 					LOG.info("[SunRules] allow keyTag={} slot={} power={}", keyTag, slot, name);
 				}
+				return true;
+			}
+			// Bat key must reach demorph even when weaknesses are active (day/sun).
+			if ("morphBat".equals(name)) {
 				return true;
 			}
 			if ("morpMist".equals(name)) {

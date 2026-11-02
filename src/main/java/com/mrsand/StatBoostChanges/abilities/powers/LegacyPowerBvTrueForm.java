@@ -63,7 +63,7 @@ public class LegacyPowerBvTrueForm extends LegacyPower {
 			boolean wasTrue = LegendsUtil.isDraculaTrueForm(player);
 			LegendsUtil.morphTrueForm(player);
 			boolean nowTrue = LegendsUtil.isDraculaTrueForm(player);
-			LegacyHelper.setCooldown(player, key, nowTrue ? 200 : 40);
+			// No post-morph cooldown — leave key at cooldownMax (ready).
 			if (nowTrue && !wasTrue) {
 				player.addChatMessage(new ChatComponentText(
 						LegendsChatFormat.red + "You assume your true form."));

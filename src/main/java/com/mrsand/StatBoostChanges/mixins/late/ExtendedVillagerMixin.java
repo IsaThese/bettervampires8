@@ -137,7 +137,7 @@ public abstract class ExtendedVillagerMixin {
 //				} else {
 //					GeneralUtil.increaseSuspicion(playerEnt, 1500);
 //				}
-//				GeneralUtil.villagerDied(playerEnt);
+				GeneralUtil.villagerDied(playerEnt);
 			}
 			else if (blood < 250 && isKnockedOut) {
 				if(level != 10)

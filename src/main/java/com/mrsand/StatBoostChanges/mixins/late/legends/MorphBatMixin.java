@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.mrsand.StatBoostChanges.util.HandRenderDebug;
 import com.mrsand.StatBoostChanges.util.MorphHandRender;
 import com.tihyo.legends.morph.MorphBat;
 
@@ -19,7 +20,7 @@ public class MorphBatMixin {
 	 */
 	@Inject(method = "renderRightHand", at = @At("HEAD"), cancellable = true)
 	private void renderRightHand(Minecraft mc, EntityPlayer player, CallbackInfo ci) {
-		com.mrsand.StatBoostChanges.util.HandRenderDebug.logPipeline("MorphBat.renderRightHand -> bat texture arm");
+		HandRenderDebug.logPipeline("MorphBat.renderRightHand -> bat texture arm");
 		MorphHandRender.renderRightArm(mc, player, MorphHandRender.BAT_HAND);
 		ci.cancel();
 	}

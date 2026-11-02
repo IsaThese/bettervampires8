@@ -6,6 +6,7 @@ import com.mrsand.StatBoostChanges.util.HypnosisDebug;
 import com.mrsand.StatBoostChanges.util.MistPhaseDebug;
 import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryHandRenderDebug;
+import com.tihyo.legends.morph.MorphHelper;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.EventPriority;
@@ -13,7 +14,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.teamlapen.vampirism.entity.player.skills.BatSkill;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 
@@ -46,6 +49,17 @@ public class ClientEventHandler {
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
+		Minecraft mc = Minecraft.getMinecraft();
+		if (mc != null && mc.thePlayer != null && Loader.isModLoaded("legends")) {
+			EntityPlayer p = mc.thePlayer;
+			if (MorphHelper.isBat(p)) {
+				// Legends size lerp can drive eyeHeight negative (−1.01) and break FP.
+				float sane = Math.max(0.2F, 0.85F * p.height);
+				if (p.eyeHeight < 0.15F || p.eyeHeight > p.height + 0.5F) {
+					p.eyeHeight = Math.min(sane, BatSkill.BAT_EYE_HEIGHT);
+				}
+			}
+		}
 		if (HandRenderDebug.enabled()) {
 			HandRenderDebug.announceJvmFlagIfNeeded();
 		}
@@ -53,19 +67,16 @@ public class ClientEventHandler {
 			WitcheryHandRenderDebug.announceIfNeeded();
 		}
 		if (MorphFormDebug.enabled()) {
-			Minecraft mc = Minecraft.getMinecraft();
 			if (mc != null && mc.thePlayer != null) {
 				MorphFormDebug.tickPeriodic(mc.thePlayer);
 			}
 		}
 		if (HypnosisDebug.enabled()) {
-			Minecraft mc = Minecraft.getMinecraft();
 			if (mc != null && mc.thePlayer != null) {
 				HypnosisDebug.announceIfNeeded(mc.thePlayer);
 			}
 		}
 		if (MistPhaseDebug.enabled()) {
-			Minecraft mc = Minecraft.getMinecraft();
 			if (mc != null && mc.thePlayer != null) {
 				MistPhaseDebug.announceIfNeeded(mc.thePlayer);
 			}

@@ -13,7 +13,8 @@ public final class BvVampirePowers {
 	public static final LegacyPowerBvDemonicFury demonicFury = new LegacyPowerBvDemonicFury();
 	public static final LegacyPowerBvTrueForm trueForm = new LegacyPowerBvTrueForm();
 	public static final LegacyPowerBvDraculaTeleport draculaTeleport = new LegacyPowerBvDraculaTeleport();
-	/** Lord-only passive; registered for UI but not mass-auto-granted via {@link #all()}. */
+	public static final LegacyPowerBvHellfire hellfire = new LegacyPowerBvHellfire();
+	/** Lord-only passive; shown on the tree, never purchasable. */
 	public static final LegacyPowerBvIntangibility intangibility = new LegacyPowerBvIntangibility();
 
 	private static boolean registered;
@@ -32,12 +33,23 @@ public final class BvVampirePowers {
 		LegacyRegistry.manager.addPower(demonicFury);
 		LegacyRegistry.manager.addPower(trueForm);
 		LegacyRegistry.manager.addPower(draculaTeleport);
+		LegacyRegistry.manager.addPower(hellfire);
 		LegacyRegistry.manager.addPower(intangibility);
 		registered = true;
 	}
 
-	/** Auto-granted restored powers only (excludes lord-only intangibility). */
+	/** All BetterVampires vampire powers — Vampirism lord-only. */
 	public static LegacyPower[] all() {
-		return new LegacyPower[] { hypnosisMastery, demonicForm, demonicFury, trueForm, draculaTeleport };
+		return new LegacyPower[] {
+				hypnosisMastery, demonicForm, demonicFury, trueForm, draculaTeleport, hellfire, intangibility
+		};
+	}
+
+	public static boolean isLordOnlyPower(LegacyPower power) {
+		if (power == null) return false;
+		for (LegacyPower p : all()) {
+			if (p == power) return true;
+		}
+		return false;
 	}
 }

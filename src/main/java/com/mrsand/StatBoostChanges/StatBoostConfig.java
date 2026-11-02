@@ -45,6 +45,17 @@ public class StatBoostConfig {
 	 */
 	public static boolean useCastlevaniaDraculaTeleport = true;
 
+	/**
+	 * When true, cycling Vampiric Eyes prints the new mode in chat.
+	 */
+	public static boolean showVampireEyesModeChat = true;
+
+	/**
+	 * Legends fullbright multiplier for vampire eye overlays.
+	 * {@code 1.0} = stock {@code setLighting(61680)}; {@code 0.0} = ambient lighting only.
+	 */
+	public static float vampireEyesGlow = 1.0F;
+
 	/** Per-tick WASD push while misted. */
 	public static double mistHorizontalSpeed = 0.14D;
 	/** Cap on horizontal mist speed (blocks/tick). */
@@ -93,6 +104,22 @@ public class StatBoostConfig {
 				"abilities",
 				true,
 				"When true, Vampirism Vampire Lord Teleport uses Castlevania Dracula teleport instead of the short raycast blink.");
+		showVampireEyesModeChat = config.getBoolean(
+				"showVampireEyesModeChat",
+				"visual",
+				true,
+				"When true, cycling the Vampiric Eyes ability prints powers-only / always / disabled in chat.");
+		vampireEyesGlow = (float) config.get(
+				"visual",
+				"vampireEyesGlow",
+				1.0D,
+				"Vampire eyes fullbright strength. 1.0 = stock Legends glow, 0.0 = no glow (ambient lighting).")
+				.getDouble(1.0D);
+		if (vampireEyesGlow < 0.0F) {
+			vampireEyesGlow = 0.0F;
+		} else if (vampireEyesGlow > 1.0F) {
+			vampireEyesGlow = 1.0F;
+		}
 		// Mist speeds: tune field defaults above for now (skip .cfg override).
 //		mistHorizontalSpeed = config.get(
 //				"mist",
