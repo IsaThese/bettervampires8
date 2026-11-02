@@ -25,6 +25,7 @@
       "ItemGeneralMixin",
       "ItemGlassGobletMixin",
       "ItemVampireClothesMixin",
+      "legends.DamageHelperWitcheryClothesMixin",
       
       "legends.HorrorCommonEventHandlerMixin",
       "legends.LegendsAbilitiesPacketMixin",
@@ -42,6 +43,7 @@
       "legends.MorphWolfMixin",
       "legends.RenderPlayerHandMorphProbeMixin",
       "legends.PlayerHelperMixin",
+      "legends.PlayerHelperBloodSyncMixin",
       "legends.PlayerRenderHelperHypnosisAimMixin",
       "legends.PlayerRenderHelperVampireEyesMixin",
       "legends.PowersHandlerMixin",

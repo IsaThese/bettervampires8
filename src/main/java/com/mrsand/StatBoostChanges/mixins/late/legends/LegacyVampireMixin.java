@@ -15,6 +15,7 @@ import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
+import com.mrsand.StatBoostChanges.util.BloodMeterSync;
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
@@ -118,7 +119,10 @@ public abstract class LegacyVampireMixin {
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 		VampireRestoredAbilities.ensureAutoGranted(player);
 
-		if (!LegendsAbilityBridge.hasBloodMeter(player)) {
+		// Witchery vampires mirror blood onto the Legends meter — do not wipe it.
+		if (playerEx != null && playerEx.isVampire()) {
+			BloodMeterSync.syncLegendsFromWitchery(player);
+		} else if (!LegendsAbilityBridge.hasBloodMeter(player)) {
 			PlayerHelper.setBloodMeter(player, 0);
 		}
 
@@ -205,7 +209,8 @@ public abstract class LegacyVampireMixin {
 				}
 
 				LegendsAbilities.mentalDefense(player, 3);
-				LegendsAbilities.regeneration(player, 0);
+				LegendsAbilities.regeneration(player,
+						PlayerHelper.getBloodAmount(player) >= 50 ? 2 : 1);
 				if (!playerEx.isVampire()) {
 					applyStrength(player, player.isPotionActive(LegendsEffects.werewolfVenom.id)
 							? ((MorphHelper.isVampireBeast(player) ? 20 : (MorphHelper.isWolf(player)

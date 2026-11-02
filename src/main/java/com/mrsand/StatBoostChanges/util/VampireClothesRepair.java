@@ -9,21 +9,68 @@ import com.emoniph.witchery.Witchery;
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.item.ItemVampireClothes;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 /**
- * Blood-fed and drink-burst repair for Witchery vampire clothes.
+ * Durability wear and blood/drink repair for Witchery vampire clothes.
  */
 public final class VampireClothesRepair {
 
 	public static final int PASSIVE_INTERVAL_TICKS = 40;
 	public static final float PASSIVE_BLOOD_FLOOR = 0.40F;
-	public static final int PASSIVE_MEND_AMOUNT = 1;
+	/** Scaled for the 1000-durability pool (~iron-tier relative mend rate). */
+	public static final int PASSIVE_MEND_AMOUNT = 4;
 	public static final int PASSIVE_BLOOD_COST = 1;
-	public static final int DRINK_MEND_AMOUNT = 12;
+	/** Scaled for the 1000-durability pool (~iron-tier relative drink burst). */
+	public static final int DRINK_MEND_AMOUNT = 50;
 
 	private VampireClothesRepair() {}
+
+	public static boolean isVampireClothes(ItemStack stack) {
+		return stack != null && stack.getItem() instanceof ItemVampireClothes;
+	}
+
+	/**
+	 * Keeps Witchery clothes damage in {@code [0, maxDamage]}. Negative damage
+	 * can appear when Legends calls {@code damageItem} with a negative mend amount.
+	 */
+	public static void clampDamage(ItemStack stack) {
+		if (!isVampireClothes(stack)) {
+			return;
+		}
+		int max = stack.getMaxDamage();
+		int damage = stack.getItemDamage();
+		if (damage < 0) {
+			stack.setItemDamage(0);
+		} else if (max > 0 && damage > max) {
+			stack.setItemDamage(max);
+		}
+	}
+
+	/** Clamp all worn Witchery vampire clothes on the player. */
+	public static void clampWornVampireClothes(EntityPlayer player) {
+		if (player == null) {
+			return;
+		}
+		ItemStack[] armor = player.inventory.armorInventory;
+		for (int i = 0; i < 4; i++) {
+			clampDamage(armor[i]);
+		}
+	}
+
+	/**
+	 * Equipment-like wear with no Legends-style 900 soft floor — pieces can break.
+	 */
+	public static void applyDamage(ItemStack stack, int amount, EntityLivingBase entity) {
+		if (amount <= 0 || !isVampireClothes(stack) || entity == null) {
+			return;
+		}
+		clampDamage(stack);
+		stack.damageItem(amount, entity);
+		clampDamage(stack);
+	}
 
 	/**
 	 * Restores up to {@code amount} durability across worn vampire clothes,
@@ -33,11 +80,12 @@ public final class VampireClothesRepair {
 		if (player == null || amount <= 0 || player.worldObj.isRemote) {
 			return 0;
 		}
+		clampWornVampireClothes(player);
 		ItemStack[] armor = player.inventory.armorInventory;
 		List<ItemStack> damaged = new ArrayList<ItemStack>(4);
 		for (int i = 0; i < 4; i++) {
 			ItemStack stack = armor[i];
-			if (stack != null && stack.getItem() instanceof ItemVampireClothes && stack.isItemDamaged()) {
+			if (isVampireClothes(stack) && stack.isItemDamaged()) {
 				damaged.add(stack);
 			}
 		}
@@ -54,9 +102,9 @@ public final class VampireClothesRepair {
 		int mended = 0;
 		for (ItemStack stack : damaged) {
 			if (remaining <= 0) break;
-			int damage = stack.getItemDamage();
+			int damage = Math.max(0, stack.getItemDamage());
 			int heal = Math.min(damage, remaining);
-			stack.setItemDamage(damage - heal);
+			stack.setItemDamage(Math.max(0, damage - heal));
 			remaining -= heal;
 			mended += heal;
 		}
@@ -92,7 +140,7 @@ public final class VampireClothesRepair {
 		ItemStack[] armor = player.inventory.armorInventory;
 		for (int i = 0; i < 4; i++) {
 			ItemStack stack = armor[i];
-			if (stack != null && stack.getItem() instanceof ItemVampireClothes && stack.isItemDamaged()) {
+			if (isVampireClothes(stack) && stack.isItemDamaged()) {
 				return true;
 			}
 		}

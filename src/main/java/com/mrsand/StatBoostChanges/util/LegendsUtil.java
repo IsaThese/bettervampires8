@@ -19,8 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -526,7 +524,6 @@ public class LegendsUtil {
 				PowersHandler.mistForm(player, 12); // make mist form forever? Could
 			// probably change time to 8000
 			// or large
-			player.addPotionEffect(new PotionEffect(Potion.regeneration.id, 20 * 3, 3, false));
 			player.addChatComponentMessage(
 					new ChatComponentText("You are extremely thirsty.")
 					.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
@@ -548,7 +545,6 @@ public class LegendsUtil {
 
 				player.getEntityData().setInteger("isInCombat", 1);
 				player.getEntityData().setInteger("isInCombatTimer", 1200);
-				player.addPotionEffect(new PotionEffect(Potion.regeneration.id, 20 * 10, 3, false));
 				return true;
 			}
 			else if (LegacyHelper.findAbility(player, "morpMist") != 0

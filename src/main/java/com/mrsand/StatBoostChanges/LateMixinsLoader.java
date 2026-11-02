@@ -20,11 +20,13 @@ public class LateMixinsLoader implements ILateMixinLoader {
 		if (loadedMods.contains("witchery") && loadedMods.contains("legends")) {
 			mixins.add("EntityWitchHunterMixin");
 			mixins.add("ItemVampireClothesMixin");
+			mixins.add("legends.DamageHelperWitcheryClothesMixin");
 			mixins.add("legends.LegacyPowerMorphBatMixin");
 			mixins.add("legends.LegacyPowerMorphMistMixin");
 			mixins.add("legends.LegacyPowerMorphWolfMixin");
 			mixins.add("legends.LegacyVampireMixin");
 			mixins.add("legends.MorphWolfMixin");
+			mixins.add("legends.PlayerHelperBloodSyncMixin");
 			mixins.add("legends.PowersHandlerMixin");
 			mixins.add("ShapeshiftMixin");
 		}

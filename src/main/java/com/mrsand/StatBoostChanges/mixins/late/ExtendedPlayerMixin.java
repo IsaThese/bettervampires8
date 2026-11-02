@@ -18,6 +18,7 @@ import com.emoniph.witchery.util.TransformCreature;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.BatFormDebug;
+import com.mrsand.StatBoostChanges.util.BloodMeterSync;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
@@ -139,6 +140,14 @@ public abstract class ExtendedPlayerMixin {
 			}
 		}
 
+	}
+
+	/** Mirror Witchery blood percentage onto the Legends blood meter. */
+	@Inject(method = "setBloodPower", at = @At("RETURN"))
+	private void betterVampires$syncLegendsBlood(int bloodLevel, CallbackInfo ci) {
+		if (Loader.isModLoaded("legends")) {
+			BloodMeterSync.syncLegendsFromWitchery(player);
+		}
 	}
 	
 

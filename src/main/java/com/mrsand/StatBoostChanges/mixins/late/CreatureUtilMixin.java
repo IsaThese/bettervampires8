@@ -88,11 +88,10 @@ public abstract class CreatureUtilMixin {
 		}
 
 		if (!dead) {
-			creature.setHealth(2.0F); // func_70606_j
 			if (creature instanceof EntityPlayer) {
-				((EntityPlayer) creature).getFoodStats().addStats(0, 5.0F); // func_71024_bL, func_75113_a
 				EntityPlayer player = (EntityPlayer) creature;
-				player.setHealth(7.0F);
+				((EntityPlayer) creature).getFoodStats().addStats(0, 5.0F); // func_71024_bL, func_75113_a
+				player.setHealth(player.getMaxHealth());
 				ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 
 				//Some i=frames so no gitching.
