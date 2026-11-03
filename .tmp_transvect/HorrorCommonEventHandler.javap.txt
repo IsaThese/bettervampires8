@@ -1,7 +1,0 @@
-﻿javap : Error: class not found: com.tihyo.horror.handlers.HorrorCommonEventHandler
-At C:\Users\isaac\AppData\Local\Temp\ps-script-f007e8e6-3731-45dc-90ef-d71bd744a3ab.ps1:89 char:1
-+ javap -c -p com.tihyo.horror.handlers.HorrorCommonEventHandler 2>&1 | ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (Error: class no...monEventHandler:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 

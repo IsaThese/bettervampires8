@@ -157,15 +157,10 @@ bin/
 # Cursor
 .cursor/
 
-# Scratch javap/decompile dumps from dependency jars (local research only)
-.tmp_decompile/
-.tmp_legends_cmp/
-.tmp_intang/
-.tmp_cape/
+# Scratch javap/decompile/research dumps from dependency jars (local only)
+.tmp_*/
 
 # Built jars stay out of git. Dependency jars in lib/ are tracked with Git LFS (private repo).
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 !lib/**/*.jar
-
-.tmp_legends_search/

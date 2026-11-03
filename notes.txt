@@ -1,0 +1,91 @@
+Castlevania Dracula ability slots (vampire lord BV powers)
+==========================================================
+
+Lords assign each BV power to a Legends ability key. True Form swaps the
+effect/name on paired combat slots (same power, different move).
+
+Descriptions below match tihyo's Castlevania Dracula suit docs
+(https://www.tihyo.com/characters/dracula-(castlevania)).
+
+Combat slots
+------------
+
+Slot 1  —  bvVampireBite
+  Humanoid : Vampiric Bite
+    Bite the target, cause bleed, fill blood meter.
+    ~6 damage; staggers ~5 seconds.
+  True Form: Fury Swipes
+    Claw flurry. ~10 damage + 2 bleeding.
+
+Slot 2  —  bvHellfire
+  Humanoid : Hellfire
+    Three hellfireballs. ~15 damage + 2 burn.
+  True Form: Wave of Fireballs
+    Three large fireballs from the mouth. ~5 damage each; staggers.
+
+Slot 3  —  bvBattlePrecognition
+  Humanoid : Battle Precognition
+    Anticipate attacks for ~10 seconds: voids most damage and ignores Distortion.
+  True Form: Combat
+    Melee mastery for ~15 seconds: damage ramps every few hits; can void basic
+    melee; reduced enemy knockback after winded; skilled foes can block punches
+    but not stagger.
+
+Slot 4  —  bvDarkInferno
+  Humanoid : Dark Inferno
+    Hellfire variation — torrent of dark magical orbs.
+    ~10 damage on contact (often ~20 total); stuns ~3 seconds.
+    (Suit also has a rare “crit” variation when suit durability is low; BV
+    lords call the normal TimedAbility path without that suit check.)
+  True Form: Rampage
+    Charge forward ~5 seconds, voiding damage and knocking things aside.
+    ~5 damage per collision.
+
+Slot 5  —  bvDraculaTeleport
+  Humanoid : Teleport
+    Engulf in flame/energy, vanish, reappear shortly after.
+  True Form: Electric Wave
+    Shockwave of electricity around you. ~25 damage to nearby foes.
+
+Other Castlevania slots
+-----------------------
+
+Equip  —  bvTrueForm
+  True Form
+    Toggle Castlevania Dracula True Form morph. Unlocks the True Form versions
+    of slots 1–5. Suit notes ~25% damage reduction while transformed.
+    Grants Legends Transvection (levitate hover), not flight; clears in daylight
+    outside sun-safe / vampire biomes.
+
+Utility —  bvSoulSteal
+  Soul Steal
+    Drain nearby foes: ~5 damage twice, heal ~10 (up to ~20 with more targets).
+    Chance to feed Soul Well essence.
+
+Special —  bvDemonicMegiddo  (PowerType.special — special move slot only)
+  Demonic Megiddo
+    Ultimate AoE dome of chaotic magic. ~80 total damage in radius, staggers;
+    you are invulnerable while it plays. Does not break blocks/terrain.
+
+Special —  bvVampiresWrath  (PowerType.special — The Count)
+  Vampire's Wrath
+    Embrace / drain channel (same as The Count). Heavy damage while held;
+    blood fill uses Horror wrath pulses with a BV floor of ≥30% on successful contact.
+
+Armor  —  bvCape
+  Cape
+    Toggle cape mode (shroud / open cape visuals & related suit behavior).
+
+Not a separate BV power
+-----------------------
+  Blood Flow Vision — Legacy vampire stats already drive PowersHandler.bloodVision.
+
+Cooldowns (approx. suit ticks)
+------------------------------
+  Slot 1 / 2 : 200
+  Slot 3     : 500
+  Slot 4     : 400
+  Slot 5     : 400
+  Soul Steal : 500
+  Megiddo    : 1000
+  Cape       : 40

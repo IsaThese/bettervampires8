@@ -1,7 +1,0 @@
-﻿javap : Error: class not found: com.tihyo.legends.legacy.LegacyHelper
-At C:\Users\isaac\AppData\Local\Temp\ps-script-9bff1c6e-28d7-494c-8be4-a37910c421f9.ps1:91 char:1
-+ javap -v -p com.tihyo.legends.legacy.LegacyHelper 2>&1 | Out-File -En ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (Error: class no...cy.LegacyHelper:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
