@@ -21,10 +21,11 @@ public class StatBoostConfig {
 	public static boolean enableVampireLordDamageCap = true;
 
 	/**
-	 * When true, vampire apparel cape uses Legends basic red cape. When false,
-	 * uses the default (custom) cape_0 texture.
+	 * Witchery vampire clothes cape only (not Legends default apparel).
+	 * {@code 0} = cape_red (black + red lining), {@code 1} = cape_gray,
+	 * {@code 2} = stock Legends Dracula cape (no pack remap).
 	 */
-	public static boolean useRedVampireCape = true;
+	public static int witcheryVampireCapeStyle = 0;
 
 	/**
 	 * When true, Legends Daywalker is removed for vampire legacy players. Sunlight
@@ -54,7 +55,7 @@ public class StatBoostConfig {
 	 * Legends fullbright multiplier for vampire eye overlays.
 	 * {@code 1.0} = stock {@code setLighting(61680)}; {@code 0.0} = ambient lighting only.
 	 */
-	public static float vampireEyesGlow = 1.0F;
+	public static float vampireEyesGlow = 0.8F;
 
 	/** Per-tick WASD push while misted. */
 	public static double mistHorizontalSpeed = 0.14D;
@@ -79,11 +80,13 @@ public class StatBoostConfig {
 				"visual",
 				false,
 				"When true, vampires get Legends apparel day/night visuals (chest at night/shade, hidden in sunlight). When false, worn armor (e.g. Witchery clothes) renders normally.");
-		useRedVampireCape = config.getBoolean(
-				"useRedVampireCape",
+		witcheryVampireCapeStyle = config.getInt(
+				"witcheryVampireCapeStyle",
 				"visual",
-				false,
-				"When true, vampire apparel uses the basic Legends red cape. When false, uses the default cape texture.");
+				0,
+				0,
+				2,
+				"Witchery vampire clothes cape only. 0=cape_red (black+red lining), 1=cape_gray, 2=stock Legends cape (no remap).");
 		enableVampireLordDamageCap = config.getBoolean(
 				"enableVampireLordDamageCap",
 				"combat",
@@ -112,9 +115,9 @@ public class StatBoostConfig {
 		vampireEyesGlow = (float) config.get(
 				"visual",
 				"vampireEyesGlow",
-				1.0D,
+				0.8D,
 				"Vampire eyes fullbright strength. 1.0 = stock Legends glow, 0.0 = no glow (ambient lighting).")
-				.getDouble(1.0D);
+				.getDouble(0.8D);
 		if (vampireEyesGlow < 0.0F) {
 			vampireEyesGlow = 0.0F;
 		} else if (vampireEyesGlow > 1.0F) {

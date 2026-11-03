@@ -36,7 +36,6 @@
       "legends.LegacyPowerMorphWolfMixin",
       "legends.LegacyPowerVampiricEyesMixin",
       "legends.LegacyVampireMixin",
-      "legends.ModelVampireApparelV1Mixin",
       "legends.ModelVampireTeethMixin",
       "legends.MorphBatMixin",
       "legends.MorphHelperMixin",

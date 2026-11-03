@@ -15,17 +15,25 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * When Witchery vampire clothes use {@link ModelDracula} for the coat, bind cape
- * textures from resource-pack {@code vampire_apparel_v1} instead of stock
- * {@code dracula/default/cape_*}. Does not affect real Dracula character morph.
+ * Witchery {@code ItemVampireClothes} coat uses {@link ModelDracula}; remap cape
+ * binds to pack {@code cape_red*} / {@code cape_0..2} when configured.
+ * Does not change real Dracula morph or Legends default apparel.
  */
 @Mixin(value = ModelDracula.class, remap = false)
 public abstract class ModelDraculaMixin {
 
 	private static final String STOCK_CAPE_PREFIX = "textures/models/armors/dracula/default/cape_";
-	private static final String PACK_CAPE_PREFIX = "textures/models/armors/legacy/vampire_apparel_v1/cape_";
-	private static final ResourceLocation RED_CAPE = new ResourceLocation(
-			"horror", "textures/models/armors/legacy/vampire_apparel_v1/cape_red.png");
+	private static final String PACK_DIR = "textures/models/armors/legacy/vampire_apparel_v1/";
+	private static final ResourceLocation CAPE_RED = new ResourceLocation(
+			"horror", PACK_DIR + "cape_red.png");
+	private static final ResourceLocation CAPE_RED_2 = new ResourceLocation(
+			"horror", PACK_DIR + "cape_red_2.png");
+	private static final ResourceLocation CAPE_0 = new ResourceLocation(
+			"horror", PACK_DIR + "cape_0.png");
+	private static final ResourceLocation CAPE_1 = new ResourceLocation(
+			"horror", PACK_DIR + "cape_1.png");
+	private static final ResourceLocation CAPE_2 = new ResourceLocation(
+			"horror", PACK_DIR + "cape_2.png");
 
 	@Redirect(
 			method = "renderCape",
@@ -41,14 +49,27 @@ public abstract class ModelDraculaMixin {
 				&& "horror".equals(location.getResourceDomain())
 				&& location.getResourcePath() != null
 				&& location.getResourcePath().startsWith(STOCK_CAPE_PREFIX)) {
-			textureManager.bindTexture(resolvePackCape(location.getResourcePath()));
-			return;
+			ResourceLocation remapped = resolveWitcheryCape(location.getResourcePath());
+			if (remapped != null) {
+				textureManager.bindTexture(remapped);
+				return;
+			}
 		}
 		textureManager.bindTexture(location);
 	}
 
-	private static ResourceLocation resolvePackCape(String stockPath) {
-		// stockPath e.g. textures/models/armors/dracula/default/cape_0.png
+	/**
+	 * @return pack cape, or {@code null} to keep stock (style 2 / unknown).
+	 */
+	private static ResourceLocation resolveWitcheryCape(String stockPath) {
+		int style = StatBoostConfig.witcheryVampireCapeStyle;
+		if (style < 0 || style > 2) {
+			style = 0;
+		}
+		if (style == 2) {
+			return null;
+		}
+
 		int stage = 0;
 		int under = stockPath.lastIndexOf('_');
 		int dot = stockPath.lastIndexOf('.');
@@ -59,11 +80,14 @@ public abstract class ModelDraculaMixin {
 				stage = 0;
 			}
 		}
-		if (stage == 0 && StatBoostConfig.useRedVampireCape) {
-			return RED_CAPE;
-		}
 		if (stage < 0) stage = 0;
 		if (stage > 2) stage = 2;
-		return new ResourceLocation("horror", PACK_CAPE_PREFIX + stage + ".png");
+
+		if (style == 0) {
+			return stage >= 2 ? CAPE_RED_2 : CAPE_RED;
+		}
+		if (stage <= 0) return CAPE_0;
+		if (stage == 1) return CAPE_1;
+		return CAPE_2;
 	}
 }
