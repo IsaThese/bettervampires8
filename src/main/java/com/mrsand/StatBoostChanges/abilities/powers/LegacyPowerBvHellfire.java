@@ -13,13 +13,13 @@ import com.tihyo.legends.legacy.PowerType;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Castlevania Dracula Hellfire ({@code PowersHandler.hellfire}) — same volley as the suit ability.
+ * Castlevania Dracula Hellfire / Wave of Fireballs (True Form).
  */
 public class LegacyPowerBvHellfire extends LegacyPower {
 
 	private static final List<LegendsLegacy> legacies = Lists.newArrayList();
-	/** Match Castlevania suit ability2 duration (seconds fed to PowersHandler). */
 	public static final int HELLFIRE_SECONDS = 1;
+	public static final int WAVE_SECONDS = 2;
 
 	@Override
 	public String getName() {
@@ -28,7 +28,7 @@ public class LegacyPowerBvHellfire extends LegacyPower {
 
 	@Override
 	public String getDisplayName(EntityPlayer player) {
-		return "Hellfire";
+		return LegendsUtil.isDraculaTrueForm(player) ? "Wave of Fireballs" : "Hellfire";
 	}
 
 	@Override
@@ -56,7 +56,11 @@ public class LegacyPowerBvHellfire extends LegacyPower {
 			return;
 		}
 		if (!player.worldObj.isRemote) {
-			LegendsUtil.hellfire(player, HELLFIRE_SECONDS);
+			if (LegendsUtil.isDraculaTrueForm(player)) {
+				LegendsUtil.waveOfFireballs(player, WAVE_SECONDS);
+			} else {
+				LegendsUtil.hellfire(player, HELLFIRE_SECONDS);
+			}
 			LegacyHelper.setCooldown(player, key, 200);
 		}
 	}
@@ -83,7 +87,11 @@ public class LegacyPowerBvHellfire extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Castlevania Dracula's Hellfire — launch a torrent of magical flame.";
+		if (LegendsUtil.isDraculaTrueForm(player)) {
+			return "Wave of Fireballs: expel three large fireballs. Each deals ~5 damage and staggers.";
+		}
+		return "Hellfire: call forth three hellfireballs. Deals ~15 damage + 2 burn. "
+				+ "Becomes Wave of Fireballs in True Form.";
 	}
 
 	@Override

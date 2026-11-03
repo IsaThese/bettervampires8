@@ -144,9 +144,16 @@ public class GeneralEventHandler {
 					&& !LegacyHelper.getLegacyClass(player).getWeaknesses(player)
 					&& !MorphHelper.isMorphed(player)) 
 			{
-				if (PhysicsUtil.isMobLookingAtPlayer(target, player, .75) && (VampireRestoredAbilities.hasHypnosisMastery(player) || LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")) || ExtendedPlayer.get(player).getVampireLevel() >= 8)
-						&& VExtendedPlayer.get(player).getBoolean(PlayerKeys.HYPNOTIZING))
+				// Mastery owns bind via sneak-channel; its eyes flag would otherwise trigger
+				// the old gaze PacketSyncTarget path (random.orb ding without sneaking).
+				if (PhysicsUtil.isMobLookingAtPlayer(target, player, .75)
+						&& !VampireRestoredAbilities.isHypnosisMasteryChanneling(player)
+						&& (VampireRestoredAbilities.hasHypnosisMastery(player)
+								|| LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis"))
+								|| ExtendedPlayer.get(player).getVampireLevel() >= 8)
+						&& VExtendedPlayer.get(player).getBoolean(PlayerKeys.HYPNOTIZING)) {
 					StatBoostChanges.network.sendToServer(new PacketSyncTarget(target.getEntityId()));
+				}
 			}
 		}
 

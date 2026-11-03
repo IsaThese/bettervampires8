@@ -119,7 +119,9 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Hold to hypnotize. Stand still to stun a target and, after ~6s of focus, enthrall / tame / paralyse them (blood cost; one success message). Sneak to drag them toward the block behind them along your gaze without binding. The purple bar does not drain. Punch applies standard hypnosis.";
+		return "Hold to hypnotize. Drag the target toward the block behind them along your gaze. "
+				+ "Sneak to stun and, after ~6s of focus, enthrall / tame / paralyse them (blood cost; one success message). "
+				+ "The purple bar does not drain. Punch applies standard hypnosis.";
 	}
 
 	@Override

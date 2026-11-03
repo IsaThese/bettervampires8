@@ -93,7 +93,10 @@ public class LegacyPowerBvTrueForm extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Transform into Castlevania Dracula's True Form. Raises suspicion if witnessed.";
+		return "Toggle Castlevania Dracula's True Form. Swaps slots 1–5 to Fury Swipes, "
+				+ "Wave of Fireballs, Combat, Rampage, and Electric Wave. "
+				+ "Grants Legends Transvection (levitate hover). Incoming damage is reduced "
+				+ "while transformed. Raises suspicion if witnessed.";
 	}
 
 	@Override

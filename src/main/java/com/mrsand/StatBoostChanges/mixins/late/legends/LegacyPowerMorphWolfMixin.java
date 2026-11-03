@@ -36,12 +36,15 @@ public abstract class LegacyPowerMorphWolfMixin {
 	@Shadow
 	public abstract int getAssignedKey(EntityPlayer player);
 
-	/** Stock keyPressed sets cooldown to 200 — force ready (cooldown == max) for instant reuse. */
+	/**
+	 * Stock keyPressed calls {@code setCooldown(key, 200)} which sets max=200 and current=0
+	 * (ready only when current == max). Force max=0 so current==max immediately.
+	 */
 	@Inject(method = "keyPressed", at = @At("RETURN"))
 	private void clearWolfCooldown(EntityPlayer player, CallbackInfo ci) {
 		int key = getAssignedKey(player);
 		if (key <= 0 || player.worldObj.isRemote) return;
-		LegacyHelper.setCooldown(player, key, LegacyHelper.getCooldownMax(player, key));
+		LegacyHelper.setCooldown(player, key, 0);
 	}
 
 	@Inject(method = "execute", at = @At("HEAD"), cancellable = true)

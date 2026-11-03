@@ -16,21 +16,33 @@ import net.minecraft.util.EnumChatFormatting;
 /**
  * Opt-in hypnosis / Mesmerize gaze probe. Enable with JVM arg (not Minecraft "game" args):
  *   -Dstatboo.debugHypnosis=true
+ * Drag probe (entity pos / block / velocity / ray):
+ *   -Dstatboo.debugHypnosisDrag=true
  * CurseForge: instance → Settings (gear) → Java Settings → Additional Arguments.
  *
  * Chat only for important events (TOGGLE / DIM / announce). Full detail stays in latest.log.
+ * Drag chat pulses every {@link #DRAG_CHAT_INTERVAL} ticks when drag debug is on.
  */
 public final class HypnosisDebug {
 
 	public static final Logger LOG = LogManager.getLogger("StatBoo/Hypnosis");
 
 	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("statboo.debugHypnosis", "false"));
+	private static final boolean DRAG_ENABLED = Boolean.parseBoolean(
+			System.getProperty("statboo.debugHypnosisDrag", "false"));
+	private static final int DRAG_CHAT_INTERVAL = 10;
 	private static boolean announced;
+	private static boolean dragAnnounced;
 
 	private HypnosisDebug() {}
 
 	public static boolean enabled() {
 		return ENABLED;
+	}
+
+	/** Psychic-drag probe (entity / block / velocity / ray). Implies log output. */
+	public static boolean dragEnabled() {
+		return DRAG_ENABLED || ENABLED;
 	}
 
 	public static void announceIfNeeded(EntityPlayer player) {
@@ -75,6 +87,39 @@ public final class HypnosisDebug {
 	/** Mastery hold pull probe (log only; high frequency — gated by caller). */
 	public static void logMastery(EntityPlayer player, String detail) {
 		log(player, "MASTERY", detail, false);
+	}
+
+	/**
+	 * Psychic drag frame: entity pos, destination block, velocity in/out, ray hit.
+	 * Chat every {@link #DRAG_CHAT_INTERVAL} ticks so you can watch in-game.
+	 * Writes directly — must not go through {@link #log} which requires full debugHypnosis.
+	 */
+	public static void logDrag(EntityPlayer player, int tick, String detail) {
+		if (!dragEnabled()) return;
+		announceDragIfNeeded(player);
+		String line = format(player, "DRAG", detail);
+		LOG.info(line);
+		if (tick % DRAG_CHAT_INTERVAL == 0) {
+			chat(player, line);
+		}
+	}
+
+	public static void announceDragIfNeeded(EntityPlayer player) {
+		if (!dragEnabled() || dragAnnounced || player == null || player.worldObj == null) return;
+		if (player.worldObj.isRemote) return;
+		dragAnnounced = true;
+		LOG.info("Hypnosis drag debug enabled via -Dstatboo.debugHypnosisDrag=true");
+		chat(player, "Hypnosis DRAG debug ON (chat every " + DRAG_CHAT_INTERVAL
+				+ "t; full detail in latest.log)");
+	}
+
+	/** Bind / enslavement / gaze-ding probe (same gate as drag debug). Always chats. */
+	public static void logBind(EntityPlayer player, String detail) {
+		if (!dragEnabled()) return;
+		announceDragIfNeeded(player);
+		String line = format(player, "BIND", detail);
+		LOG.info(line);
+		chat(player, line);
 	}
 
 	/** Arm-raise pose sync probe (log only). */

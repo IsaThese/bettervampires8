@@ -112,6 +112,34 @@ public final class VampireRestoredAbilities {
 		return DaywalkerControl.isVampireLord(player);
 	}
 
+	public static boolean hasVampireBite(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasBattlePrecognition(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasDarkInferno(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasSoulSteal(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasDemonicMegiddo(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasVampiresWrath(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
+	public static boolean hasCape(EntityPlayer player) {
+		return DaywalkerControl.isVampireLord(player);
+	}
+
 	public static int getHypnosisStrength(EntityPlayer player) {
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		return v == null ? 0 : v.getInteger(PlayerKeys.HYPNOSIS_STRENGTH);

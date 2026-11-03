@@ -14,6 +14,13 @@ public final class BvVampirePowers {
 	public static final LegacyPowerBvTrueForm trueForm = new LegacyPowerBvTrueForm();
 	public static final LegacyPowerBvDraculaTeleport draculaTeleport = new LegacyPowerBvDraculaTeleport();
 	public static final LegacyPowerBvHellfire hellfire = new LegacyPowerBvHellfire();
+	public static final LegacyPowerBvVampireBite vampireBite = new LegacyPowerBvVampireBite();
+	public static final LegacyPowerBvBattlePrecognition battlePrecognition = new LegacyPowerBvBattlePrecognition();
+	public static final LegacyPowerBvDarkInferno darkInferno = new LegacyPowerBvDarkInferno();
+	public static final LegacyPowerBvSoulSteal soulSteal = new LegacyPowerBvSoulSteal();
+	public static final LegacyPowerBvDemonicMegiddo demonicMegiddo = new LegacyPowerBvDemonicMegiddo();
+	public static final LegacyPowerBvVampiresWrath vampiresWrath = new LegacyPowerBvVampiresWrath();
+	public static final LegacyPowerBvCape cape = new LegacyPowerBvCape();
 	/** Lord-only passive; shown on the tree, never purchasable. */
 	public static final LegacyPowerBvIntangibility intangibility = new LegacyPowerBvIntangibility();
 
@@ -34,6 +41,13 @@ public final class BvVampirePowers {
 		LegacyRegistry.manager.addPower(trueForm);
 		LegacyRegistry.manager.addPower(draculaTeleport);
 		LegacyRegistry.manager.addPower(hellfire);
+		LegacyRegistry.manager.addPower(vampireBite);
+		LegacyRegistry.manager.addPower(battlePrecognition);
+		LegacyRegistry.manager.addPower(darkInferno);
+		LegacyRegistry.manager.addPower(soulSteal);
+		LegacyRegistry.manager.addPower(demonicMegiddo);
+		LegacyRegistry.manager.addPower(vampiresWrath);
+		LegacyRegistry.manager.addPower(cape);
 		LegacyRegistry.manager.addPower(intangibility);
 		registered = true;
 	}
@@ -41,7 +55,9 @@ public final class BvVampirePowers {
 	/** All BetterVampires vampire powers — Vampirism lord-only. */
 	public static LegacyPower[] all() {
 		return new LegacyPower[] {
-				hypnosisMastery, demonicForm, demonicFury, trueForm, draculaTeleport, hellfire, intangibility
+				hypnosisMastery, demonicForm, demonicFury, trueForm, draculaTeleport, hellfire,
+				vampireBite, battlePrecognition, darkInferno, soulSteal, demonicMegiddo, vampiresWrath,
+				cape, intangibility
 		};
 	}
 

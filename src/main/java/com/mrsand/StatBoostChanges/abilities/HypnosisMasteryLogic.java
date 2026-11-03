@@ -37,6 +37,7 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
@@ -47,9 +48,9 @@ import net.minecraft.util.Vec3;
 /**
  * Hypnosis Mastery: hold to control.
  * <ul>
- *   <li>Stand — stun in place and build a one-session bind (~6s).</li>
- *   <li>Stand again on a bind you own — same ~6s session releases thrall/tame/paralyse.</li>
- *   <li>Sneak — drag toward the block behind them along the look ray (no bind/release).</li>
+ *   <li>Stand — free terrain/ledge drag; look down (hand gesture) = bite magnet standoff.</li>
+ *   <li>Sneak — stun in place and build a one-session bind (~6s).</li>
+ *   <li>Sneak again on a bind you own — same ~6s session releases thrall/tame/paralyse.</li>
  * </ul>
  * Purple bar does not drain while channeling.
  */
@@ -62,11 +63,68 @@ public final class HypnosisMasteryLogic {
 	private static final int THRALL_THRESHOLD = 24;
 	private static final int SESSION_GAP_TICKS = 10;
 	private static final int THRALL_DURATION_SECS = 240;
-	private static final double PULL_SCALE = 0.25D;
-	/** Extra vertical authority so lift beats gravity / ground stickiness. */
-	private static final double PULL_SCALE_UP = 0.55D;
-	private static final double MIN_LIFT = 0.42D;
+	/** Max approach speed (blocks/tick) — arrive slows further when close. */
+	private static final double SPEED_CAP = 0.38D;
+	private static final double SPEED_CAP_MOB = 0.48D;
+	/** Blend toward desired velocity each tick (lower = smoother). */
+	private static final double MOTION_BLEND = 0.38D;
+	private static final double MOTION_BLEND_MOB = 0.42D;
+	/** Distance (blocks) where arrive starts cutting speed. */
+	private static final double ARRIVE_DIST = 2.25D;
+	/**
+	 * Arrive never drops below this fraction of the cap (close ground hits were crawling
+	 * at MIN_APPROACH alone when the look-ray block sat under/beside the mob).
+	 */
+	private static final double ARRIVE_FLOOR = 0.40D;
+	/** Soft floor so a nearly-arrived mob still creeps onto a ledge. */
+	private static final double MIN_APPROACH = 0.14D;
+	/** Enough lift to beat gravity and mount 1-high ledges (logs showed lift=true never fired). */
+	private static final double MIN_LIFT = 0.22D;
+	private static final double MIN_LIFT_MOB = 0.30D;
+	private static final double MAX_LIFT = 0.48D;
+	/** Extra Y blend when mounting so lift responds faster than horizontal drag. */
+	private static final double LIFT_BLEND = 0.65D;
 	private static final double PSYCHIC_RANGE = 25.0D;
+	/** How far past the target (along look) before searching for a block to pull toward. */
+	private static final double ENTITY_PAST_OFFSET = 0.45D;
+	/**
+	 * If the player's direct look-hit is within this horizontal range of the mob, prefer it
+	 * over the past-entity ray (near-ledge: past-ray starts inside/beyond the ledge and
+	 * only sees same-level floor — logs needed mob far away for lift=true).
+	 */
+	private static final double AIM_DEST_RANGE = 5.5D;
+	/** Climb this many solid blocks above a ray hit so ledge-face/base mounts the top. */
+	private static final int COLUMN_CLIMB = 3;
+	/** Cap for bite-magnet standoff (horizontal center-to-center). */
+	private static final double STANDOFF_MAX = 2.5D;
+	/** Floor so tiny hitboxes are still biteable without face-gluing. */
+	private static final double STANDOFF_MIN = 1.6D;
+	/**
+	 * Extra pad beyond touching hitbox radii (player arm / bite reach).
+	 * Cow width 0.9 → half-radii + pad ≈ 2.5 (the requested bite ring).
+	 */
+	private static final double STANDOFF_BITE_PAD = 1.75D;
+	/**
+	 * Magnet approach uses a fraction of free-drag caps (logs: 0.48 felt too snappy).
+	 */
+	private static final double MAGNET_SPEED_SCALE = 0.58D;
+	/**
+	 * Look vector Y at/below this = downward hand gesture → bite magnet.
+	 * Logs: -0.35 required a deep nod; many intentional mild-downs sat at -0.20..-0.34.
+	 */
+	private static final double LOOK_DOWN_MAGNET = -0.20D;
+	/** Heavy slowness on dragged non-players so they cannot walk out of the yank. */
+	private static final int DRAG_SLOWNESS_AMPLIFIER = 5;
+	private static final int DRAG_SLOWNESS_TICKS = 30;
+	/**
+	 * Vampirism {@code FreezeSkill} style lock while in bite magnet hold.
+	 * Amp-5 was not enough — Zod walked out of the ring and jittered with micro-pulls.
+	 */
+	private static final int BITE_FREEZE_SLOWNESS_AMP = 10;
+	private static final int BITE_FREEZE_JUMP_AMP = 128;
+	private static final int BITE_FREEZE_TICKS = 40;
+	/** Hold/freeze band past standoff so edge micro-pulls cannot oscillate (Zod ~2.52↔2.88). */
+	private static final double STANDOFF_HOLD_SLACK = 0.55D;
 
 	private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<UUID, Session>();
 	private static final String BV_AIM_OWNED_TAG = "bvHypnosisAimOwned";
@@ -257,18 +315,22 @@ public final class HypnosisMasteryLogic {
 		}
 
 		if (sneaking) {
-			// Psychic control: move target toward the block behind them along the look ray.
-			applyPsychicMoveToBlock(player, target);
-		} else {
 			// Enslavement focus: stun in place (no pull) and build bind.
 			applyStun(target);
 			tickBindProgress(player, target, now);
+		} else {
+			double lookY = player.getLook(1.0F).yCoord;
+			if (lookY <= LOOK_DOWN_MAGNET) {
+				applyBiteStandoffPull(player, target);
+			} else {
+				applyPsychicMoveToBlock(player, target);
+			}
 		}
 
 		if (HypnosisDebug.enabled() && now % 10 == 0) {
 			HypnosisDebug.logMastery(player,
 					String.format("%s %s motion=%.3f,%.3f,%.3f",
-							sneaking ? "blockPull" : "stun",
+							sneaking ? "stun" : "blockPull",
 							target.getCommandSenderName(), target.motionX, target.motionY, target.motionZ));
 		}
 	}
@@ -292,8 +354,8 @@ public final class HypnosisMasteryLogic {
 	}
 
 	/**
-	 * Sneak psychic control: look-ray past the entity → next block hit → move entity toward that contact.
-	 * No block behind them within range → no yank.
+	 * Free terrain drag (look level/up): aim/past/ledge without reeling into the player's face.
+	 * Inbound aim dests prefer past; leftover pull-toward-player motion is stripped.
 	 */
 	private static void applyPsychicMoveToBlock(EntityPlayer player, EntityLivingBase target) {
 		Vec3 eye = player.getPosition(1.0F);
@@ -305,41 +367,429 @@ public final class HypnosisMasteryLogic {
 		double along = toX * look.xCoord + toY * look.yCoord + toZ * look.zCoord;
 		if (along < 0.0D) along = 0.0D;
 
-		double past = along + Math.max((double) target.width, (double) target.height) * 0.5D + 0.05D;
-		if (past >= PSYCHIC_RANGE) return;
+		double past = along + Math.max((double) target.width, (double) target.height) * 0.5D + ENTITY_PAST_OFFSET;
 
 		Vec3 start = eye.addVector(look.xCoord * past, look.yCoord * past, look.zCoord * past);
 		Vec3 end = eye.addVector(look.xCoord * PSYCHIC_RANGE, look.yCoord * PSYCHIC_RANGE, look.zCoord * PSYCHIC_RANGE);
-		MovingObjectPosition hit = player.worldObj.func_147447_a(start, end, false, false, true);
-		if (hit == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || hit.hitVec == null) {
+		MovingObjectPosition pastHit = past < PSYCHIC_RANGE
+				? player.worldObj.func_147447_a(start, end, false, false, true)
+				: null;
+		MovingObjectPosition aimHit = player.rayTrace(PSYCHIC_RANGE, 1.0F);
+
+		DestPick pick = pickPsychicDest(player, target, aimHit, pastHit);
+		// Unlocked: never reel in via floor-between-you aim — prefer past when aim is inbound.
+		if (pick != null && isDestInbound(player, target, pick.destX, pick.destZ)) {
+			DestPick pastPick = destFromHit(player, target, pastHit, "past");
+			if (pastPick != null && !isDestInbound(player, target, pastPick.destX, pastPick.destZ)) {
+				pick = pastPick;
+			} else if (pastPick != null && "aim".equals(pick.source)) {
+				pick = pastPick;
+			}
+		}
+		if (pick == null) {
+			if (HypnosisDebug.dragEnabled()) {
+				HypnosisDebug.logDrag(player, LegendsHelper.getTicks(player),
+						String.format("noBlockHit id=%d name=%s lookY=%.2f magnet=false along=%.2f past=%.2f rayStart=%.2f,%.2f,%.2f rayEnd=%.2f,%.2f,%.2f ent=%.2f,%.2f,%.2f vel=%.3f,%.3f,%.3f",
+								target.getEntityId(), target.getCommandSenderName(),
+								look.yCoord,
+								along, past,
+								start.xCoord, start.yCoord, start.zCoord,
+								end.xCoord, end.yCoord, end.zCoord,
+								target.posX, target.posY, target.posZ,
+								target.motionX, target.motionY, target.motionZ));
+			}
 			return;
 		}
 
-		double dx = hit.hitVec.xCoord - target.posX;
-		double dy = hit.hitVec.yCoord - midY;
-		double dz = hit.hitVec.zCoord - target.posZ;
+		double destX = pick.destX;
+		double destY = pick.destY;
+		double destZ = pick.destZ;
+		boolean clampedDown = pick.clampedDown;
+		boolean inbound = isDestInbound(player, target, destX, destZ);
+
+		double dx = destX - target.posX;
+		double dy = destY - target.posY;
+		double dz = destZ - target.posZ;
 		double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-		if (dist < 1.0E-4D) return;
+		double targetToPlayer = horizDist(target.posX, target.posZ, player.posX, player.posZ);
 
-		target.motionX = dx / dist * PULL_SCALE;
-		target.motionZ = dz / dist * PULL_SCALE;
-
-		// Block above the mob (ceiling / higher surface): force real lift, not gravity-cancelled nudge.
-		boolean blockAbove = hit.hitVec.yCoord > target.posY + 0.2D;
-		if (blockAbove) {
-			double lift = dy / dist * PULL_SCALE_UP;
-			if (lift < MIN_LIFT) lift = MIN_LIFT;
-			target.motionY = lift;
-			target.onGround = false;
-		} else {
-			target.motionY = dy / dist * PULL_SCALE;
+		if (dist < 0.12D) {
+			target.motionX *= 0.3D;
+			target.motionZ *= 0.3D;
+			if (target.motionY > 0.0D) target.motionY *= 0.3D;
+			target.velocityChanged = true;
+			if (HypnosisDebug.dragEnabled()) {
+				HypnosisDebug.logDrag(player, LegendsHelper.getTicks(player),
+						String.format("arrived id=%d name=%s src=%s lookY=%.2f magnet=false block=%d,%d,%d ent=%.2f,%.2f,%.2f dist=%.3f",
+								target.getEntityId(), target.getCommandSenderName(), pick.source,
+								look.yCoord,
+								pick.blockX, pick.blockY, pick.blockZ,
+								target.posX, target.posY, target.posZ, dist));
+			}
+			return;
 		}
+
+		boolean nonPlayer = !(target instanceof EntityPlayer);
+		double speedCap = nonPlayer ? SPEED_CAP_MOB : SPEED_CAP;
+		double blend = nonPlayer ? MOTION_BLEND_MOB : MOTION_BLEND;
+		double minLift = nonPlayer ? MIN_LIFT_MOB : MIN_LIFT;
+
+		double arrive = dist / ARRIVE_DIST;
+		if (arrive > 1.0D) arrive = 1.0D;
+		if (arrive < ARRIVE_FLOOR) arrive = ARRIVE_FLOOR;
+		double speed = speedCap * arrive;
+		if (speed < MIN_APPROACH) speed = MIN_APPROACH;
+
+		double nx = dx / dist;
+		double ny = dy / dist;
+		double nz = dz / dist;
+
+		double wantX = nx * speed;
+		double wantY = ny * speed;
+		double wantZ = nz * speed;
+
+		boolean needLift = destY > target.posY + 0.15D;
+		if (needLift) {
+			if (wantY < minLift) wantY = minLift;
+			if (wantY > MAX_LIFT) wantY = MAX_LIFT;
+			if (nonPlayer) target.onGround = false;
+		}
+
+		// Unlocked: never close distance to the player (ledge lift / lateral / push away OK).
+		if (inbound) {
+			double[] stripped = stripTowardPlayer(player, target, wantX, wantY, wantZ);
+			wantX = stripped[0];
+			wantY = stripped[1];
+			wantZ = stripped[2];
+		}
+
+		double beforeX = target.motionX;
+		double beforeY = target.motionY;
+		double beforeZ = target.motionZ;
+		double yBlend = needLift ? LIFT_BLEND : blend;
+
+		target.motionX = beforeX + (wantX - beforeX) * blend;
+		target.motionY = beforeY + (wantY - beforeY) * yBlend;
+		target.motionZ = beforeZ + (wantZ - beforeZ) * blend;
 
 		target.fallDistance = 0.0F;
 		target.velocityChanged = true;
+
+		if (nonPlayer) {
+			target.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, DRAG_SLOWNESS_TICKS,
+					DRAG_SLOWNESS_AMPLIFIER, true));
+		}
+
+		if (HypnosisDebug.dragEnabled()) {
+			HypnosisDebug.logDrag(player, LegendsHelper.getTicks(player),
+					String.format(
+							"id=%d name=%s src=%s lookY=%.2f magnet=false "
+									+ "ent=%.2f,%.2f,%.2f block=%d,%d,%d dest=%.2f,%.2f,%.2f "
+									+ "hitVec=%.2f,%.2f,%.2f dist=%.2f arrive=%.2f speed=%.3f "
+									+ "want=%.3f,%.3f,%.3f velIn=%.3f,%.3f,%.3f velOut=%.3f,%.3f,%.3f "
+									+ "lift=%s clampDown=%s inbound=%s pDist=%.2f "
+									+ "rayStart=%.2f,%.2f,%.2f along=%.2f past=%.2f",
+							target.getEntityId(),
+							target.getCommandSenderName(),
+							pick.source,
+							look.yCoord,
+							target.posX, target.posY, target.posZ,
+							pick.blockX, pick.blockY, pick.blockZ,
+							destX, destY, destZ,
+							pick.hitX, pick.hitY, pick.hitZ,
+							dist, arrive, speed,
+							wantX, wantY, wantZ,
+							beforeX, beforeY, beforeZ,
+							target.motionX, target.motionY, target.motionZ,
+							needLift, clampedDown, inbound, targetToPlayer,
+							start.xCoord, start.yCoord, start.zCoord,
+							along, past));
+		}
 	}
 
-	/** Hold them still without yanking (stand / enslavement focus). */
+	/**
+	 * Bite magnet ring: hitbox touch (+ pad), or mob melee-ish reach ({@code width*2}), capped at
+	 * {@link #STANDOFF_MAX}.
+	 */
+	private static double biteStandoffDistance(EntityPlayer player, EntityLivingBase target) {
+		double touch = player.width * 0.5D + target.width * 0.5D + STANDOFF_BITE_PAD;
+		// Vanilla collide-AI style reach uses ~2× attacker width; treat the mob the same way.
+		double melee = (double) target.width * 2.0D + player.width * 0.5D;
+		double d = Math.max(touch, melee);
+		if (d < STANDOFF_MIN) d = STANDOFF_MIN;
+		if (d > STANDOFF_MAX) d = STANDOFF_MAX;
+		return d;
+	}
+
+	/**
+	 * Same lock as Vampirism {@code FreezeSkill}: Slowness X + Jump 128, plus hard stop / AI clear.
+	 * No Resistance — they must stay biteable in combat.
+	 */
+	private static void applyBiteFreeze(EntityLivingBase target) {
+		applyStun(target);
+		target.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, BITE_FREEZE_TICKS,
+				BITE_FREEZE_SLOWNESS_AMP, true));
+		target.addPotionEffect(new PotionEffect(Potion.jump.id, BITE_FREEZE_TICKS,
+				BITE_FREEZE_JUMP_AMP, true));
+		if (target instanceof EntityLiving) {
+			EntityLiving living = (EntityLiving) target;
+			if (living.getNavigator() != null) {
+				living.getNavigator().clearPathEntity();
+			}
+			living.setAttackTarget(null);
+			living.setRevengeTarget(null);
+		}
+	}
+
+	/**
+	 * Look-down bite magnet: reel in only when farther than the hold band; at/inside use
+	 * Vampirism-style freeze (Zod combat logs: AI walked out → micro-pull jitter).
+	 * Optional lift if aim hits a higher block near the mob while reeling.
+	 */
+	private static void applyBiteStandoffPull(EntityPlayer player, EntityLivingBase target) {
+		double lookY = player.getLook(1.0F).yCoord;
+		double standoff = biteStandoffDistance(player, target);
+		double targetToPlayer = horizDist(target.posX, target.posZ, player.posX, player.posZ);
+		boolean nonPlayer = !(target instanceof EntityPlayer);
+
+		// Already in bite range (at or inside hold band): hard freeze — no rim micro-adjust.
+		if (targetToPlayer <= standoff + STANDOFF_HOLD_SLACK) {
+			if (nonPlayer) {
+				applyBiteFreeze(target);
+			} else {
+				applyStun(target);
+			}
+			if (HypnosisDebug.dragEnabled()) {
+				HypnosisDebug.logDrag(player, LegendsHelper.getTicks(player),
+						String.format("standoffHold id=%d name=%s lookY=%.2f magnet=true stand=%.2f pDist=%.2f ent=%.2f,%.2f,%.2f freeze=true",
+								target.getEntityId(), target.getCommandSenderName(),
+								lookY, standoff, targetToPlayer,
+								target.posX, target.posY, target.posZ));
+			}
+			return;
+		}
+
+		double rdx = target.posX - player.posX;
+		double rdz = target.posZ - player.posZ;
+		double rh = Math.sqrt(rdx * rdx + rdz * rdz);
+		if (rh < 1.0E-4D) {
+			Vec3 look = player.getLook(1.0F);
+			rdx = look.xCoord;
+			rdz = look.zCoord;
+			rh = Math.sqrt(rdx * rdx + rdz * rdz);
+			if (rh < 1.0E-4D) return;
+		}
+		rdx /= rh;
+		rdz /= rh;
+
+		double destX = player.posX + rdx * standoff;
+		double destZ = player.posZ + rdz * standoff;
+		double destY = target.posY;
+
+		// Optional mount while reeling: aim higher block near the mob.
+		MovingObjectPosition aimHit = player.rayTrace(PSYCHIC_RANGE, 1.0F);
+		DestPick aim = destFromHit(player, target, aimHit, "aim");
+		boolean needLift = false;
+		if (aim != null) {
+			double ahx = aim.destX - target.posX;
+			double ahz = aim.destZ - target.posZ;
+			if (Math.sqrt(ahx * ahx + ahz * ahz) <= AIM_DEST_RANGE && aim.destY > target.posY + 0.15D) {
+				destY = aim.destY;
+				needLift = true;
+			}
+		}
+
+		double dx = destX - target.posX;
+		double dy = destY - target.posY;
+		double dz = destZ - target.posZ;
+		double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		if (dist < 0.12D) {
+			if (nonPlayer) applyBiteFreeze(target);
+			else applyStun(target);
+			return;
+		}
+
+		// Kill AI walking while we reel (FreezeSkill potions); forced motion still applies after.
+		if (nonPlayer) {
+			target.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, BITE_FREEZE_TICKS,
+					BITE_FREEZE_SLOWNESS_AMP, true));
+			target.addPotionEffect(new PotionEffect(Potion.jump.id, BITE_FREEZE_TICKS,
+					BITE_FREEZE_JUMP_AMP, true));
+			if (target instanceof EntityLiving) {
+				EntityLiving living = (EntityLiving) target;
+				if (living.getNavigator() != null) {
+					living.getNavigator().clearPathEntity();
+				}
+				living.setAttackTarget(null);
+				living.setRevengeTarget(null);
+			}
+		}
+
+		double speedCap = (nonPlayer ? SPEED_CAP_MOB : SPEED_CAP) * MAGNET_SPEED_SCALE;
+		double blend = nonPlayer ? MOTION_BLEND_MOB : MOTION_BLEND;
+		double minLift = nonPlayer ? MIN_LIFT_MOB : MIN_LIFT;
+		double minApproach = MIN_APPROACH * MAGNET_SPEED_SCALE;
+
+		double arrive = dist / ARRIVE_DIST;
+		if (arrive > 1.0D) arrive = 1.0D;
+		if (arrive < ARRIVE_FLOOR) arrive = ARRIVE_FLOOR;
+		double speed = speedCap * arrive;
+		if (speed < minApproach) speed = minApproach;
+
+		double nx = dx / dist;
+		double ny = dy / dist;
+		double nz = dz / dist;
+		double wantX = nx * speed;
+		double wantY = ny * speed;
+		double wantZ = nz * speed;
+
+		if (needLift) {
+			if (wantY < minLift) wantY = minLift;
+			if (wantY > MAX_LIFT) wantY = MAX_LIFT;
+			if (nonPlayer) target.onGround = false;
+		}
+
+		double beforeX = target.motionX;
+		double beforeY = target.motionY;
+		double beforeZ = target.motionZ;
+		double yBlend = needLift ? LIFT_BLEND : blend;
+
+		target.motionX = beforeX + (wantX - beforeX) * blend;
+		target.motionY = beforeY + (wantY - beforeY) * yBlend;
+		target.motionZ = beforeZ + (wantZ - beforeZ) * blend;
+		target.fallDistance = 0.0F;
+		target.velocityChanged = true;
+
+		if (HypnosisDebug.dragEnabled()) {
+			HypnosisDebug.logDrag(player, LegendsHelper.getTicks(player),
+					String.format(
+							"id=%d name=%s src=magnet lookY=%.2f magnet=true stand=%.2f "
+									+ "ent=%.2f,%.2f,%.2f dest=%.2f,%.2f,%.2f dist=%.2f speed=%.3f "
+									+ "want=%.3f,%.3f,%.3f velOut=%.3f,%.3f,%.3f lift=%s pDist=%.2f",
+							target.getEntityId(), target.getCommandSenderName(),
+							lookY, standoff,
+							target.posX, target.posY, target.posZ,
+							destX, destY, destZ, dist, speed,
+							wantX, wantY, wantZ,
+							target.motionX, target.motionY, target.motionZ,
+							needLift, targetToPlayer));
+		}
+	}
+
+	private static double horizDist(double x0, double z0, double x1, double z1) {
+		double dx = x0 - x1;
+		double dz = z0 - z1;
+		return Math.sqrt(dx * dx + dz * dz);
+	}
+
+	private static boolean isDestInbound(EntityPlayer player, EntityLivingBase target, double destX, double destZ) {
+		double targetToPlayer = horizDist(target.posX, target.posZ, player.posX, player.posZ);
+		double destToPlayer = horizDist(destX, destZ, player.posX, player.posZ);
+		return destToPlayer + 0.15D < targetToPlayer;
+	}
+
+	/** Remove the horizontal component of want that closes distance to the player. */
+	private static double[] stripTowardPlayer(EntityPlayer player, EntityLivingBase target,
+			double wantX, double wantY, double wantZ) {
+		double rdx = target.posX - player.posX;
+		double rdz = target.posZ - player.posZ;
+		double rh = Math.sqrt(rdx * rdx + rdz * rdz);
+		if (rh < 1.0E-4D) {
+			return new double[] { 0.0D, wantY, 0.0D };
+		}
+		rdx /= rh;
+		rdz /= rh;
+		double radial = wantX * rdx + wantZ * rdz;
+		if (radial < 0.0D) {
+			wantX -= rdx * radial;
+			wantZ -= rdz * radial;
+		}
+		return new double[] { wantX, wantY, wantZ };
+	}
+
+	private static final class DestPick {
+		final String source;
+		final int blockX, blockY, blockZ;
+		final double destX, destY, destZ;
+		final double hitX, hitY, hitZ;
+		final boolean clampedDown;
+
+		DestPick(String source, int blockX, int blockY, int blockZ,
+				double destX, double destY, double destZ,
+				double hitX, double hitY, double hitZ, boolean clampedDown) {
+			this.source = source;
+			this.blockX = blockX;
+			this.blockY = blockY;
+			this.blockZ = blockZ;
+			this.destX = destX;
+			this.destY = destY;
+			this.destZ = destZ;
+			this.hitX = hitX;
+			this.hitY = hitY;
+			this.hitZ = hitZ;
+			this.clampedDown = clampedDown;
+		}
+	}
+
+	/**
+	 * Prefer the block the player is aiming at when it sits near the mob (near-ledge mount);
+	 * otherwise the first block past the entity along look. Climb short solid columns so
+	 * hitting a ledge face/base resolves to the standable top.
+	 */
+	private static DestPick pickPsychicDest(EntityPlayer player, EntityLivingBase target,
+			MovingObjectPosition aimHit, MovingObjectPosition pastHit) {
+		DestPick aim = destFromHit(player, target, aimHit, "aim");
+		DestPick past = destFromHit(player, target, pastHit, "past");
+
+		if (aim != null) {
+			double ahx = aim.destX - target.posX;
+			double ahz = aim.destZ - target.posZ;
+			double aHoriz = Math.sqrt(ahx * ahx + ahz * ahz);
+			boolean aimNear = aHoriz <= AIM_DEST_RANGE;
+			boolean aimHigher = aim.destY > target.posY + 0.15D;
+			boolean pastFlat = past == null || past.destY <= target.posY + 0.15D;
+			// Near ledge: aim at the raised block even when past-ray only sees floor.
+			if (aimNear && (aimHigher || past == null || pastFlat || aim.destY >= past.destY)) {
+				return aim;
+			}
+		}
+		return past != null ? past : aim;
+	}
+
+	private static DestPick destFromHit(EntityPlayer player, EntityLivingBase target,
+			MovingObjectPosition hit, String source) {
+		if (hit == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || hit.hitVec == null) {
+			return null;
+		}
+		int topY = climbStandTop(player.worldObj, hit.blockX, hit.blockY, hit.blockZ);
+		double destX = hit.blockX + 0.5D;
+		double destY = topY + 1.05D;
+		double destZ = hit.blockZ + 0.5D;
+		boolean clampedDown = false;
+		if (destY < target.posY) {
+			destY = target.posY;
+			clampedDown = true;
+		}
+		return new DestPick(source, hit.blockX, topY, hit.blockZ,
+				destX, destY, destZ,
+				hit.hitVec.xCoord, hit.hitVec.yCoord, hit.hitVec.zCoord,
+				clampedDown);
+	}
+
+	/** Top Y of a short solid stack above the hit (ledge face/base → ledge top). */
+	private static int climbStandTop(net.minecraft.world.World world, int x, int y, int z) {
+		int top = y;
+		for (int i = 1; i <= COLUMN_CLIMB; i++) {
+			int ny = y + i;
+			if (world.isAirBlock(x, ny, z)) break;
+			net.minecraft.block.Block block = world.getBlock(x, ny, z);
+			if (block == null || !block.getMaterial().blocksMovement()) break;
+			top = ny;
+		}
+		return top;
+	}
+
+	/** Hold them still without yanking (sneak / enslavement focus). */
 	private static void applyStun(EntityLivingBase target) {
 		target.motionX = 0.0D;
 		target.motionZ = 0.0D;
@@ -502,6 +952,12 @@ public final class HypnosisMasteryLogic {
 		NBTTagCompound nbt = target.getEntityData();
 		int attempt = nbt.getInteger("VampireHypnosisAttempts") + 1;
 		nbt.setInteger("VampireHypnosisAttempts", attempt);
+		if (HypnosisDebug.dragEnabled()) {
+			HypnosisDebug.logBind(player,
+					String.format("masteryBump id=%d name=%s sneak=%s attempt=%d/%d",
+							target.getEntityId(), target.getCommandSenderName(),
+							player.isSneaking(), attempt, threshold));
+		}
 		playBindProgress(player, attempt, threshold);
 		return attempt;
 	}
@@ -509,6 +965,9 @@ public final class HypnosisMasteryLogic {
 	/** Ding at start; rising hypnosis pitch while focus builds — no chat until success. */
 	private static void playBindProgress(EntityPlayer player, int attempt, int threshold) {
 		if (attempt == 1) {
+			if (HypnosisDebug.dragEnabled()) {
+				HypnosisDebug.logBind(player, "ding random.orb attempt=1 sneak=" + player.isSneaking());
+			}
 			player.worldObj.playSoundAtEntity(player, "random.orb", 1.0F, 5.0F);
 			return;
 		}

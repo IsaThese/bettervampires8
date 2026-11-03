@@ -2,8 +2,10 @@ package com.mrsand.StatBoostChanges.common.handlers;
 
 import com.emoniph.witchery.Witchery;
 import com.emoniph.witchery.util.TimeUtil;
+import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.packets.PacketSyncTarget;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
+import com.mrsand.StatBoostChanges.util.HypnosisDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -25,6 +27,14 @@ public class SyncHandlerTarget implements IMessageHandler<PacketSyncTarget, IMes
 		EntityPlayer player = ctx.getServerHandler().playerEntity;
 		Entity entity = player.worldObj.getEntityByID(message.getEntityID());
 		if (entity instanceof EntityCreature && player != null) {
+			// Belt-and-suspenders: Mastery channel must not run old gaze bind/ding.
+			if (VampireRestoredAbilities.isHypnosisMasteryChanneling(player)) {
+				if (HypnosisDebug.dragEnabled()) {
+					HypnosisDebug.logBind(player, "gazePacket ignored — mastery channeling id="
+							+ message.getEntityID() + " sneak=" + player.isSneaking());
+				}
+				return null;
+			}
 			EntityCreature target = (EntityCreature) entity;
 
 			GeneralUtil.forceLookAtEntity(target, player);
@@ -61,6 +71,12 @@ public class SyncHandlerTarget implements IMessageHandler<PacketSyncTarget, IMes
 			if (tick % 7 == 0 && (!nbt.getBoolean("tranced") || nbt.getBoolean("angry"))) {
 				if (attempt < 15) {
 					if (attempt == 0) {
+						if (HypnosisDebug.dragEnabled()) {
+							HypnosisDebug.logBind(player,
+									"gazeDing random.orb id=" + target.getEntityId()
+											+ " name=" + target.getCommandSenderName()
+											+ " sneak=" + player.isSneaking());
+						}
 						player.worldObj.playSoundAtEntity(player, "random.orb", 1.0F, 5.0F);
 					}
 					attempt++;

@@ -4,6 +4,7 @@ import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.tihyo.legends.management.PlayerHelper;
 
+import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -33,7 +34,8 @@ public final class VampireEyesVisual {
 	/**
 	 * True while synced {@code HYPNOTIZING} (mesmerize / mastery), hypnosis raise-hand
 	 * (Legends {@code AIMING_RIGHT} type 0 — same Replay-stable signal as the arm),
-	 * L10 otherform, blood vision, or starve OTHERFORM.
+	 * L10 otherform, blood vision, starve OTHERFORM, or vampire-legacy bite channels
+	 * (Vampiric Bite, Vampire's Wrath, Blood Lust).
 	 * <p>
 	 * Do not gate on mastery key duration — that is local-only.
 	 */
@@ -47,7 +49,18 @@ public final class VampireEyesVisual {
 		}
 		if (v != null && v.getBoolean(PlayerKeys.OTHERFORM)) return true;
 		if (v != null && v.getBoolean(PlayerKeys.IS_STARVING)) return true;
-		return LegendsUtil.bloodVision(player);
+		if (LegendsUtil.bloodVision(player)) return true;
+		return isVampireBiteChannelEyes(player);
+	}
+
+	/** Vampire legacy: Bite / Wrath / Blood Lust show powers-only eyes for the channel. */
+	private static boolean isVampireBiteChannelEyes(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || !LegendsUtil.isVampire(player)) {
+			return false;
+		}
+		return LegendsAbilityBridge.isVampireBite(player)
+				|| LegendsAbilityBridge.isVampiresWrath(player)
+				|| LegendsAbilityBridge.isBloodLust(player);
 	}
 
 	public static int getMode(EntityPlayer player) {
@@ -86,7 +99,7 @@ public final class VampireEyesVisual {
 			return "Vampiric eyes: disabled";
 		case MODE_POWERS_ONLY:
 		default:
-			return "Vampiric eyes: powers only (hypnosis mastery / mesmerize / blood vision / level 10)";
+			return "Vampiric eyes: powers only (hypnosis / blood vision / bite / wrath / blood lust / level 10)";
 		}
 	}
 

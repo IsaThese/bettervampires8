@@ -4,9 +4,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
+import com.mrsand.StatBoostChanges.util.VampireBloodChannels;
 import com.tihyo.legends.management.LegendsGameRules;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.management.properties.LegendsProperties;
@@ -16,6 +18,18 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @Mixin(value = PlayerHelper.class, remap = false)
 public abstract class PlayerHelperMixin {
+
+	/**
+	 * Stock Vampiric Drain tooltip claims a flat +20; suppress that while
+	 * {@code BLOOD_DRAIN} is active so BV's bite-rate pulses own the gain.
+	 */
+	@Inject(method = "increaseBloodMeter", at = @At("HEAD"), cancellable = true)
+	private static void bvSuppressDrainFlatGrant(EntityPlayer player, int amount, boolean unused,
+			CallbackInfo ci) {
+		if (VampireBloodChannels.shouldSuppressDrainFlatGrant(player, amount)) {
+			ci.cancel();
+		}
+	}
 
 	@Inject(method = "isInvincible", at = @At("HEAD"), cancellable = true)
 	private static void isInvincibleChange(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {

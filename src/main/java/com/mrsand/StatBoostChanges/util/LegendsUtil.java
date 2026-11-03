@@ -6,10 +6,12 @@ import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.tihyo.horror.blocks.RegisterBlocksHorror;
 import com.tihyo.legends.abilities.LegendsAbilities;
+import com.tihyo.legends.abilities.timed.TimedAbility;
 import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.management.PlayerHelper;
+import com.tihyo.legends.management.properties.LegendsProperties;
 import com.tihyo.legends.morph.MorphHelper;
 import com.tihyo.legends.morph.MorphRegistry;
 
@@ -362,9 +364,18 @@ public class LegendsUtil {
 			MorphHelper.morph(player, MorphRegistry.draculaTrueForm);
 			if (!player.worldObj.isRemote) {
 				player.worldObj.playSoundAtEntity(player, "horror:dracula_trueform", 1.0F, 1.0F);
+				// Vampire-legacy Transvection (levitate); stats() keeps it refreshed at night.
+				if (!VampireSunRules.isDaytime(player)) {
+					PowersHandler.transvection(player, true);
+					player.getEntityData().setBoolean("bvTrueFormTransvection", true);
+				}
 			}
 		} else {
 			ifMorphedTurnHuman(player);
+			if (!player.worldObj.isRemote && player.getEntityData().getBoolean("bvTrueFormTransvection")) {
+				PowersHandler.transvection(player, false);
+				player.getEntityData().removeTag("bvTrueFormTransvection");
+			}
 		}
 	}
 
@@ -385,6 +396,82 @@ public class LegendsUtil {
 		if (VampireSunRules.generalPowersBlocked(player)) return;
 		PowersHandler.hellfire(player, Math.max(1, durationSeconds));
 	}
+
+	public static void waveOfFireballs(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.waveOfFireballs(player, Math.max(1, durationSeconds));
+	}
+
+	public static void vampireBite(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.vampireBite(player, Math.max(1, durationSeconds));
+	}
+
+	/** The Count / Legacy Vampire's Wrath (embrace drain channel). */
+	public static void vampiresWrath(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.vampiresWrath(player, Math.max(1, durationSeconds));
+	}
+
+	public static void furySwipes(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.furySwipes(player, Math.max(1, durationSeconds));
+	}
+
+	public static void battlePrecognition(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.battlePrecognition(player, Math.max(1, durationSeconds));
+	}
+
+	public static void combat(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.combat(player, Math.max(1, durationSeconds));
+	}
+
+	public static void darkInferno(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		TimedAbility.darkInferno.start(player, Math.max(1, durationSeconds), false);
+	}
+
+	public static void rampage(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		TimedAbility.ramming.start(player, Math.max(1, durationSeconds));
+	}
+
+	public static void thunderWave(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.thunderWave(player, Math.max(1, durationSeconds));
+	}
+
+	public static void soulSteal(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.soulSteal(player, Math.max(1, durationSeconds));
+	}
+
+	public static void demonicMegiddo(EntityPlayer player, int durationSeconds) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		PowersHandler.demonicMegiddo(player, Math.max(1, durationSeconds));
+	}
+
+	/** Toggle Castlevania cape mode (closed ↔ open). */
+	public static void toggleCapeMode(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
+		Boolean on = (Boolean) LegendsProperties.CAPE_MODE.get(player);
+		boolean next = on == null || !on.booleanValue();
+		PowersHandler.capeMode(player, next);
+	}
+
 	public static boolean fangs(EntityPlayer player) {
 		return LegendsAbilityBridge.isVampireFangs(player);
 	}

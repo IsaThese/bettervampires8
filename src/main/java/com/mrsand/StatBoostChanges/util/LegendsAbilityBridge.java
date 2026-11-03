@@ -49,6 +49,14 @@ public final class LegendsAbilityBridge {
 		return getIntProp(entity, LegendsProperties.VAMPIRE_BITE) > 0;
 	}
 
+	public static boolean isBloodDrain(EntityLivingBase entity) {
+		return getIntProp(entity, LegendsProperties.BLOOD_DRAIN) > 0;
+	}
+
+	public static boolean isVampiresWrath(EntityLivingBase entity) {
+		return getIntProp(entity, LegendsProperties.VAMPIRES_WRATH) > 0;
+	}
+
 	public static boolean isFury(EntityLivingBase entity) {
 		return getIntProp(entity, LegendsProperties.FURY) > 0;
 	}

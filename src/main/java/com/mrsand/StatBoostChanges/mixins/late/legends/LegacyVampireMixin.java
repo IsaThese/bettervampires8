@@ -174,6 +174,20 @@ public abstract class LegacyVampireMixin {
 			}
 		}
 
+		// True Form: vampire-legacy Transvection (levitate), not Stat.flight.
+		// Daylight off except sun-safe / vampire biomes. Flag tracks BV auto-grant so we
+		// do not clear a player's own Transvection toggle when they are not in True Form.
+		final String tfTransvectionTag = "bvTrueFormTransvection";
+		boolean trueFormHover = MorphHelper.isDraculaTrueForm(player)
+				&& !VampireSunRules.isDaytime(player);
+		if (trueFormHover) {
+			PowersHandler.transvection(player, true);
+			player.getEntityData().setBoolean(tfTransvectionTag, true);
+		} else if (player.getEntityData().getBoolean(tfTransvectionTag)) {
+			PowersHandler.transvection(player, false);
+			player.getEntityData().removeTag(tfTransvectionTag);
+		}
+
 		if (!MorphHelper.isMorphed(player)) {
 			LegendsAbilities.stealth(player, true);
 		}

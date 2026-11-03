@@ -13,13 +13,13 @@ import com.tihyo.legends.legacy.PowerType;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Castlevania Dracula teleport ({@code PowersHandler.draculaTeleport}).
+ * Castlevania Dracula Teleport / Electric Wave (True Form).
  */
 public class LegacyPowerBvDraculaTeleport extends LegacyPower {
 
 	private static final List<LegendsLegacy> legacies = Lists.newArrayList();
-	/** Match Castlevania suit ability duration (seconds). */
 	public static final int TELEPORT_SECONDS = 11;
+	public static final int THUNDER_WAVE_SECONDS = 3;
 
 	@Override
 	public String getName() {
@@ -28,7 +28,7 @@ public class LegacyPowerBvDraculaTeleport extends LegacyPower {
 
 	@Override
 	public String getDisplayName(EntityPlayer player) {
-		return "Castlevania Teleport";
+		return LegendsUtil.isDraculaTrueForm(player) ? "Electric Wave" : "Castlevania Teleport";
 	}
 
 	@Override
@@ -56,8 +56,12 @@ public class LegacyPowerBvDraculaTeleport extends LegacyPower {
 			return;
 		}
 		if (!player.worldObj.isRemote) {
-			LegendsUtil.draculaTeleport(player, TELEPORT_SECONDS);
-			LegacyHelper.setCooldown(player, key, 200);
+			if (LegendsUtil.isDraculaTrueForm(player)) {
+				LegendsUtil.thunderWave(player, THUNDER_WAVE_SECONDS);
+			} else {
+				LegendsUtil.draculaTeleport(player, TELEPORT_SECONDS);
+			}
+			LegacyHelper.setCooldown(player, key, 400);
 		}
 	}
 
@@ -83,7 +87,12 @@ public class LegacyPowerBvDraculaTeleport extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Castlevania Dracula's teleport — vanish and reappear after a short delay.";
+		if (LegendsUtil.isDraculaTrueForm(player)) {
+			return "Electric Wave: generate a wave of electricity around you. "
+					+ "Shocks nearby foes for ~25 damage.";
+		}
+		return "Teleport: engulf yourself in flame/energy, vanish, and reappear shortly after. "
+				+ "Becomes Electric Wave in True Form.";
 	}
 
 	@Override

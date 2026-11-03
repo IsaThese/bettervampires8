@@ -13,6 +13,7 @@ import com.mrsand.StatBoostChanges.util.MistPhaseDebug;
 import com.mrsand.StatBoostChanges.util.MorphUtil;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
+import com.mrsand.StatBoostChanges.util.VampireBloodChannels;
 import com.mrsand.StatBoostChanges.util.VampirismUtil;
 import com.mrsand.StatBoostChanges.util.WebPassDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
@@ -238,6 +239,9 @@ public class LegendsEventHandler {
 
 
 		if (event.phase == Phase.END) {
+			if (Loader.isModLoaded("legends") && !player.worldObj.isRemote) {
+				VampireBloodChannels.tick(player);
+			}
 			if (Loader.isModLoaded("legends") && LegendsAbilityBridge.isMist(player)) {
 				MistPhaseDebug.sample(player, "tickEND");
 			}
