@@ -9,6 +9,7 @@ import com.mrsand.StatBoostChanges.ModCompat;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager.VillagerKeys;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
+import com.mrsand.StatBoostChanges.util.VampireDeathDebug;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import de.teamlapen.vampirism.entity.player.VampirePlayer;
@@ -48,10 +49,13 @@ public class WitcheryEventHandler {
 		ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 		if (playerEx == null || !playerEx.isVampire()) return;
 
+		VampireDeathDebug.log(player, "LIVING_DEATH_ENTER", event.source);
+
 		// Mirror Witchery: if health already restored, just cancel
 		if (player.getHealth() > 0.0F) {
 			event.setCanceled(true);
 			player.isDead = false;
+			VampireDeathDebug.log(player, "CANCEL_ALREADY_ALIVE", event.source);
 			return;
 		}
 
@@ -61,6 +65,9 @@ public class WitcheryEventHandler {
 			player.isDead = false;
 			player.deathTime = 0;
 			player.getEntityData().setBoolean(NBT_VAMPIRE_DEATH_SAVED, true);
+			VampireDeathDebug.log(player, "CANCEL_SAVED", event.source);
+		} else {
+			VampireDeathDebug.log(player, "DEATH_ALLOWED", event.source);
 		}
 	}
 

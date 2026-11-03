@@ -84,7 +84,8 @@ public class LegacyPowerBvDemonicForm extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Transform into a demonic beast. Raises suspicion if witnessed.";
+		return "Transform into a demonic beast. Drains 1% blood per second while active; "
+				+ "melee hits on blood targets feed you. Raises suspicion if witnessed.";
 	}
 
 	@Override

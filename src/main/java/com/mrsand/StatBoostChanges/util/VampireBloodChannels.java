@@ -1,19 +1,24 @@
 package com.mrsand.StatBoostChanges.util;
 
+import com.tihyo.legends.management.LegendsChatFormat;
 import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.management.properties.LegendsProperties;
+import com.tihyo.legends.morph.MorphHelper;
 
 import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 
 /**
  * Retunes Legends blood-channel abilities for BV:
  * <ul>
  *   <li>Vampiric Drain ({@code BLOOD_DRAIN}) — same +5 / 10t as Vampiric Bite</li>
  *   <li>Vampire's Wrath ({@code VAMPIRES_WRATH}) — ≥30% blood on successful contact</li>
+ *   <li>Fury Swipes ({@code FURY_SWIPES}) — same +5 / 10t on claw contact</li>
+ *   <li>Demonic Form upkeep — 1% max Witchery blood / second while beasted</li>
  * </ul>
  */
 public final class VampireBloodChannels {
@@ -23,6 +28,7 @@ public final class VampireBloodChannels {
 	public static final double DRAIN_RANGE = 2.0D;
 	public static final double WRATH_RANGE = 3.0D;
 	public static final int WRATH_MIN_BLOOD = 30;
+	public static final float DEMONIC_UPKEEP_PERCENT = 0.01F;
 
 	private static final String TAG_WRATH_TRACKING = "bvWrathTracking";
 	private static final String TAG_WRATH_GAINED = "bvWrathGained";
@@ -46,13 +52,26 @@ public final class VampireBloodChannels {
 			return;
 		}
 		tickBloodDrain(player);
+		tickFurySwipes(player);
 		tickVampiresWrath(player);
+		tickDemonicFormUpkeep(player);
 	}
 
 	private static void tickBloodDrain(EntityPlayer player) {
 		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) <= 0) {
 			return;
 		}
+		pulseBloodOnContact(player);
+	}
+
+	private static void tickFurySwipes(EntityPlayer player) {
+		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.FURY_SWIPES) <= 0) {
+			return;
+		}
+		pulseBloodOnContact(player);
+	}
+
+	private static void pulseBloodOnContact(EntityPlayer player) {
 		if (LegendsHelper.getTicks(player) % BITE_PULSE_INTERVAL != 0) {
 			return;
 		}
@@ -66,6 +85,21 @@ public final class VampireBloodChannels {
 		} finally {
 			SUPPRESS_DRAIN_FLAT.set(Boolean.FALSE);
 		}
+	}
+
+	/** 1% max Witchery blood per second while in Demonic Form; demorph if empty. */
+	private static void tickDemonicFormUpkeep(EntityPlayer player) {
+		if (!MorphHelper.isVampireBeast(player)) return;
+		if (player.ticksExisted % 20 != 0) return;
+		if (!Loader.isModLoaded("witchery")) return;
+
+		if (WitcheryUtil.decreaseBlood(player, 0, DEMONIC_UPKEEP_PERCENT, true)) {
+			return;
+		}
+		// Starved out — force humanoid demorph.
+		LegendsUtil.ifMorphedTurnHuman(player);
+		player.addChatMessage(new ChatComponentText(
+				LegendsChatFormat.red + "Starved out of demonic form."));
 	}
 
 	private static void tickVampiresWrath(EntityPlayer player) {

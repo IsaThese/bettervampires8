@@ -67,9 +67,9 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 		int key = getAssignedKey(player);
 		if (key <= 0) return;
 
-		if (MorphHelper.isMorphed(player)) {
+		if (!canHypnotizeInCurrentForm(player)) {
 			if (LegendsHelper.getTicks(player) % 10 == 0) {
-				warn(player, "Must return to human form to hypnotize.");
+				warn(player, "Must be humanoid, True Form, or Demonic Form to hypnotize.");
 			}
 			return;
 		}
@@ -93,6 +93,11 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 			HypnosisMasteryLogic.clearAimingPose(player);
 			return;
 		}
+		if (!canHypnotizeInCurrentForm(player)) {
+			HypnosisMasteryLogic.clearAimingPose(player);
+			LegacyHelper.setDuration(player, key, 0);
+			return;
+		}
 		if (player.worldObj.isRemote) {
 			HypnosisMasteryLogic.tickChannel(player);
 			return;
@@ -100,6 +105,12 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 		if (LegacyHelper.getLegacyClass(player) == null) return;
 		if (LegacyHelper.getLegacyClass(player).getWeaknesses(player)) return;
 		HypnosisMasteryLogic.tickChannel(player);
+	}
+
+	/** Humanoid, Demonic Form, or True Form — not bat/wolf/mist/other morphs. */
+	private static boolean canHypnotizeInCurrentForm(EntityPlayer player) {
+		if (!MorphHelper.isMorphed(player)) return true;
+		return MorphHelper.isVampireBeast(player) || MorphHelper.isDraculaTrueForm(player);
 	}
 
 	@Override
@@ -119,7 +130,8 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Hold to hypnotize. Drag the target toward the block behind them along your gaze. "
+		return "Hold to hypnotize (humanoid, True Form, or Demonic Form). "
+				+ "Drag the target toward the block behind them along your gaze. "
 				+ "Sneak to stun and, after ~6s of focus, enthrall / tame / paralyse them (blood cost; one success message). "
 				+ "The purple bar does not drain. Punch applies standard hypnosis.";
 	}

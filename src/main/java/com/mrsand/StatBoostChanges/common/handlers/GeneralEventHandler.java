@@ -32,6 +32,7 @@ import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
+import com.mrsand.StatBoostChanges.util.VampireDeathDebug;
 import com.mrsand.StatBoostChanges.util.VampireHostility;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
@@ -108,6 +109,10 @@ public class GeneralEventHandler {
 
 		if (event.phase == Phase.END && !player.worldObj.isRemote && ModCompat.LEGENDS) {
 			LegendsUtil.tickMistDemist(player);
+		}
+
+		if (event.phase == Phase.END && player.worldObj != null && player.worldObj.isRemote) {
+			VampireDeathDebug.tickClient(player);
 		}
 
 		if (event.phase == Phase.END) {
