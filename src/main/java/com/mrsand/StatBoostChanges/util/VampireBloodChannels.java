@@ -17,13 +17,14 @@ import net.minecraft.util.ChatComponentText;
  * <ul>
  *   <li>Vampiric Drain ({@code BLOOD_DRAIN}) — same +5 / 10t as Vampiric Bite</li>
  *   <li>Vampire's Wrath ({@code VAMPIRES_WRATH}) — ≥30% blood on successful contact</li>
- *   <li>Fury Swipes ({@code FURY_SWIPES}) — same +5 / 10t on claw contact</li>
+ *   <li>Fury Swipes ({@code FURY_SWIPES}) — +10 / 10t on claw contact</li>
  *   <li>Demonic Form upkeep — 1% max Witchery blood / second while beasted</li>
  * </ul>
  */
 public final class VampireBloodChannels {
 
 	public static final int BITE_PULSE_AMOUNT = 5;
+	public static final int FURY_SWIPES_PULSE_AMOUNT = 10;
 	public static final int BITE_PULSE_INTERVAL = 10;
 	public static final double DRAIN_RANGE = 2.0D;
 	public static final double WRATH_RANGE = 3.0D;
@@ -61,17 +62,17 @@ public final class VampireBloodChannels {
 		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) <= 0) {
 			return;
 		}
-		pulseBloodOnContact(player);
+		pulseBloodOnContact(player, BITE_PULSE_AMOUNT);
 	}
 
 	private static void tickFurySwipes(EntityPlayer player) {
 		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.FURY_SWIPES) <= 0) {
 			return;
 		}
-		pulseBloodOnContact(player);
+		pulseBloodOnContact(player, FURY_SWIPES_PULSE_AMOUNT);
 	}
 
-	private static void pulseBloodOnContact(EntityPlayer player) {
+	private static void pulseBloodOnContact(EntityPlayer player, int amount) {
 		if (LegendsHelper.getTicks(player) % BITE_PULSE_INTERVAL != 0) {
 			return;
 		}
@@ -81,7 +82,7 @@ public final class VampireBloodChannels {
 		}
 		SUPPRESS_DRAIN_FLAT.set(Boolean.TRUE);
 		try {
-			PlayerHelper.increaseBloodMeter(player, BITE_PULSE_AMOUNT, false);
+			PlayerHelper.increaseBloodMeter(player, amount, false);
 		} finally {
 			SUPPRESS_DRAIN_FLAT.set(Boolean.FALSE);
 		}

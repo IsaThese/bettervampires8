@@ -88,10 +88,10 @@ public class LegacyPowerBvVampireBite extends LegacyPower {
 	public String getDescription(EntityPlayer player) {
 		if (LegendsUtil.isDraculaTrueForm(player)) {
 			return "Fury Swipes: ferociously claw the target. Deals ~10 damage + 2 bleeding; "
-					+ "fills blood on claw contact.";
+					+ "fills blood quickly on claw contact.";
 		}
 		return "Vampiric Bite: bite the victim, cause bleed, and fill your blood meter. "
-				+ "Deals ~6 damage and staggers ~5 seconds. Becomes Fury Swipes in True Form.";
+				+ "Deals ~2 damage per tick and staggers. Becomes Fury Swipes in True Form.";
 	}
 
 	@Override

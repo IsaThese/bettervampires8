@@ -27,6 +27,7 @@
       "ItemVampireClothesMixin",
       "legends.DamageHelperWitcheryClothesMixin",
       
+      "legends.BattlebournBatHordeMixin",
       "legends.HorrorCommonEventHandlerMixin",
       "legends.LegendsAbilitiesPacketMixin",
       "legends.LegacyHelperMixin",

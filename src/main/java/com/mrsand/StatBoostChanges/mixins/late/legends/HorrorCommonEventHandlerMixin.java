@@ -19,13 +19,13 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 
 /**
  * Legends 8 Horror hooks: BV sun fire tiers + thinner mist smoke in first person
- * + L5-parity vampire bite mob damage.
+ * + vampire bite / bat ability damage retunes.
  */
 @Mixin(value = HorrorCommonEventHandler.class, remap = false)
 public abstract class HorrorCommonEventHandlerMixin {
 
-	/** L5 stock mob bite damage (L8 ships 1.0F). */
-	private static final float L5_BITE_MOB_DAMAGE = 5.0F;
+	/** Per-tick mob bite damage (L8 stock 1.0F; was BV-buffed to 5). */
+	private static final float BITE_MOB_TICK_DAMAGE = 2.0F;
 
 	@Redirect(method = "onPlayerUpdate", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/entity/player/EntityPlayer;func_70015_d(I)V"))
@@ -79,8 +79,8 @@ public abstract class HorrorCommonEventHandlerMixin {
 	}
 
 	/**
-	 * Buff L8 vampire-bite mob damage (6th DamageHelper.attack in the bite block) from 1.0F to 5.0F.
-	 * Player bleeding hit (ordinal 2) stays at 1.0F like Legends 5.
+	 * Vampiric Bite mob tick damage → 2.0F (6th DamageHelper.attack in the bite block).
+	 * Player bleeding hit (ordinal 2) stays stock.
 	 */
 	@ModifyArg(
 			method = "onAbilities",
@@ -101,7 +101,46 @@ public abstract class HorrorCommonEventHandlerMixin {
 			),
 			index = 3
 	)
-	private float bvBuffVampireBiteMobDamage(float damage) {
-		return L5_BITE_MOB_DAMAGE;
+	private float bvBiteMobTickDamage(float damage) {
+		return BITE_MOB_TICK_DAMAGE;
+	}
+
+	/** Bat Attack projectile damage: L8 stock 4 → 14. */
+	@ModifyArg(
+			method = "onAbilities",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/entities/projectiles/EntityBatAttack;<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityLivingBase;I)V"
+			),
+			index = 2
+	)
+	private int bvBuffBatAttackDamage(int damage) {
+		return 14;
+	}
+
+	/** Blinding Bat projectile damage: L8 stock 5 → 15. */
+	@ModifyArg(
+			method = "onAbilities",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/entities/projectiles/EntityBlindingBat;<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityLivingBase;I)V"
+			),
+			index = 2
+	)
+	private int bvBuffBlindingBatDamage(int damage) {
+		return 15;
+	}
+
+	/** Bat Slam projectile damage: L8 stock 4 → 6. */
+	@ModifyArg(
+			method = "onAbilities",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/entities/projectiles/EntityBatSlam;<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityLivingBase;I)V"
+			),
+			index = 2
+	)
+	private int bvBuffBatSlamDamage(int damage) {
+		return 6;
 	}
 }

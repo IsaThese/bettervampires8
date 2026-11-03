@@ -142,13 +142,12 @@ public class LegendsEventHandler {
 					}
 				}
 			}
-			else if (MorphHelper.isVampireBeast(player)) {
+			else if (MorphHelper.isVampireBeast(player) || MorphHelper.isDraculaTrueForm(player)) {
 				if (event.target instanceof EntityLivingBase) {
 					EntityLivingBase target = (EntityLivingBase)event.target;
 					if(LegendsHelper.isBloodTarget(target)) {
 						if(Loader.isModLoaded("witchery"))
 							if(target.getHealth() != 0) {
-								//									target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)event.entityPlayer), 1000.0F);
 								WitcheryUtil.increaseBloodPower(player, (int)Math.ceil(WitcheryUtil.getMaxBloodPower(player)*.02F));
 								WitcheryUtil.playDrinkSound(event.entityPlayer, target);
 							}

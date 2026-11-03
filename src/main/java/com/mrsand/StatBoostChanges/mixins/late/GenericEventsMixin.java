@@ -25,6 +25,7 @@ import com.emoniph.witchery.util.SoundEffect;
 import com.emoniph.witchery.util.TargetPointUtil;
 import com.emoniph.witchery.util.TimeUtil;
 import com.emoniph.witchery.util.TransformCreature;
+import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
@@ -34,6 +35,7 @@ import com.mrsand.StatBoostChanges.util.VampireClothesRepair;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.legends.morph.MorphHelper;
+import com.tihyo.legends.morph.MorphRegistry;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -145,8 +147,21 @@ public abstract class GenericEventsMixin {
 				if(tick % 60 == 0) {
 					if(LegendsUtil.isVampire(player)) {
 						//Originally was going to do if it wasn't in their hot bar? But was too difficult to implement once sated
-						if(LegendsUtil.hasLearnedBeastForm(player) && vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE) && vPlayer.getBoolean(PlayerKeys.IS_STARVING)
-								&& !LegendsUtil.isVampireBeast(player) && !GeneralUtil.isInLight(player) && !LegendsUtil.isMist(player)) {
+						boolean vulnerableStarving = vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE)
+								&& vPlayer.getBoolean(PlayerKeys.IS_STARVING)
+								&& !GeneralUtil.isInLight(player)
+								&& !LegendsUtil.isMist(player);
+						if (vulnerableStarving && VampireRestoredAbilities.hasTrueForm(player)
+								&& !LegendsUtil.isDraculaTrueForm(player)
+								&& !LegendsUtil.isVampireBeast(player)) {
+							if (MorphHelper.isMorphed(player)) {
+								LegendsUtil.ifMorphedTurnHuman(player);
+							}
+							MorphHelper.morph(player, MorphRegistry.draculaTrueForm);
+							VisualUtil.changeForm(player, true);
+						} else if (vulnerableStarving && LegendsUtil.hasLearnedBeastForm(player)
+								&& !LegendsUtil.isVampireBeast(player)
+								&& !LegendsUtil.isDraculaTrueForm(player)) {
 							LegendsUtil.morphBeast(player);
 							VisualUtil.changeForm(player, true);
 						}

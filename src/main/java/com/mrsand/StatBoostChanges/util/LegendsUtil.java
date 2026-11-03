@@ -383,6 +383,19 @@ public class LegendsUtil {
 		return Loader.isModLoaded("legends") && player != null && MorphHelper.isDraculaTrueForm(player);
 	}
 
+	/** True if the named assignable power is on a Legends ability hotbar key. */
+	public static boolean isAbilityEquipped(EntityPlayer player, String powerName) {
+		return player != null && powerName != null && LegacyHelper.findAbility(player, powerName) > 0;
+	}
+
+	public static void clearTrueFormTransvection(EntityPlayer player) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) return;
+		if (player.getEntityData().getBoolean("bvTrueFormTransvection")) {
+			PowersHandler.transvection(player, false);
+			player.getEntityData().removeTag("bvTrueFormTransvection");
+		}
+	}
+
 	/** Castlevania Dracula teleport (Horror tick spawns EntityDraculaTeleport). */
 	public static void draculaTeleport(EntityPlayer player, int durationSeconds) {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
@@ -595,46 +608,89 @@ public class LegendsUtil {
 
 	public static boolean checkForVampireDeath(EntityPlayer player, Integer bloodPower, Integer maxBloodPower, boolean isInSunlight) {
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
-		//Decrease needs to be same as critical blood I believe an error occured
-		int criticalBlood = Math.round(maxBloodPower*.17333F); //260 at max Blood
-		criticalBlood = 300;
-		//If already transformed to beast
-		if ((bloodPower > 0 && bloodPower < criticalBlood)
-				&& MorphHelper.isVampireBeast(player)
-				&& !isInSunlight
-				&& !vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE)) {
+		int criticalBlood = 300;
+		boolean lowBlood = bloodPower > 0 && bloodPower < criticalBlood;
+		boolean vulnerable = vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE);
+
+		// Already in True Form under threshold: hotbar gates exit vs stay+warn.
+		if (lowBlood && MorphHelper.isDraculaTrueForm(player) && !isInSunlight && !vulnerable) {
 			vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
 			vPlayer.syncClient();
-			MorphHelper.morph(player, MorphRegistry.vampireBeast); //Turns back to human
-			if (LegacyHelper.findAbility(player, "morpMist") != 0
-					|| LegacyHelper.findAbility(player, "morphVampireMist") != 0)
-				PowersHandler.mistForm(player, 12); // make mist form forever? Could
-			// probably change time to 8000
-			// or large
-			player.addChatComponentMessage(
-					new ChatComponentText("You are extremely thirsty.")
-					.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-		} 
-		//First time and transform to beast (auto-granted Demonic Form — do not require hotbar slot)
-		else if ((bloodPower > 0 && bloodPower < criticalBlood)
-				&& !isInSunlight
-				&& !vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE) 
-				&& !MorphHelper.isVampireBeast(player)) {
+			if (isAbilityEquipped(player, "bvTrueForm")) {
+				player.addChatComponentMessage(
+						new ChatComponentText("Your thirst is critical — leave true form or feed.")
+						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+			} else {
+				clearTrueFormTransvection(player);
+				ifMorphedTurnHuman(player);
+				if (LegacyHelper.findAbility(player, "morpMist") != 0
+						|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
+					PowersHandler.mistForm(player, 12);
+				}
+				player.addChatComponentMessage(
+						new ChatComponentText("You are extremely thirsty.")
+						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+			}
+			return false;
+		}
 
+		// Already in Demonic Form under threshold: hotbar gates exit vs stay+warn.
+		if (lowBlood && MorphHelper.isVampireBeast(player) && !isInSunlight && !vulnerable) {
+			vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+			vPlayer.syncClient();
+			if (isAbilityEquipped(player, "bvDemonicForm")) {
+				player.addChatComponentMessage(
+						new ChatComponentText("Your thirst is critical — leave demonic form or feed.")
+						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+			} else {
+				ifMorphedTurnHuman(player);
+				if (LegacyHelper.findAbility(player, "morpMist") != 0
+						|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
+					PowersHandler.mistForm(player, 12);
+				}
+				player.addChatComponentMessage(
+						new ChatComponentText("You are extremely thirsty.")
+						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+			}
+			return false;
+		}
+
+		// First-time low-blood morph — no hotbar required.
+		if (lowBlood && !isInSunlight && !vulnerable
+				&& !MorphHelper.isVampireBeast(player)
+				&& !MorphHelper.isDraculaTrueForm(player)) {
+
+			if (VampireRestoredAbilities.hasTrueForm(player)) {
+				if (MorphHelper.isMorphed(player)) {
+					ifMorphedTurnHuman(player);
+				}
+				SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 10.0D);
+				MorphHelper.morph(player, MorphRegistry.draculaTrueForm);
+				if (!player.worldObj.isRemote && !VampireSunRules.isDaytime(player)) {
+					PowersHandler.transvection(player, true);
+					player.getEntityData().setBoolean("bvTrueFormTransvection", true);
+				}
+				player.addChatComponentMessage(
+						new ChatComponentText("Enraged, you take your true form.")
+						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+				player.getEntityData().setInteger("isInCombat", 1);
+				player.getEntityData().setInteger("isInCombatTimer", 1200);
+				return true;
+			}
 			if (VampireRestoredAbilities.hasDemonicForm(player)) {
-				if(MorphHelper.isMorphed(player))
-					LegendsUtil.ifMorphedTurnHuman(player);
+				if (MorphHelper.isMorphed(player)) {
+					ifMorphedTurnHuman(player);
+				}
 				SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 10.0D);
 				MorphHelper.morph(player, MorphRegistry.vampireBeast);
 				player.addChatComponentMessage(
 						new ChatComponentText("Enraged, you use your demonic form.")
 						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-
 				player.getEntityData().setInteger("isInCombat", 1);
 				player.getEntityData().setInteger("isInCombatTimer", 1200);
 				return true;
 			}
-			else if (LegacyHelper.findAbility(player, "morpMist") != 0
+			if (LegacyHelper.findAbility(player, "morpMist") != 0
 					|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
 				vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
 				vPlayer.syncClient();
