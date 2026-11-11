@@ -1,0 +1,400 @@
+﻿  public void onLivingUpdate(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+    Code:
+       0: aload_1
+       1: getfield      #1676               // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+       4: getfield      #345                // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+       7: getfield      #163                // Field net/minecraft/world/World.field_72995_K:Z
+      10: ifne          910
+      13: aload_1
+      14: getfield      #1676               // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+      17: instanceof    #45                 // class net/minecraft/entity/player/EntityPlayer
+      20: ifeq          910
+      23: aload_1
+      24: getfield      #1676               // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+      27: checkcast     #45                 // class net/minecraft/entity/player/EntityPlayer
+      30: astore_2
+      31: aload_2
+      32: invokestatic  #107                // Method com/emoniph/witchery/common/ExtendedPlayer.get:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/emoniph/witchery/common/ExtendedPlayer;
+      35: astore_3
+      36: getstatic     #354                // Field com/emoniph/witchery/common/Shapeshift.INSTANCE:Lcom/emoniph/witchery/common/Shapeshift;
+      39: aload_2
+      40: aload_3
+      41: invokevirtual #1680               // Method com/emoniph/witchery/common/Shapeshift.updatePlayerState:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/emoniph/witchery/common/ExtendedPlayer;)V
+      44: aload_3
+      45: invokevirtual #1683               // Method com/emoniph/witchery/common/ExtendedPlayer.tick:()V
+      48: aload_3
+      49: invokevirtual #542                // Method com/emoniph/witchery/common/ExtendedPlayer.isVampire:()Z
+      52: ifeq          96
+      55: aload_2
+      56: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+      59: getfield      #1686               // Field net/minecraft/util/FoodStats.field_75124_e:I
+      62: istore        4
+      64: aload_2
+      65: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+      68: invokevirtual #1635               // Method net/minecraft/util/FoodStats.func_75116_a:()I
+      71: istore        5
+      73: iload         4
+      75: iload         5
+      77: if_icmpge     96
+      80: aload_2
+      81: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+      84: aload_2
+      85: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+      88: invokevirtual #1635               // Method net/minecraft/util/FoodStats.func_75116_a:()I
+      91: ineg
+      92: fconst_0
+      93: invokevirtual #1690               // Method net/minecraft/util/FoodStats.func_75122_a:(IF)V
+      96: aload_1
+      97: getfield      #1676               // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+     100: getfield      #1693               // Field net/minecraft/entity/Entity.field_70173_aa:I
+     103: bipush        40
+     105: irem
+     106: iconst_1
+     107: if_icmpne     910
+     110: aload_3
+     111: invokevirtual #1391               // Method com/emoniph/witchery/common/ExtendedPlayer.getWerewolfLevel:()I
+     114: ifle          315
+     117: aload_2
+     118: getfield      #420                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     121: invokestatic  #1697               // Method com/emoniph/witchery/util/CreatureUtil.isFullMoon:(Lnet/minecraft/world/World;)Z
+     124: istore        4
+     126: getstatic     #1700               // Field com/emoniph/witchery/common/GenericEvents$3.$SwitchMap$com$emoniph$witchery$util$TransformCreature:[I
+     129: aload_3
+     130: invokevirtual #111                // Method com/emoniph/witchery/common/ExtendedPlayer.getCreatureType:()Lcom/emoniph/witchery/util/TransformCreature;
+     133: invokevirtual #1701               // Method com/emoniph/witchery/util/TransformCreature.ordinal:()I
+     136: iaload
+     137: tableswitch   { // 1 to 3
+
+                     1: 164
+
+                     2: 164
+
+                     3: 250
+               default: 315
+          }
+     164: aload_3
+     165: invokevirtual #111                // Method com/emoniph/witchery/common/ExtendedPlayer.getCreatureType:()Lcom/emoniph/witchery/util/TransformCreature;
+     168: getstatic     #1704               // Field com/emoniph/witchery/util/TransformCreature.WOLFMAN:Lcom/emoniph/witchery/util/TransformCreature;
+     171: if_acmpne     178
+     174: iconst_1
+     175: goto          179
+     178: iconst_0
+     179: istore        5
+     181: iload         4
+     183: ifne          241
+     186: aload_2
+     187: getfield      #1708               // Field net/minecraft/entity/player/EntityPlayer.field_71071_by:Lnet/minecraft/entity/player/InventoryPlayer;
+     190: getstatic     #807                // Field com/emoniph/witchery/Witchery.Items:Lcom/emoniph/witchery/WitcheryItems;
+     193: getfield      #1711               // Field com/emoniph/witchery/WitcheryItems.MOON_CHARM:Lnet/minecraft/item/Item;
+     196: invokevirtual #1717               // Method net/minecraft/entity/player/InventoryPlayer.func_146028_b:(Lnet/minecraft/item/Item;)Z
+     199: ifne          241
+     202: aload_2
+     203: aload_3
+     204: invokestatic  #1723               // Method com/emoniph/witchery/item/ItemMoonCharm.isWolfsbaneActive:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/emoniph/witchery/common/ExtendedPlayer;)Z
+     207: ifne          241
+     210: getstatic     #354                // Field com/emoniph/witchery/common/Shapeshift.INSTANCE:Lcom/emoniph/witchery/common/Shapeshift;
+     213: aload_2
+     214: getstatic     #1078               // Field com/emoniph/witchery/util/TransformCreature.NONE:Lcom/emoniph/witchery/util/TransformCreature;
+     217: invokevirtual #1727               // Method com/emoniph/witchery/common/Shapeshift.shiftTo:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/emoniph/witchery/util/TransformCreature;)V
+     220: getstatic     #952                // Field com/emoniph/witchery/util/ParticleEffect.EXPLODE:Lcom/emoniph/witchery/util/ParticleEffect;
+     223: getstatic     #1730               // Field com/emoniph/witchery/util/SoundEffect.RANDOM_FIZZ:Lcom/emoniph/witchery/util/SoundEffect;
+     226: aload_2
+     227: ldc2_w        #1731               // double 1.5d
+     230: ldc2_w        #1731               // double 1.5d
+     233: bipush        16
+     235: invokevirtual #962                // Method com/emoniph/witchery/util/ParticleEffect.send:(Lcom/emoniph/witchery/util/SoundEffect;Lnet/minecraft/entity/Entity;DDI)V
+     238: goto          315
+     241: aload_2
+     242: iload         5
+     244: invokestatic  #1735               // Method updateWerewolfEffects:(Lnet/minecraft/entity/player/EntityPlayer;Z)V
+     247: goto          315
+     250: iload         4
+     252: ifeq          315
+     255: aload_2
+     256: getfield      #1708               // Field net/minecraft/entity/player/EntityPlayer.field_71071_by:Lnet/minecraft/entity/player/InventoryPlayer;
+     259: getstatic     #807                // Field com/emoniph/witchery/Witchery.Items:Lcom/emoniph/witchery/WitcheryItems;
+     262: getfield      #1711               // Field com/emoniph/witchery/WitcheryItems.MOON_CHARM:Lnet/minecraft/item/Item;
+     265: invokevirtual #1717               // Method net/minecraft/entity/player/InventoryPlayer.func_146028_b:(Lnet/minecraft/item/Item;)Z
+     268: ifne          315
+     271: aload_2
+     272: aload_3
+     273: invokestatic  #1723               // Method com/emoniph/witchery/item/ItemMoonCharm.isWolfsbaneActive:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/emoniph/witchery/common/ExtendedPlayer;)Z
+     276: ifne          315
+     279: getstatic     #354                // Field com/emoniph/witchery/common/Shapeshift.INSTANCE:Lcom/emoniph/witchery/common/Shapeshift;
+     282: aload_2
+     283: getstatic     #1402               // Field com/emoniph/witchery/util/TransformCreature.WOLF:Lcom/emoniph/witchery/util/TransformCreature;
+     286: invokevirtual #1727               // Method com/emoniph/witchery/common/Shapeshift.shiftTo:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/emoniph/witchery/util/TransformCreature;)V
+     289: getstatic     #952                // Field com/emoniph/witchery/util/ParticleEffect.EXPLODE:Lcom/emoniph/witchery/util/ParticleEffect;
+     292: getstatic     #1738               // Field com/emoniph/witchery/util/SoundEffect.WITCHERY_MOB_WOLFMAN_HOWL:Lcom/emoniph/witchery/util/SoundEffect;
+     295: aload_2
+     296: ldc2_w        #1731               // double 1.5d
+     299: ldc2_w        #1731               // double 1.5d
+     302: bipush        16
+     304: invokevirtual #962                // Method com/emoniph/witchery/util/ParticleEffect.send:(Lcom/emoniph/witchery/util/SoundEffect;Lnet/minecraft/entity/Entity;DDI)V
+     307: aload_2
+     308: iconst_0
+     309: invokestatic  #1735               // Method updateWerewolfEffects:(Lnet/minecraft/entity/player/EntityPlayer;Z)V
+     312: goto          315
+     315: aload_3
+     316: invokevirtual #542                // Method com/emoniph/witchery/common/ExtendedPlayer.isVampire:()Z
+     319: ifeq          905
+     322: aload_2
+     323: invokevirtual #1741               // Method net/minecraft/entity/player/EntityPlayer.func_70090_H:()Z
+     326: ifeq          336
+     329: aload_2
+     330: sipush        300
+     333: invokevirtual #1744               // Method net/minecraft/entity/player/EntityPlayer.func_70050_g:(I)V
+     336: aload_3
+     337: invokevirtual #111                // Method com/emoniph/witchery/common/ExtendedPlayer.getCreatureType:()Lcom/emoniph/witchery/util/TransformCreature;
+     340: getstatic     #1747               // Field com/emoniph/witchery/util/TransformCreature.BAT:Lcom/emoniph/witchery/util/TransformCreature;
+     343: if_acmpne     370
+     346: aload_3
+     347: getstatic     #1749               // Field com/emoniph/witchery/common/ExtendedPlayer$VampirePower.BAT:Lcom/emoniph/witchery/common/ExtendedPlayer$VampirePower;
+     350: getfield      #1752               // Field com/emoniph/witchery/common/ExtendedPlayer$VampirePower.UPKEEP_COST:I
+     353: iconst_1
+     354: invokevirtual #1174               // Method com/emoniph/witchery/common/ExtendedPlayer.decreaseBloodPower:(IZ)Z
+     357: ifne          370
+     360: getstatic     #354                // Field com/emoniph/witchery/common/Shapeshift.INSTANCE:Lcom/emoniph/witchery/common/Shapeshift;
+     363: aload_2
+     364: getstatic     #1078               // Field com/emoniph/witchery/util/TransformCreature.NONE:Lcom/emoniph/witchery/util/TransformCreature;
+     367: invokevirtual #1727               // Method com/emoniph/witchery/common/Shapeshift.shiftTo:(Lnet/minecraft/entity/player/EntityPlayer;Lcom/emoniph/witchery/util/TransformCreature;)V
+     370: aload_3
+     371: invokevirtual #1105               // Method com/emoniph/witchery/common/ExtendedPlayer.getVampireLevel:()I
+     374: iconst_3
+     375: if_icmpne     444
+     378: aload_2
+     379: getfield      #420                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     382: invokevirtual #639                // Method net/minecraft/world/World.func_72935_r:()Z
+     385: ifne          444
+     388: aload_3
+     389: invokevirtual #1114               // Method com/emoniph/witchery/common/ExtendedPlayer.getVampireQuestCounter:()I
+     392: sipush        300
+     395: if_icmpge     417
+     398: aload_3
+     399: invokevirtual #1114               // Method com/emoniph/witchery/common/ExtendedPlayer.getVampireQuestCounter:()I
+     402: bipush        10
+     404: if_icmplt     431
+     407: aload_2
+     408: getfield      #186                // Field net/minecraft/entity/player/EntityPlayer.field_71075_bZ:Lnet/minecraft/entity/player/PlayerCapabilities;
+     411: getfield      #191                // Field net/minecraft/entity/player/PlayerCapabilities.field_75098_d:Z
+     414: ifeq          431
+     417: aload_3
+     418: invokevirtual #1133               // Method com/emoniph/witchery/common/ExtendedPlayer.canIncreaseVampireLevel:()Z
+     421: ifeq          444
+     424: aload_3
+     425: invokevirtual #1117               // Method com/emoniph/witchery/common/ExtendedPlayer.increaseVampireLevel:()V
+     428: goto          444
+     431: invokestatic  #93                 // Method com/emoniph/witchery/util/Config.instance:()Lcom/emoniph/witchery/util/Config;
+     434: getfield      #1108               // Field com/emoniph/witchery/util/Config.allowVampireQuests:Z
+     437: ifeq          444
+     440: aload_3
+     441: invokevirtual #1127               // Method com/emoniph/witchery/common/ExtendedPlayer.increaseVampireQuestCounter:()V
+     444: aload_3
+     445: invokevirtual #1105               // Method com/emoniph/witchery/common/ExtendedPlayer.getVampireLevel:()I
+     448: bipush        7
+     450: if_icmpne     555
+     453: aload_3
+     454: invokevirtual #1133               // Method com/emoniph/witchery/common/ExtendedPlayer.canIncreaseVampireLevel:()Z
+     457: ifeq          555
+     460: aload_2
+     461: getfield      #420                // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+     464: getfield      #1756               // Field net/minecraft/world/World.field_72982_D:Lnet/minecraft/village/VillageCollection;
+     467: aload_2
+     468: getfield      #549                // Field net/minecraft/entity/player/EntityPlayer.field_70165_t:D
+     471: invokestatic  #555                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+     474: aload_2
+     475: getfield      #558                // Field net/minecraft/entity/player/EntityPlayer.field_70163_u:D
+     478: invokestatic  #555                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+     481: aload_2
+     482: getfield      #561                // Field net/minecraft/entity/player/EntityPlayer.field_70161_v:D
+     485: invokestatic  #555                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+     488: bipush        32
+     490: invokevirtual #1762               // Method net/minecraft/village/VillageCollection.func_75550_a:(IIII)Lnet/minecraft/village/Village;
+     493: astore        4
+     495: aload         4
+     497: ifnull        555
+     500: aload_3
+     501: aload         4
+     503: invokevirtual #1320               // Method net/minecraft/village/Village.func_75577_a:()Lnet/minecraft/util/ChunkCoordinates;
+     506: getfield      #1323               // Field net/minecraft/util/ChunkCoordinates.field_71574_a:I
+     509: iconst_4
+     510: ishr
+     511: aload         4
+     513: invokevirtual #1320               // Method net/minecraft/village/Village.func_75577_a:()Lnet/minecraft/util/ChunkCoordinates;
+     516: getfield      #1332               // Field net/minecraft/util/ChunkCoordinates.field_71573_c:I
+     519: iconst_4
+     520: ishr
+     521: invokevirtual #1766               // Method com/emoniph/witchery/common/ExtendedPlayer.storeVampireQuestChunk:(II)Z
+     524: ifeq          555
+     527: aload_3
+     528: invokevirtual #1114               // Method com/emoniph/witchery/common/ExtendedPlayer.getVampireQuestCounter:()I
+     531: iconst_3
+     532: if_icmplt     542
+     535: aload_3
+     536: invokevirtual #1117               // Method com/emoniph/witchery/common/ExtendedPlayer.increaseVampireLevel:()V
+     539: goto          555
+     542: aload_3
+     543: invokevirtual #1127               // Method com/emoniph/witchery/common/ExtendedPlayer.increaseVampireQuestCounter:()V
+     546: getstatic     #1120               // Field com/emoniph/witchery/util/SoundEffect.NOTE_PLING:Lcom/emoniph/witchery/util/SoundEffect;
+     549: aload_2
+     550: fconst_1
+     551: fconst_1
+     552: invokevirtual #1124               // Method com/emoniph/witchery/util/SoundEffect.playOnlyTo:(Lnet/minecraft/entity/player/EntityPlayer;FF)V
+     555: aload_3
+     556: invokevirtual #1769               // Method com/emoniph/witchery/common/ExtendedPlayer.isVampireVisionActive:()Z
+     559: ifeq          584
+     562: aload_2
+     563: new           #1005               // class net/minecraft/potion/PotionEffect
+     566: dup
+     567: getstatic     #1772               // Field net/minecraft/potion/Potion.field_76439_r:Lnet/minecraft/potion/Potion;
+     570: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     573: sipush        400
+     576: iconst_0
+     577: iconst_1
+     578: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     581: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     584: aload_2
+     585: getstatic     #1779               // Field net/minecraft/potion/Potion.field_76436_u:Lnet/minecraft/potion/Potion;
+     588: invokevirtual #628                // Method net/minecraft/entity/player/EntityPlayer.func_70644_a:(Lnet/minecraft/potion/Potion;)Z
+     591: ifeq          604
+     594: aload_2
+     595: getstatic     #1779               // Field net/minecraft/potion/Potion.field_76436_u:Lnet/minecraft/potion/Potion;
+     598: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     601: invokevirtual #1782               // Method net/minecraft/entity/player/EntityPlayer.func_82170_o:(I)V
+     604: aload_2
+     605: invokevirtual #1785               // Method net/minecraft/entity/player/EntityPlayer.func_70027_ad:()Z
+     608: ifeq          630
+     611: aload_2
+     612: getstatic     #1788               // Field net/minecraft/potion/Potion.field_76426_n:Lnet/minecraft/potion/Potion;
+     615: invokevirtual #628                // Method net/minecraft/entity/player/EntityPlayer.func_70644_a:(Lnet/minecraft/potion/Potion;)Z
+     618: ifeq          630
+     621: aload_2
+     622: getstatic     #1792               // Field com/emoniph/witchery/util/EntityUtil$DamageSourceVampireFire.SOURCE:Lcom/emoniph/witchery/util/EntityUtil$DamageSourceVampireFire;
+     625: fconst_2
+     626: invokevirtual #1059               // Method net/minecraft/entity/player/EntityPlayer.func_70097_a:(Lnet/minecraft/util/DamageSource;F)Z
+     629: pop
+     630: aload_2
+     631: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+     634: invokevirtual #1635               // Method net/minecraft/util/FoodStats.func_75116_a:()I
+     637: bipush        20
+     639: if_icmpge     665
+     642: aload_3
+     643: iconst_5
+     644: iconst_1
+     645: invokevirtual #1174               // Method com/emoniph/witchery/common/ExtendedPlayer.decreaseBloodPower:(IZ)Z
+     648: ifeq          665
+     651: aload_2
+     652: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+     655: iconst_1
+     656: ldc_w         #1055               // float 4.0f
+     659: invokevirtual #1690               // Method net/minecraft/util/FoodStats.func_75122_a:(IF)V
+     662: goto          630
+     665: aload_3
+     666: invokevirtual #1795               // Method com/emoniph/witchery/common/ExtendedPlayer.getBloodPower:()I
+     669: ifne          755
+     672: aload_2
+     673: invokevirtual #1630               // Method net/minecraft/entity/player/EntityPlayer.func_71024_bL:()Lnet/minecraft/util/FoodStats;
+     676: invokevirtual #1635               // Method net/minecraft/util/FoodStats.func_75116_a:()I
+     679: ifne          755
+     682: aload_2
+     683: new           #1005               // class net/minecraft/potion/PotionEffect
+     686: dup
+     687: getstatic     #1798               // Field net/minecraft/potion/Potion.field_76437_t:Lnet/minecraft/potion/Potion;
+     690: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     693: bipush        10
+     695: invokestatic  #862                // Method com/emoniph/witchery/util/TimeUtil.secsToTicks:(I)I
+     698: bipush        8
+     700: iconst_1
+     701: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     704: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     707: aload_2
+     708: new           #1005               // class net/minecraft/potion/PotionEffect
+     711: dup
+     712: getstatic     #1801               // Field net/minecraft/potion/Potion.field_76421_d:Lnet/minecraft/potion/Potion;
+     715: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     718: bipush        10
+     720: invokestatic  #862                // Method com/emoniph/witchery/util/TimeUtil.secsToTicks:(I)I
+     723: iconst_1
+     724: iconst_1
+     725: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     728: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     731: aload_2
+     732: new           #1005               // class net/minecraft/potion/PotionEffect
+     735: dup
+     736: getstatic     #1804               // Field net/minecraft/potion/Potion.field_76419_f:Lnet/minecraft/potion/Potion;
+     739: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     742: bipush        10
+     744: invokestatic  #862                // Method com/emoniph/witchery/util/TimeUtil.secsToTicks:(I)I
+     747: iconst_1
+     748: iconst_1
+     749: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     752: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     755: aload_2
+     756: invokestatic  #1807               // Method com/emoniph/witchery/util/CreatureUtil.isInSunlight:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     759: ifeq          910
+     762: aload_2
+     763: getfield      #186                // Field net/minecraft/entity/player/EntityPlayer.field_71075_bZ:Lnet/minecraft/entity/player/PlayerCapabilities;
+     766: getfield      #191                // Field net/minecraft/entity/player/PlayerCapabilities.field_75098_d:Z
+     769: ifne          910
+     772: aload_3
+     773: invokevirtual #1795               // Method com/emoniph/witchery/common/ExtendedPlayer.getBloodPower:()I
+     776: ifne          794
+     779: aload_2
+     780: getfield      #1808               // Field net/minecraft/entity/player/EntityPlayer.field_70173_aa:I
+     783: sipush        400
+     786: if_icmple     794
+     789: aload_2
+     790: aconst_null
+     791: invokestatic  #1480               // Method com/emoniph/witchery/util/EntityUtil.instantDeath:(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/EntityLivingBase;)V
+     794: aload_3
+     795: invokevirtual #1105               // Method com/emoniph/witchery/common/ExtendedPlayer.getVampireLevel:()I
+     798: iconst_5
+     799: if_icmplt     885
+     802: aload_3
+     803: bipush        60
+     805: iconst_0
+     806: invokevirtual #1174               // Method com/emoniph/witchery/common/ExtendedPlayer.decreaseBloodPower:(IZ)Z
+     809: pop
+     810: aload_2
+     811: new           #1005               // class net/minecraft/potion/PotionEffect
+     814: dup
+     815: getstatic     #1798               // Field net/minecraft/potion/Potion.field_76437_t:Lnet/minecraft/potion/Potion;
+     818: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     821: bipush        10
+     823: invokestatic  #862                // Method com/emoniph/witchery/util/TimeUtil.secsToTicks:(I)I
+     826: iconst_3
+     827: iconst_0
+     828: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     831: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     834: aload_2
+     835: new           #1005               // class net/minecraft/potion/PotionEffect
+     838: dup
+     839: getstatic     #1801               // Field net/minecraft/potion/Potion.field_76421_d:Lnet/minecraft/potion/Potion;
+     842: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     845: bipush        10
+     847: invokestatic  #862                // Method com/emoniph/witchery/util/TimeUtil.secsToTicks:(I)I
+     850: iconst_0
+     851: iconst_1
+     852: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     855: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     858: aload_2
+     859: new           #1005               // class net/minecraft/potion/PotionEffect
+     862: dup
+     863: getstatic     #1804               // Field net/minecraft/potion/Potion.field_76419_f:Lnet/minecraft/potion/Potion;
+     866: getfield      #1179               // Field net/minecraft/potion/Potion.field_76415_H:I
+     869: bipush        10
+     871: invokestatic  #862                // Method com/emoniph/witchery/util/TimeUtil.secsToTicks:(I)I
+     874: iconst_0
+     875: iconst_1
+     876: invokespecial #1775               // Method net/minecraft/potion/PotionEffect."<init>":(IIIZ)V
+     879: invokevirtual #1776               // Method net/minecraft/entity/player/EntityPlayer.func_70690_d:(Lnet/minecraft/potion/PotionEffect;)V
+     882: goto          890
+     885: aload_3
+     886: iconst_0
+     887: invokevirtual #1811               // Method com/emoniph/witchery/common/ExtendedPlayer.setBloodPower:(I)V
+     890: aload_3
+     891: invokevirtual #1795               // Method com/emoniph/witchery/common/ExtendedPlayer.getBloodPower:()I
+     894: ifne          910
+     897: aload_2
+     898: iconst_5
+     899: invokevirtual #1593               // Method net/minecraft/entity/player/EntityPlayer.func_70015_d:(I)V

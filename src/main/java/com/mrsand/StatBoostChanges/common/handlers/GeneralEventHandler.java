@@ -17,6 +17,7 @@ import com.emoniph.witchery.util.SoundEffect;
 import com.mrsand.StatBoostChanges.ModCompat;
 import com.mrsand.StatBoostChanges.StatBoostChanges;
 import com.mrsand.StatBoostChanges.StatBoostConfig;
+import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
@@ -24,6 +25,9 @@ import com.mrsand.StatBoostChanges.common.management.VExtendedVillager;
 import com.mrsand.StatBoostChanges.common.packets.PacketSyncTarget;
 import com.mrsand.StatBoostChanges.common.packets.PacketVignette;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket;
+import com.mrsand.StatBoostChanges.util.CoffinDebug;
+import com.mrsand.StatBoostChanges.util.CoffinPoseDebug;
+import com.mrsand.StatBoostChanges.util.CoffinSleepUtil;
 import com.mrsand.StatBoostChanges.util.DamageCalculator;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
@@ -36,6 +40,8 @@ import com.mrsand.StatBoostChanges.util.VampireDeathDebug;
 import com.mrsand.StatBoostChanges.util.VampireHostility;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
+import cpw.mods.fml.common.Loader;
+import net.minecraft.block.Block;
 import com.tihyo.legends.legacy.LegacyHelper;
 import com.tihyo.legends.legacy.LegacyManager;
 import com.tihyo.legends.legacy.LegacyRegistry;
@@ -105,6 +111,33 @@ public class GeneralEventHandler {
 
 		if (player.isDead || player.getHealth() < 1) {
 			SuspicionUtil.setSuspicion(player, 0);
+		}
+
+		// Nest/leave physics: Phase.START only (END setPosition fights packets/movement).
+		if (ModCompat.LEGENDS && player.worldObj != null) {
+			if (event.phase == Phase.START) {
+				if (!player.worldObj.isRemote) {
+					CoffinSleepUtil.tickPostLeaveSettleStart(player);
+					CoffinDebug.tickServer(player);
+					CoffinDebug.tickPose(player);
+				}
+				if (CoffinPoseDebug.enabled()) {
+					CoffinPoseDebug.tickDense(player, "TICK_START");
+					CoffinPoseDebug.checkNestDesync(player);
+					CoffinPoseDebug.checkLeaveDesync(player);
+					CoffinPoseDebug.checkNoClipFlip(player);
+					CoffinPoseDebug.checkCsGap(player);
+				}
+			} else if (event.phase == Phase.END && !player.worldObj.isRemote) {
+				// Read-only debug — no nest soft-pin / settle re-pin on END.
+				if (CoffinPoseDebug.enabled()) {
+					CoffinPoseDebug.tickDense(player, "TICK_END");
+					CoffinPoseDebug.checkNestDesync(player);
+					CoffinPoseDebug.checkLeaveDesync(player);
+					CoffinPoseDebug.checkNoClipFlip(player);
+					CoffinPoseDebug.checkCsGap(player);
+				}
+			}
 		}
 
 		if (event.phase == Phase.END && !player.worldObj.isRemote && ModCompat.LEGENDS) {
@@ -210,6 +243,10 @@ public class GeneralEventHandler {
 
 			// Mist/bat/wolf: stop bows, food, and other charged item use
 			if (LegendsUtil.blocksItemUse(player) && player.isUsingItem()) {
+				player.clearItemInUse();
+			}
+			// Nested coffin: no charged item use
+			if (CoffinSleepUtil.isInCoffin(player) && player.isUsingItem()) {
 				player.clearItemInUse();
 			}
 
@@ -475,7 +512,7 @@ public class GeneralEventHandler {
 
 				if (player.worldObj.isRemote) {
 					if (playerEx.getSelectedVampirePower() == VampirePower.DRINK && player.isSneaking() && (VampireRestoredAbilities.hasHypnosisMastery(player) || LegacyHelper.hasLearnedPower(player, LegacyManager.getPowerFromName("hypnosis")))) {
-						// Holding an item fires RIGHT_CLICK_BLOCK then RIGHT_CLICK_AIR in one click — only
+						// Holding an item fires RIGHT_CLICK_BLOCK then RIGHT_CLICK_AIR in one click â€” only
 						// process AIR when holding something; empty hand may only get BLOCK.
 						if (held != null && event.action != Action.RIGHT_CLICK_AIR) {
 							return;
@@ -498,7 +535,7 @@ public class GeneralEventHandler {
 						if (player.isUsingItem() && event.action != Action.LEFT_CLICK_BLOCK) {
 							return; 
 						}
-						// Empty-hand RIGHT_CLICK_BLOCK repeats every tick while the mouse is held —
+						// Empty-hand RIGHT_CLICK_BLOCK repeats every tick while the mouse is held â€”
 						// one physical press must be one toggle (same idea as wall-climb debounce).
 						if (held != null && event.action != Action.RIGHT_CLICK_AIR) {
 							return;
@@ -534,7 +571,7 @@ public class GeneralEventHandler {
 		}
 
 		// Bind teleport spot: empty-hand punch same block 3 times (level 10).
-		// LEFT_CLICK_BLOCK repeats every tick while held — only count a new punch when the
+		// LEFT_CLICK_BLOCK repeats every tick while held â€” only count a new punch when the
 		// player releases (gap > 2 ticks) or switches blocks, i.e. a real dig-start.
 		if (event.action == Action.LEFT_CLICK_BLOCK && !player.worldObj.isRemote) {
 			NBTTagCompound nbt = player.getEntityData();
@@ -552,7 +589,7 @@ public class GeneralEventHandler {
 						&& nbt.getInteger("bvDigX") == bx
 						&& nbt.getInteger("bvDigY") == by
 						&& nbt.getInteger("bvDigZ") == bz;
-				// Still holding the same dig — event spam, not a new punch
+				// Still holding the same dig â€” event spam, not a new punch
 				boolean continuingHold = sameDigBlock && (now - lastClick) <= 2;
 				nbt.setInteger("bvLastClickTick", now);
 				if (continuingHold) {
@@ -586,7 +623,7 @@ public class GeneralEventHandler {
 					// Keep dig active so continued hold does not start a new 3-count
 					nbt.setInteger("bvBindCooldownUntil", now + 20);
 					VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
-					// Next slot lives in entityData (server-only) — VExtendedPlayerPacket sync was wiping SECONDSLOT
+					// Next slot lives in entityData (server-only) â€” VExtendedPlayerPacket sync was wiping SECONDSLOT
 					int slot = nbt.getInteger("bvNextTeleportSlot");
 					if (slot != 2) {
 						slot = 1;
@@ -648,6 +685,17 @@ public class GeneralEventHandler {
 			return;
 		}
 		event.ammount = DamageCalculator.capDamage(event.ammount);
+	}
+
+	/** Nested Vampire Lords cannot be chipped by leftover mob swings. */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelAttackOnNestingLord(LivingAttackEvent event) {
+		if (event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
+		if (!(event.entity instanceof EntityPlayer)) return;
+		EntityPlayer player = (EntityPlayer) event.entity;
+		if (!DaywalkerControl.isVampireLord(player)) return;
+		if (!CoffinSleepUtil.isInCoffin(player)) return;
+		event.setCanceled(true);
 	}
 
 	@SubscribeEvent
@@ -729,21 +777,87 @@ public class GeneralEventHandler {
 	@SubscribeEvent
 	public void vampireSleep(PlayerSleepInBedEvent event) {
 		if (!event.entityPlayer.worldObj.isRemote) {
-			ExtendedPlayer playerEx = ExtendedPlayer.get(event.entityPlayer);
-			VExtendedPlayer vPlayer = VExtendedPlayer.get(event.entityPlayer);
-			vPlayer.setInteger(PlayerKeys.SLEEP_START, (int) event.entityPlayer.worldObj.getWorldTime());
-			vPlayer.syncClient();
+			EntityPlayer player = event.entityPlayer;
+			ExtendedPlayer playerEx = ExtendedPlayer.get(player);
+			VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
+			if (vPlayer != null) {
+				vPlayer.setInteger(PlayerKeys.SLEEP_START, (int) player.worldObj.getWorldTime());
+				vPlayer.syncClient();
+			}
 
 			if (playerEx != null && playerEx.isVampire()) {
-				int suspicion = SuspicionUtil.getSuspicion(event.entityPlayer);
-				SuspicionUtil.checkForSuspicionWitnesses(event.entityPlayer, 1500, 128);
+				Block bed = player.worldObj.getBlock(event.x, event.y, event.z);
+				if (!CoffinSleepUtil.isAnyModCoffin(bed)) {
+					event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM;
+					player.addChatComponentMessage(new ChatComponentText("Vampires must rest in a coffin.")
+							.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED).setItalic(true)));
+					return;
+				}
+
+				// Lords skip vanilla NOT_SAFE (nearby monsters); suspicion can still deny.
+				if (DaywalkerControl.isVampireLord(player)) {
+					event.result = EntityPlayer.EnumStatus.OK;
+				}
+
+				int suspicion = SuspicionUtil.getSuspicion(player);
+				SuspicionUtil.checkForSuspicionWitnesses(player, 1500, 128);
 
 				if (suspicion >= 5100) {
-					event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM; 
-					WitcheryUtil.spawnHunter(event.entityPlayer, true);
-					event.entityPlayer.addChatComponentMessage(new ChatComponentText("Hunters found you while sleeping").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED).setBold(true).setItalic(true)));
+					event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM;
+					WitcheryUtil.spawnHunter(player, true);
+					player.addChatComponentMessage(new ChatComponentText("Hunters found you while sleeping")
+							.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED).setBold(true).setItalic(true)));
 				}
 			}
+		}
+	}
+
+	/**
+	 * While nested: only left/right-click on a Legends coffin block is allowed
+	 * (lid open/close). Everything else is canceled.
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelInteractInCoffin(PlayerInteractEvent event) {
+		if (event.entityPlayer == null || event.entityPlayer.worldObj == null) return;
+		if (!Loader.isModLoaded("legends")) return;
+		if (!CoffinSleepUtil.isInCoffin(event.entityPlayer)) return;
+
+		if (event.action == Action.RIGHT_CLICK_BLOCK || event.action == Action.LEFT_CLICK_BLOCK) {
+			Block block = event.world.getBlock(event.x, event.y, event.z);
+			if (CoffinSleepUtil.isLegendsCoffinBlock(block)) {
+				return; // allow coffin interact / punch target
+			}
+		}
+		event.setCanceled(true);
+		event.setResult(Result.DENY);
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelEntityInteractInCoffin(EntityInteractEvent event) {
+		if (event.entityPlayer == null) return;
+		if (!Loader.isModLoaded("legends")) return;
+		if (CoffinSleepUtil.isInCoffin(event.entityPlayer)) {
+			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelAttackInCoffin(AttackEntityEvent event) {
+		if (event.entityPlayer == null) return;
+		if (!Loader.isModLoaded("legends")) return;
+		if (CoffinSleepUtil.isInCoffin(event.entityPlayer)) {
+			event.setCanceled(true);
+		}
+	}
+
+	/** Nested players must not mine (including the coffin block itself). */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelBreakSpeedInCoffin(PlayerEvent.BreakSpeed event) {
+		if (event.entityPlayer == null) return;
+		if (!Loader.isModLoaded("legends")) return;
+		if (CoffinSleepUtil.isInCoffin(event.entityPlayer)) {
+			event.setCanceled(true);
+			event.newSpeed = 0.0F;
 		}
 	}
 

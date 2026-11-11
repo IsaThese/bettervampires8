@@ -1,0 +1,8 @@
+﻿javap : Error: class not found: 
+C:\Users\isaac\Documents\Coding\Gamedev\Minecraft\bettervampires8\com\tihyo\legends\morph\MorphEventHandler.class
+At C:\Users\isaac\AppData\Local\Temp\ps-script-35adc796-eafb-4394-ab40-a1846193c9b8.ps1:99 char:1
++ javap -c -p "$base\com\tihyo\legends\morph\MorphEventHandler.class" 2 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: class no...ntHandler.class:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

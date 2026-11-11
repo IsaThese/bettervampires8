@@ -1,0 +1,536 @@
+﻿Compiled from "LegendsEntityRenderer.java"
+public class com.tihyo.legends.management.LegendsEntityRenderer extends net.minecraft.client.renderer.EntityRenderer {
+  private final net.minecraft.client.Minecraft mc;
+
+  private net.minecraft.entity.Entity pointedEntity;
+
+  public com.tihyo.legends.management.LegendsEntityRenderer(net.minecraft.client.Minecraft);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_1
+       3: invokevirtual #17                 // Method net/minecraft/client/Minecraft.func_110442_L:()Lnet/minecraft/client/resources/IResourceManager;
+       6: invokespecial #20                 // Method net/minecraft/client/renderer/EntityRenderer."<init>":(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V
+       9: aload_0
+      10: aload_1
+      11: putfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      14: return
+
+  public void func_78480_b(float);
+    Code:
+       0: aload_0
+       1: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+       4: getfield      #30                 // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+       7: astore_2
+       8: aload_2
+       9: ifnull        19
+      12: aload_2
+      13: invokevirtual #36                 // Method net/minecraft/entity/player/EntityPlayer.func_70608_bn:()Z
+      16: ifeq          25
+      19: aload_0
+      20: fload_1
+      21: invokespecial #38                 // Method net/minecraft/client/renderer/EntityRenderer.func_78480_b:(F)V
+      24: return
+      25: aload_2
+      26: invokestatic  #44                 // Method com/tihyo/legends/management/LegendsRenderHelper.getSideStandingOn:(Lnet/minecraft/entity/player/EntityPlayer;)I
+      29: istore_3
+      30: aload_2
+      31: invokestatic  #50                 // Method com/tihyo/legends/management/PlayerHelper.getSize:(Lnet/minecraft/entity/player/EntityPlayer;)F
+      34: fstore        4
+      36: iload_3
+      37: iconst_1
+      38: if_icmpeq     60
+      41: ldc           #51                 // float 0.15f
+      43: fstore        5
+      45: aload_2
+      46: ldc           #52                 // float 1.62f
+      48: ldc           #52                 // float 1.62f
+      50: fload         5
+      52: fsub
+      53: fadd
+      54: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+      57: goto          75
+      60: aload_2
+      61: fload         4
+      63: fconst_1
+      64: fsub
+      65: fneg
+      66: ldc           #52                 // float 1.62f
+      68: fmul
+      69: ldc           #52                 // float 1.62f
+      71: fadd
+      72: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+      75: aload_2
+      76: invokestatic  #60                 // Method com/tihyo/legends/management/PlayerHelper.isSitting:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      79: ifne          89
+      82: aload_2
+      83: invokestatic  #63                 // Method com/tihyo/legends/management/PlayerHelper.isMeditating:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      86: ifeq          100
+      89: aload_2
+      90: dup
+      91: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+      94: ldc           #64                 // float 0.6f
+      96: fadd
+      97: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     100: aload_2
+     101: invokestatic  #67                 // Method com/tihyo/legends/management/PlayerHelper.isLying:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     104: ifne          130
+     107: aload_2
+     108: invokestatic  #70                 // Method com/tihyo/legends/management/PlayerHelper.isCrawling:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     111: ifne          130
+     114: getstatic     #76                 // Field com/tihyo/legends/management/properties/LegendsProperties.SLIDING_SWEEP:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     117: aload_2
+     118: invokevirtual #80                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     121: checkcast     #82                 // class java/lang/Integer
+     124: invokevirtual #86                 // Method java/lang/Integer.intValue:()I
+     127: ifle          141
+     130: aload_2
+     131: dup
+     132: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     135: ldc           #87                 // float 0.8f
+     137: fadd
+     138: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     141: getstatic     #90                 // Field com/tihyo/legends/management/properties/LegendsProperties.SWEEP_KICK:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     144: aload_2
+     145: invokevirtual #80                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     148: checkcast     #82                 // class java/lang/Integer
+     151: invokevirtual #86                 // Method java/lang/Integer.intValue:()I
+     154: ifgt          173
+     157: getstatic     #93                 // Field com/tihyo/legends/management/properties/LegendsProperties.MAULER:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     160: aload_2
+     161: invokevirtual #80                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     164: checkcast     #82                 // class java/lang/Integer
+     167: invokevirtual #86                 // Method java/lang/Integer.intValue:()I
+     170: ifle          184
+     173: aload_2
+     174: dup
+     175: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     178: ldc           #94                 // float 0.35f
+     180: fadd
+     181: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     184: aload_2
+     185: invokestatic  #97                 // Method com/tihyo/legends/management/PlayerHelper.hasCustomSize:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     188: ifeq          217
+     191: aload_2
+     192: invokestatic  #103                // Method com/tihyo/legends/management/LegendsHelper.getCharacter:(Lnet/minecraft/entity/player/EntityPlayer;)Lcom/tihyo/legends/management/characters/LegendsCharacter;
+     195: checkcast     #105                // class com/tihyo/legends/management/interfaces/ICustomSize
+     198: astore        5
+     200: aload_2
+     201: dup
+     202: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     205: aload         5
+     207: aload_2
+     208: invokeinterface #109,  2          // InterfaceMethod com/tihyo/legends/management/interfaces/ICustomSize.getPlayerOffset:(Lnet/minecraft/entity/EntityLivingBase;)F
+     213: fsub
+     214: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     217: aload_2
+     218: invokestatic  #115                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingAntMan:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     221: ifne          231
+     224: aload_2
+     225: invokestatic  #118                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingWasp:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     228: ifeq          313
+     231: aload_2
+     232: getfield      #121                // Field net/minecraft/entity/player/EntityPlayer.field_70154_o:Lnet/minecraft/entity/Entity;
+     235: ifnull        313
+     238: aload_2
+     239: getfield      #121                // Field net/minecraft/entity/player/EntityPlayer.field_70154_o:Lnet/minecraft/entity/Entity;
+     242: instanceof    #123                // class com/tihyo/superheroes/entities/mobs/EntityAnt
+     245: ifne          313
+     248: aload_2
+     249: getfield      #121                // Field net/minecraft/entity/player/EntityPlayer.field_70154_o:Lnet/minecraft/entity/Entity;
+     252: instanceof    #125                // class com/tihyo/superheroes/entities/mobs/EntityAntony
+     255: ifne          313
+     258: aload_2
+     259: getfield      #121                // Field net/minecraft/entity/player/EntityPlayer.field_70154_o:Lnet/minecraft/entity/Entity;
+     262: instanceof    #32                 // class net/minecraft/entity/player/EntityPlayer
+     265: ifeq          292
+     268: aload_2
+     269: dup
+     270: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     273: aload_2
+     274: getfield      #121                // Field net/minecraft/entity/player/EntityPlayer.field_70154_o:Lnet/minecraft/entity/Entity;
+     277: getfield      #130                // Field net/minecraft/entity/Entity.field_70131_O:F
+     280: fconst_2
+     281: fdiv
+     282: ldc           #131                // float 0.3f
+     284: fadd
+     285: fsub
+     286: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     289: goto          313
+     292: aload_2
+     293: dup
+     294: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     297: aload_2
+     298: getfield      #121                // Field net/minecraft/entity/player/EntityPlayer.field_70154_o:Lnet/minecraft/entity/Entity;
+     301: getfield      #130                // Field net/minecraft/entity/Entity.field_70131_O:F
+     304: fconst_2
+     305: fdiv
+     306: ldc           #131                // float 0.3f
+     308: fadd
+     309: fsub
+     310: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     313: aload_2
+     314: invokestatic  #134                // Method com/tihyo/legends/management/LegendsHelper.isWerewolf:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     317: ifeq          359
+     320: aload_2
+     321: invokestatic  #139                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     324: ifeq          359
+     327: aload_2
+     328: invokevirtual #142                // Method net/minecraft/entity/player/EntityPlayer.func_70051_ag:()Z
+     331: ifeq          359
+     334: aload_2
+     335: invokestatic  #145                // Method com/tihyo/legends/management/PlayerHelper.isInAnimation:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     338: ifne          359
+     341: aload_2
+     342: invokestatic  #148                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingWolfman:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     345: ifne          359
+     348: aload_2
+     349: dup
+     350: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     353: ldc           #149                // float 0.55f
+     355: fadd
+     356: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     359: aload_2
+     360: invokestatic  #134                // Method com/tihyo/legends/management/LegendsHelper.isWerewolf:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     363: ifeq          398
+     366: aload_2
+     367: invokestatic  #139                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     370: ifeq          398
+     373: aload_2
+     374: invokestatic  #152                // Method com/tihyo/legends/management/PlayerHelper.isRamming:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     377: ifeq          398
+     380: aload_2
+     381: invokestatic  #148                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingWolfman:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     384: ifne          398
+     387: aload_2
+     388: dup
+     389: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     392: ldc           #149                // float 0.55f
+     394: fadd
+     395: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     398: aload_2
+     399: invokestatic  #134                // Method com/tihyo/legends/management/LegendsHelper.isWerewolf:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     402: ifeq          446
+     405: aload_2
+     406: invokestatic  #139                // Method com/tihyo/legends/morph/MorphHelper.isMorphed:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     409: ifeq          446
+     412: getstatic     #155                // Field com/tihyo/legends/management/properties/LegendsProperties.ROADKILL:Lcom/tihyo/legends/management/properties/LegendsProperties;
+     415: aload_2
+     416: invokevirtual #80                 // Method com/tihyo/legends/management/properties/LegendsProperties.get:(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;
+     419: checkcast     #82                 // class java/lang/Integer
+     422: invokevirtual #86                 // Method java/lang/Integer.intValue:()I
+     425: ifle          446
+     428: aload_2
+     429: invokestatic  #148                // Method com/tihyo/legends/management/SuitCheckerHelper.isWearingWolfman:(Lnet/minecraft/entity/EntityLivingBase;)Z
+     432: ifne          446
+     435: aload_2
+     436: dup
+     437: getfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     440: ldc           #149                // float 0.55f
+     442: fadd
+     443: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     446: aload_0
+     447: fload_1
+     448: invokespecial #38                 // Method net/minecraft/client/renderer/EntityRenderer.func_78480_b:(F)V
+     451: aload_2
+     452: ldc           #52                 // float 1.62f
+     454: putfield      #56                 // Field net/minecraft/entity/player/EntityPlayer.field_70129_M:F
+     457: return
+
+  public void func_78473_a(float);
+    Code:
+       0: aload_0
+       1: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+       4: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+       7: ifnull        627
+      10: aload_0
+      11: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      14: getfield      #173                // Field net/minecraft/client/Minecraft.field_71441_e:Lnet/minecraft/client/multiplayer/WorldClient;
+      17: ifnull        627
+      20: aload_0
+      21: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      24: aconst_null
+      25: putfield      #176                // Field net/minecraft/client/Minecraft.field_147125_j:Lnet/minecraft/entity/Entity;
+      28: aload_0
+      29: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      32: getfield      #180                // Field net/minecraft/client/Minecraft.field_71442_b:Lnet/minecraft/client/multiplayer/PlayerControllerMP;
+      35: invokevirtual #186                // Method net/minecraft/client/multiplayer/PlayerControllerMP.func_78757_d:()F
+      38: f2d
+      39: dstore_2
+      40: aload_0
+      41: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      44: aload_0
+      45: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      48: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+      51: dload_2
+      52: fload_1
+      53: invokevirtual #192                // Method net/minecraft/entity/EntityLivingBase.func_70614_a:(DF)Lnet/minecraft/util/MovingObjectPosition;
+      56: putfield      #196                // Field net/minecraft/client/Minecraft.field_71476_x:Lnet/minecraft/util/MovingObjectPosition;
+      59: dload_2
+      60: dstore        4
+      62: aload_0
+      63: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      66: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+      69: fload_1
+      70: invokevirtual #200                // Method net/minecraft/entity/EntityLivingBase.func_70666_h:(F)Lnet/minecraft/util/Vec3;
+      73: astore        6
+      75: aload_0
+      76: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      79: getfield      #180                // Field net/minecraft/client/Minecraft.field_71442_b:Lnet/minecraft/client/multiplayer/PlayerControllerMP;
+      82: invokevirtual #203                // Method net/minecraft/client/multiplayer/PlayerControllerMP.func_78749_i:()Z
+      85: ifeq          128
+      88: ldc2_w        #204                // double 6.0d
+      91: aload_0
+      92: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+      95: getfield      #30                 // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+      98: invokestatic  #211                // Method com/tihyo/legends/management/asm/ASMMethods.getModifiedEntityScale:(Lnet/minecraft/entity/Entity;)F
+     101: f2d
+     102: dadd
+     103: dconst_1
+     104: dsub
+     105: dstore_2
+     106: ldc2_w        #204                // double 6.0d
+     109: aload_0
+     110: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     113: getfield      #30                 // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     116: invokestatic  #211                // Method com/tihyo/legends/management/asm/ASMMethods.getModifiedEntityScale:(Lnet/minecraft/entity/Entity;)F
+     119: f2d
+     120: dadd
+     121: dconst_1
+     122: dsub
+     123: dstore        4
+     125: goto          172
+     128: dload_2
+     129: ldc2_w        #214                // double 3.0d
+     132: aload_0
+     133: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     136: getfield      #30                 // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     139: invokestatic  #211                // Method com/tihyo/legends/management/asm/ASMMethods.getModifiedEntityScale:(Lnet/minecraft/entity/Entity;)F
+     142: f2d
+     143: dadd
+     144: dconst_1
+     145: dsub
+     146: dcmpl
+     147: ifle          169
+     150: ldc2_w        #214                // double 3.0d
+     153: aload_0
+     154: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     157: getfield      #30                 // Field net/minecraft/client/Minecraft.field_71439_g:Lnet/minecraft/client/entity/EntityClientPlayerMP;
+     160: invokestatic  #211                // Method com/tihyo/legends/management/asm/ASMMethods.getModifiedEntityScale:(Lnet/minecraft/entity/Entity;)F
+     163: f2d
+     164: dadd
+     165: dconst_1
+     166: dsub
+     167: dstore        4
+     169: dload         4
+     171: dstore_2
+     172: aload_0
+     173: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     176: getfield      #196                // Field net/minecraft/client/Minecraft.field_71476_x:Lnet/minecraft/util/MovingObjectPosition;
+     179: ifnull        199
+     182: aload_0
+     183: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     186: getfield      #196                // Field net/minecraft/client/Minecraft.field_71476_x:Lnet/minecraft/util/MovingObjectPosition;
+     189: getfield      #221                // Field net/minecraft/util/MovingObjectPosition.field_72307_f:Lnet/minecraft/util/Vec3;
+     192: aload         6
+     194: invokevirtual #225                // Method net/minecraft/util/Vec3.func_72438_d:(Lnet/minecraft/util/Vec3;)D
+     197: dstore        4
+     199: aload_0
+     200: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     203: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+     206: fload_1
+     207: invokevirtual #228                // Method net/minecraft/entity/EntityLivingBase.func_70676_i:(F)Lnet/minecraft/util/Vec3;
+     210: astore        7
+     212: aload         6
+     214: aload         7
+     216: getfield      #232                // Field net/minecraft/util/Vec3.field_72450_a:D
+     219: dload_2
+     220: dmul
+     221: aload         7
+     223: getfield      #235                // Field net/minecraft/util/Vec3.field_72448_b:D
+     226: dload_2
+     227: dmul
+     228: aload         7
+     230: getfield      #238                // Field net/minecraft/util/Vec3.field_72449_c:D
+     233: dload_2
+     234: dmul
+     235: invokevirtual #242                // Method net/minecraft/util/Vec3.func_72441_c:(DDD)Lnet/minecraft/util/Vec3;
+     238: astore        8
+     240: aload_0
+     241: aconst_null
+     242: putfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     245: aconst_null
+     246: astore        9
+     248: fconst_1
+     249: fstore        10
+     251: aload_0
+     252: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     255: getfield      #173                // Field net/minecraft/client/Minecraft.field_71441_e:Lnet/minecraft/client/multiplayer/WorldClient;
+     258: aload_0
+     259: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     262: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+     265: aload_0
+     266: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     269: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+     272: getfield      #248                // Field net/minecraft/entity/EntityLivingBase.field_70121_D:Lnet/minecraft/util/AxisAlignedBB;
+     275: aload         7
+     277: getfield      #232                // Field net/minecraft/util/Vec3.field_72450_a:D
+     280: dload_2
+     281: dmul
+     282: aload         7
+     284: getfield      #235                // Field net/minecraft/util/Vec3.field_72448_b:D
+     287: dload_2
+     288: dmul
+     289: aload         7
+     291: getfield      #238                // Field net/minecraft/util/Vec3.field_72449_c:D
+     294: dload_2
+     295: dmul
+     296: invokevirtual #254                // Method net/minecraft/util/AxisAlignedBB.func_72321_a:(DDD)Lnet/minecraft/util/AxisAlignedBB;
+     299: fload         10
+     301: f2d
+     302: fload         10
+     304: f2d
+     305: fload         10
+     307: f2d
+     308: invokevirtual #257                // Method net/minecraft/util/AxisAlignedBB.func_72314_b:(DDD)Lnet/minecraft/util/AxisAlignedBB;
+     311: invokevirtual #263                // Method net/minecraft/client/multiplayer/WorldClient.func_72839_b:(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/AxisAlignedBB;)Ljava/util/List;
+     314: astore        11
+     316: dload         4
+     318: dstore        12
+     320: aload         11
+     322: invokeinterface #269,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     327: astore        14
+     329: aload         14
+     331: invokeinterface #274,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     336: ifeq          551
+     339: aload         14
+     341: invokeinterface #278,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     346: astore        15
+     348: aload         15
+     350: checkcast     #127                // class net/minecraft/entity/Entity
+     353: astore        16
+     355: aload         16
+     357: invokevirtual #281                // Method net/minecraft/entity/Entity.func_70067_L:()Z
+     360: ifeq          548
+     363: aload         16
+     365: invokevirtual #284                // Method net/minecraft/entity/Entity.func_70111_Y:()F
+     368: fstore        17
+     370: aload         16
+     372: getfield      #285                // Field net/minecraft/entity/Entity.field_70121_D:Lnet/minecraft/util/AxisAlignedBB;
+     375: fload         17
+     377: f2d
+     378: fload         17
+     380: f2d
+     381: fload         17
+     383: f2d
+     384: invokevirtual #257                // Method net/minecraft/util/AxisAlignedBB.func_72314_b:(DDD)Lnet/minecraft/util/AxisAlignedBB;
+     387: astore        18
+     389: aload         18
+     391: aload         6
+     393: aload         8
+     395: invokevirtual #289                // Method net/minecraft/util/AxisAlignedBB.func_72327_a:(Lnet/minecraft/util/Vec3;Lnet/minecraft/util/Vec3;)Lnet/minecraft/util/MovingObjectPosition;
+     398: astore        19
+     400: aload         18
+     402: aload         6
+     404: invokevirtual #293                // Method net/minecraft/util/AxisAlignedBB.func_72318_a:(Lnet/minecraft/util/Vec3;)Z
+     407: ifeq          453
+     410: dconst_0
+     411: dload         12
+     413: dcmpg
+     414: iflt          424
+     417: dload         12
+     419: dconst_0
+     420: dcmpl
+     421: ifne          548
+     424: aload_0
+     425: aload         16
+     427: putfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     430: aload         19
+     432: ifnonnull     440
+     435: aload         6
+     437: goto          445
+     440: aload         19
+     442: getfield      #221                // Field net/minecraft/util/MovingObjectPosition.field_72307_f:Lnet/minecraft/util/Vec3;
+     445: astore        9
+     447: dconst_0
+     448: dstore        12
+     450: goto          548
+     453: aload         19
+     455: ifnull        548
+     458: aload         6
+     460: aload         19
+     462: getfield      #221                // Field net/minecraft/util/MovingObjectPosition.field_72307_f:Lnet/minecraft/util/Vec3;
+     465: invokevirtual #225                // Method net/minecraft/util/Vec3.func_72438_d:(Lnet/minecraft/util/Vec3;)D
+     468: dstore        20
+     470: dload         20
+     472: dload         12
+     474: dcmpg
+     475: iflt          485
+     478: dload         12
+     480: dconst_0
+     481: dcmpl
+     482: ifne          548
+     485: aload         16
+     487: aload_0
+     488: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     491: getfield      #169                // Field net/minecraft/client/Minecraft.field_71451_h:Lnet/minecraft/entity/EntityLivingBase;
+     494: getfield      #296                // Field net/minecraft/entity/EntityLivingBase.field_70154_o:Lnet/minecraft/entity/Entity;
+     497: if_acmpne     531
+     500: aload         16
+     502: invokevirtual #299                // Method net/minecraft/entity/Entity.canRiderInteract:()Z
+     505: ifne          531
+     508: dload         12
+     510: dconst_0
+     511: dcmpl
+     512: ifne          548
+     515: aload_0
+     516: aload         16
+     518: putfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     521: aload         19
+     523: getfield      #221                // Field net/minecraft/util/MovingObjectPosition.field_72307_f:Lnet/minecraft/util/Vec3;
+     526: astore        9
+     528: goto          548
+     531: aload_0
+     532: aload         16
+     534: putfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     537: aload         19
+     539: getfield      #221                // Field net/minecraft/util/MovingObjectPosition.field_72307_f:Lnet/minecraft/util/Vec3;
+     542: astore        9
+     544: dload         20
+     546: dstore        12
+     548: goto          329
+     551: aload_0
+     552: getfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     555: ifnull        627
+     558: dload         12
+     560: dload         4
+     562: dcmpg
+     563: iflt          576
+     566: aload_0
+     567: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     570: getfield      #196                // Field net/minecraft/client/Minecraft.field_71476_x:Lnet/minecraft/util/MovingObjectPosition;
+     573: ifnonnull     627
+     576: aload_0
+     577: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     580: new           #217                // class net/minecraft/util/MovingObjectPosition
+     583: dup
+     584: aload_0
+     585: getfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     588: aload         9
+     590: invokespecial #302                // Method net/minecraft/util/MovingObjectPosition."<init>":(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/Vec3;)V
+     593: putfield      #196                // Field net/minecraft/client/Minecraft.field_71476_x:Lnet/minecraft/util/MovingObjectPosition;
+     596: aload_0
+     597: getfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     600: instanceof    #188                // class net/minecraft/entity/EntityLivingBase
+     603: ifne          616
+     606: aload_0
+     607: getfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     610: instanceof    #304                // class net/minecraft/entity/item/EntityItemFrame
+     613: ifeq          627
+     616: aload_0
+     617: getfield      #22                 // Field mc:Lnet/minecraft/client/Minecraft;
+     620: aload_0
+     621: getfield      #244                // Field pointedEntity:Lnet/minecraft/entity/Entity;
+     624: putfield      #176                // Field net/minecraft/client/Minecraft.field_147125_j:Lnet/minecraft/entity/Entity;
+     627: return
+}

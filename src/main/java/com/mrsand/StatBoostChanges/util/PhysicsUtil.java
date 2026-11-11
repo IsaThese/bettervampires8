@@ -21,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -281,6 +282,147 @@ public class PhysicsUtil {
 	private static final float HUMAN_HEIGHT = 1.8F;
 
 	/**
+	 * Coffin leave / mist-style: find nearest 2-high air with solid floor near an origin.
+	 * Returned coords are the feet air cell (stand on top of block at y-1).
+	 * Skips the avoided column when avoidY &gt;= 0 (typically the coffin block).
+	 */
+	public static ChunkCoordinates findSafeStandNear(World world, EntityPlayer player,
+			int ox, int oy, int oz, int radius,
+			int avoidX, int avoidY, int avoidZ) {
+		if (world == null) return null;
+
+		double bestDistSq = -1.0D;
+		ChunkCoordinates best = null;
+		double originX = ox + 0.5D;
+		double originY = oy;
+		double originZ = oz + 0.5D;
+
+		for (int x = ox - radius; x <= ox + radius; x++) {
+			for (int z = oz - radius; z <= oz + radius; z++) {
+				for (int y = oy - 2; y <= oy + 4; y++) {
+					if (avoidY >= 0 && x == avoidX && z == avoidZ && (y == avoidY || y == avoidY + 1)) {
+						continue;
+					}
+					if (!isTwoHighStand(world, x, y, z)) continue;
+
+					double dx = (x + 0.5D) - originX;
+					double dy = y - originY;
+					double dz = (z + 0.5D) - originZ;
+					double distSq = dx * dx + dy * dy + dz * dz;
+					// Prefer same/adjacent Y to nest, then closer XZ.
+					double score = distSq + (Math.abs(y - oy) * 2.0D);
+					if (best == null || score < bestDistSq) {
+						bestDistSq = score;
+						best = new ChunkCoordinates(x, y, z);
+					}
+				}
+			}
+		}
+		return best;
+	}
+
+	/** True if (x,y,z) and (x,y+1,z) are air and (x,y-1,z) is a solid/opaque non-coffin floor. */
+	public static boolean isTwoHighStand(World world, int x, int y, int z) {
+		if (world == null) return false;
+		if (!world.isAirBlock(x, y, z) || !world.isAirBlock(x, y + 1, z)) return false;
+		Block floor = world.getBlock(x, y - 1, z);
+		if (floor == null || floor.getMaterial() == Material.air) return false;
+		if (isHorrorCoffinBlock(floor) || isHorrorCoffinBlock(world.getBlock(x, y, z))) return false;
+		// Skip columns that still contain a coffin (2-block beds).
+		for (int cy = y - 1; cy <= y + 2; cy++) {
+			if (isHorrorCoffinBlock(world.getBlock(x, cy, z))) return false;
+		}
+		return floor.getMaterial().isSolid() || floor.isOpaqueCube();
+	}
+
+	private static boolean isHorrorCoffinBlock(Block block) {
+		if (block == null) return false;
+		String name = block.getClass().getName();
+		return name.startsWith("com.tihyo.horror.blocks.BlockCoffin");
+	}
+
+	/**
+	 * Place player standing in a safe feet-air cell. Uses posY = feetY + yOffset
+	 * (Legends/Forge standing convention), unlike raw mist {@link #ejectFromSolidsIfNeeded}
+	 * which passes block Y straight into setPosition.
+	 */
+	public static boolean teleportToSafeStand(EntityPlayer player, ChunkCoordinates feetAir) {
+		return teleportToSafeStand(player, feetAir, true);
+	}
+
+	/**
+	 * @param zeroMotion false for client double-Y corrections so walk/look are not frozen each snap
+	 */
+	public static boolean teleportToSafeStand(EntityPlayer player, ChunkCoordinates feetAir, boolean zeroMotion) {
+		if (player == null || player.worldObj == null || feetAir == null) return false;
+		float yOff = player.yOffset;
+		if (yOff < 0.5F) {
+			yOff = 1.62F;
+		}
+		double x = feetAir.posX + 0.5D;
+		double y = feetAir.posY + yOff;
+		double z = feetAir.posZ + 0.5D;
+		player.ySize = 0.0F;
+		player.setPosition(x, y, z);
+		player.fallDistance = 0.0F;
+		player.onGround = true;
+		if (zeroMotion) {
+			player.motionX = 0.0D;
+			player.motionY = 0.0D;
+			player.motionZ = 0.0D;
+		}
+		return true;
+	}
+
+	/**
+	 * After coffin leave placement: if still colliding/inside opaque, mist-search a safe stand
+	 * near the nest and teleport with correct yOffset.
+	 * @return true if a teleport was performed; false if already safe or no spot found
+	 */
+	public static boolean ejectFromSolidsCoffinLeave(EntityPlayer player, int nestX, int nestY, int nestZ) {
+		if (player == null || player.worldObj == null) return false;
+
+		// Standing entity Y includes yOffset (teleportToSafeStand); mist path does not.
+		boolean stuck = player.isEntityInsideOpaqueBlock() || needsSolidEject(player, true, true);
+		AxisAlignedBB bb = player.boundingBox;
+		if (!stuck && bb != null) {
+			// Feet inside a solid block → buried.
+			int feetBlock = MathHelper.floor_double(bb.minY + 0.01D);
+			Block atFeet = player.worldObj.getBlock(MathHelper.floor_double(player.posX), feetBlock,
+					MathHelper.floor_double(player.posZ));
+			if (atFeet != null && atFeet.getMaterial() != Material.air
+					&& (atFeet.getMaterial().isSolid() || atFeet.isOpaqueCube())) {
+				stuck = true;
+			}
+		}
+		if (!stuck) return false;
+
+		int ox = nestX;
+		int oy = nestY;
+		int oz = nestZ;
+		if (oy < 0) {
+			ox = MathHelper.floor_double(player.posX);
+			oy = MathHelper.floor_double(player.posY - player.yOffset);
+			oz = MathHelper.floor_double(player.posZ);
+		}
+
+		ChunkCoordinates stand = findSafeStandNear(player.worldObj, player, ox, oy, oz, 5, nestX, nestY, nestZ);
+		if (stand == null) {
+			stand = findSafeStandNear(player.worldObj, player,
+					MathHelper.floor_double(player.posX),
+					MathHelper.floor_double(player.posY - player.yOffset),
+					MathHelper.floor_double(player.posZ),
+					5, nestX, nestY, nestZ);
+		}
+		if (stand == null) {
+			player.noClip = true;
+			return false;
+		}
+		teleportToSafeStand(player, stand);
+		return true;
+	}
+
+	/**
 	 * After mist/bat exit: if embedded, teleport to nearest 2-high air with solid floor.
 	 * Prefer calling after human hitbox is restored (bat is 0.8 tall and fits in 1-high gaps).
 	 * @return true if safe (or not stuck); false if still stuck (kept noClip for retry)
@@ -344,10 +486,25 @@ public class PhysicsUtil {
 
 	@SuppressWarnings("unchecked")
 	private static boolean needsSolidEject(EntityPlayer player, boolean forceHumanSize) {
+		return needsSolidEject(player, forceHumanSize, false);
+	}
+
+	/**
+	 * @param entityYIncludesOffset true after coffin leave / teleportToSafeStand (posY = feet + yOffset).
+	 *        Mist demorph leaves entity Y at block feet and must keep this false.
+	 */
+	@SuppressWarnings("unchecked")
+	private static boolean needsSolidEject(EntityPlayer player, boolean forceHumanSize,
+			boolean entityYIncludesOffset) {
 		if (player.isEntityInsideOpaqueBlock()) return true;
 
+		float yOff = player.yOffset;
+		if (entityYIncludesOffset && yOff < 0.5F) {
+			yOff = 1.62F;
+		}
+		double feetY = entityYIncludesOffset ? (player.posY - yOff) : player.posY;
 		int fx = MathHelper.floor_double(player.posX);
-		int fy = MathHelper.floor_double(player.posY);
+		int fy = MathHelper.floor_double(feetY);
 		int fz = MathHelper.floor_double(player.posZ);
 		World world = player.worldObj;
 		// Always require 2-high standing room for human/post-bat; bat BB alone would miss 1-high gaps.
@@ -359,8 +516,8 @@ public class PhysicsUtil {
 		if (forceHumanSize || (box != null && (box.maxY - box.minY) < 1.5D)) {
 			double hw = HUMAN_WIDTH * 0.5D;
 			box = AxisAlignedBB.getBoundingBox(
-					player.posX - hw, player.posY, player.posZ - hw,
-					player.posX + hw, player.posY + HUMAN_HEIGHT, player.posZ + hw);
+					player.posX - hw, feetY, player.posZ - hw,
+					player.posX + hw, feetY + HUMAN_HEIGHT, player.posZ + hw);
 		}
 		List colliding = world.getCollidingBoundingBoxes(player, box);
 		return colliding != null && !colliding.isEmpty();

@@ -28,7 +28,10 @@
       "legends.DamageHelperWitcheryClothesMixin",
       
       "legends.BattlebournBatHordeMixin",
+      "legends.BlockHorrorCoffinMixin",
       "legends.HorrorCommonEventHandlerMixin",
+      "legends.LegendsCommonEventHandlerMixin",
+      "legends.LegendsPropertiesMixin",
       "legends.LegendsAbilitiesPacketMixin",
       "legends.LegacyHelperMixin",
       "legends.LegacyPowerEyeSizeMixin",

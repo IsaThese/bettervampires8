@@ -15,7 +15,8 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Central “should this attacker leave the vampire alone?” policy.
  * <ul>
- *   <li>Normal hostiles: bat-blind, OTHERFORM, fangs/morph/blood vision, or lord+Witchery set</li>
+ *   <li>Normal hostiles: bat-blind, OTHERFORM, fangs/morph/blood vision, lord+Witchery set,
+ *       or Vampire Lord nested in a Legends coffin</li>
  *   <li>Bosses / Herobrine: Vampire Lords only (still attack normal vampires)</li>
  * </ul>
  */
@@ -30,7 +31,9 @@ public final class VampireHostility {
 		VExtendedPlayer v = VExtendedPlayer.get(player);
 		if (v != null && v.getBoolean(PlayerKeys.OTHERFORM)) return true;
 		if (LegendsUtil.mobAttack(player)) return true;
-		return WitcheryUtil.hasVampireLordClothesCap(player);
+		if (WitcheryUtil.hasVampireLordClothesCap(player)) return true;
+		// Nesting lord: mobs expect loyalty/fear — leave them to rest.
+		return DaywalkerControl.isVampireLord(player) && CoffinSleepUtil.isInCoffin(player);
 	}
 
 	/** Herobrine, Legends IBoss, vanilla boss display, Kaiju-scale peers. */

@@ -1,0 +1,66 @@
+﻿Compiled from "PacketSyncEntitySize.java"
+public class com.emoniph.witchery.network.PacketSyncEntitySize$Handler implements cpw.mods.fml.common.network.simpleimpl.IMessageHandler<com.emoniph.witchery.network.PacketSyncEntitySize, cpw.mods.fml.common.network.simpleimpl.IMessage> {
+  public com.emoniph.witchery.network.PacketSyncEntitySize$Handler();
+    Code:
+       0: aload_0
+       1: invokespecial #15                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage onMessage(com.emoniph.witchery.network.PacketSyncEntitySize, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: getstatic     #25                 // Field com/emoniph/witchery/Witchery.proxy:Lcom/emoniph/witchery/common/CommonProxy;
+       3: aload_2
+       4: invokevirtual #31                 // Method com/emoniph/witchery/common/CommonProxy.getPlayer:(Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lnet/minecraft/entity/player/EntityPlayer;
+       7: astore_3
+       8: aload_3
+       9: getfield      #37                 // Field net/minecraft/entity/player/EntityPlayer.field_70170_p:Lnet/minecraft/world/World;
+      12: getfield      #43                 // Field net/minecraft/world/World.field_72996_f:Ljava/util/List;
+      15: invokeinterface #49,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      20: astore        4
+      22: aload         4
+      24: invokeinterface #55,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      29: ifeq          105
+      32: aload         4
+      34: invokeinterface #59,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      39: astore        5
+      41: aload         5
+      43: checkcast     #61                 // class net/minecraft/entity/Entity
+      46: astore        6
+      48: aload         6
+      50: invokevirtual #65                 // Method net/minecraft/entity/Entity.func_145782_y:()I
+      53: aload_1
+      54: invokestatic  #69                 // Method com/emoniph/witchery/network/PacketSyncEntitySize.access$000:(Lcom/emoniph/witchery/network/PacketSyncEntitySize;)I
+      57: if_icmpne     102
+      60: aload         6
+      62: aload_1
+      63: invokestatic  #73                 // Method com/emoniph/witchery/network/PacketSyncEntitySize.access$100:(Lcom/emoniph/witchery/network/PacketSyncEntitySize;)F
+      66: aload_1
+      67: invokestatic  #76                 // Method com/emoniph/witchery/network/PacketSyncEntitySize.access$200:(Lcom/emoniph/witchery/network/PacketSyncEntitySize;)F
+      70: invokestatic  #82                 // Method com/emoniph/witchery/brewing/potions/PotionResizing.setEntitySize:(Lnet/minecraft/entity/Entity;FF)V
+      73: aload         6
+      75: aload_1
+      76: invokestatic  #85                 // Method com/emoniph/witchery/network/PacketSyncEntitySize.access$300:(Lcom/emoniph/witchery/network/PacketSyncEntitySize;)F
+      79: putfield      #89                 // Field net/minecraft/entity/Entity.field_70138_W:F
+      82: aload         6
+      84: instanceof    #33                 // class net/minecraft/entity/player/EntityPlayer
+      87: ifeq          100
+      90: aload_1
+      91: invokestatic  #92                 // Method com/emoniph/witchery/network/PacketSyncEntitySize.access$400:(Lcom/emoniph/witchery/network/PacketSyncEntitySize;)F
+      94: ldc           #93                 // float -1.0f
+      96: fcmpl
+      97: ifeq          100
+     100: aconst_null
+     101: areturn
+     102: goto          22
+     105: aconst_null
+     106: areturn
+
+  public cpw.mods.fml.common.network.simpleimpl.IMessage onMessage(cpw.mods.fml.common.network.simpleimpl.IMessage, cpw.mods.fml.common.network.simpleimpl.MessageContext);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: checkcast     #10                 // class com/emoniph/witchery/network/PacketSyncEntitySize
+       5: aload_2
+       6: invokevirtual #108                // Method onMessage:(Lcom/emoniph/witchery/network/PacketSyncEntitySize;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage;
+       9: areturn
+}

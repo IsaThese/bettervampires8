@@ -1,0 +1,36 @@
+﻿Compiled from "LegendsCommonEventHandler.java"
+public class com.tihyo.legends.handlers.LegendsCommonEventHandler {
+  public static float[] blurOffsetsX;
+  public static float[] blurOffsetsY;
+  public static float[] blurOffsetsZ;
+  public com.tihyo.legends.handlers.LegendsCommonEventHandler();
+  public void timers(cpw.mods.fml.common.gameevent.TickEvent$PlayerTickEvent);
+  public void onAbilities(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+  public void onPlayerUpdate(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+  public void onHit(net.minecraftforge.event.entity.living.LivingAttackEvent);
+  public void onAttack(net.minecraftforge.event.entity.player.AttackEntityEvent);
+  public void onHurt(net.minecraftforge.event.entity.living.LivingHurtEvent);
+  public void onJump(net.minecraftforge.event.entity.living.LivingEvent$LivingJumpEvent);
+  public void onFall(net.minecraftforge.event.entity.living.LivingFallEvent);
+  public void onPlayerTick(cpw.mods.fml.common.gameevent.TickEvent$PlayerTickEvent);
+  public void onItemUpdate(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+  public void onDeath(net.minecraftforge.event.entity.living.LivingDeathEvent);
+  public void onRespawn(cpw.mods.fml.common.gameevent.PlayerEvent$PlayerRespawnEvent);
+  public void onBreakBlock(net.minecraftforge.event.world.BlockEvent$BreakEvent);
+  public void onMine(net.minecraftforge.event.world.BlockEvent$HarvestDropsEvent);
+  public void onInteract(net.minecraftforge.event.entity.player.PlayerInteractEvent);
+  public void onRolesInteract(net.minecraftforge.event.entity.player.PlayerInteractEvent);
+  public void onRolesInteract(net.minecraftforge.event.entity.player.EntityInteractEvent);
+  public void breakSpeed(net.minecraftforge.event.entity.player.PlayerEvent$BreakSpeed);
+  public void onGameRules(net.minecraftforge.event.world.WorldEvent$Load);
+  public void onCreatureSpawn(net.minecraftforge.event.entity.living.LivingSpawnEvent$CheckSpawn);
+  public void onSpawningEvent(net.minecraftforge.event.entity.living.LivingSpawnEvent);
+  public void onEntityDrop(net.minecraftforge.event.entity.living.LivingDropsEvent);
+  public void onCrafted(cpw.mods.fml.common.gameevent.PlayerEvent$ItemCraftedEvent);
+  public void onEntitySetTarget(net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent);
+  private void doFlightParticles(net.minecraft.entity.player.EntityPlayer, boolean);
+  public void chainsawSound(net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent);
+  public void lightningStrike(net.minecraftforge.event.entity.EntityStruckByLightningEvent);
+  public void onEvent(cpw.mods.fml.common.gameevent.TickEvent$PlayerTickEvent);
+  static {};
+}

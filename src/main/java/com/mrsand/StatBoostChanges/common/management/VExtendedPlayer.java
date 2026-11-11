@@ -74,6 +74,8 @@ public class VExtendedPlayer implements IExtendedEntityProperties {
 		return data;
 	}
 
+	private static final String LEAVE_STAND_TAG = NBT_PREFIX + "LeaveStand";
+
 	/** Keys that must stay NBT booleans (old packet sync rewrote them as ints). */
 	public static boolean isBooleanKey(PlayerKeys key) {
 		switch (key) {
@@ -84,6 +86,7 @@ public class VExtendedPlayer implements IExtendedEntityProperties {
 		case WALL_CLIMB:
 		case OTHERFORM:
 		case UNLOCKED_RESTORED_POWERS:
+		case LEAVE_STANDING:
 			return true;
 		default:
 			return false;
@@ -167,6 +170,29 @@ public class VExtendedPlayer implements IExtendedEntityProperties {
 			return props.getData();
 		}
 		return null;
+	}
+
+	/** Server leave-stand block (feet air). Cleared when settle ends / walk-away. */
+	public void setLeaveStand(int x, int y, int z) {
+		if (this.data == null) return;
+		NBTTagCompound stand = new NBTTagCompound();
+		stand.setInteger("x", x);
+		stand.setInteger("y", y);
+		stand.setInteger("z", z);
+		this.data.setTag(LEAVE_STAND_TAG, stand);
+		setBoolean(PlayerKeys.LEAVE_STANDING, true);
+	}
+
+	public ChunkCoordinates getLeaveStand() {
+		if (this.data == null || !this.data.hasKey(LEAVE_STAND_TAG)) return null;
+		NBTTagCompound stand = this.data.getCompoundTag(LEAVE_STAND_TAG);
+		return new ChunkCoordinates(stand.getInteger("x"), stand.getInteger("y"), stand.getInteger("z"));
+	}
+
+	public void clearLeaveStand() {
+		if (this.data == null) return;
+		this.data.removeTag(LEAVE_STAND_TAG);
+		setBoolean(PlayerKeys.LEAVE_STANDING, false);
 	}
 
 	public void setTeleportSpot(int slot, int x, int y, int z, int dimension) {

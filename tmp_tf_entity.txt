@@ -1,0 +1,350 @@
+﻿Compiled from "TransformerEntity.java"
+public class com.tihyo.legends.management.asm.TransformerEntity extends com.tihyo.legends.management.asm.AbstractTransformer {
+  public static java.lang.String varPlayer;
+
+  public static java.lang.String varEntity;
+
+  public com.tihyo.legends.management.asm.TransformerEntity();
+    Code:
+       0: aload_0
+       1: ldc           #12                 // String net.minecraft.entity.Entity
+       3: invokespecial #15                 // Method com/tihyo/legends/management/asm/AbstractTransformer."<init>":(Ljava/lang/String;)V
+       6: return
+
+  public boolean processMethods(java.util.List<org.objectweb.asm.tree.MethodNode>);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: aload_1
+       3: invokeinterface #25,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       8: astore_3
+       9: aload_3
+      10: invokeinterface #31,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      15: ifeq          756
+      18: aload_3
+      19: invokeinterface #35,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      24: checkcast     #37                 // class org/objectweb/asm/tree/MethodNode
+      27: astore        4
+      29: aload         4
+      31: getfield      #40                 // Field org/objectweb/asm/tree/MethodNode.name:Ljava/lang/String;
+      34: ldc           #42                 // String c
+      36: ldc           #44                 // String getBrightnessForRender
+      38: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      41: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      44: ifeq          290
+      47: aload         4
+      49: getfield      #59                 // Field org/objectweb/asm/tree/MethodNode.desc:Ljava/lang/String;
+      52: ldc           #61                 // String (F)I
+      54: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      57: ifeq          290
+      60: new           #63                 // class org/objectweb/asm/tree/InsnList
+      63: dup
+      64: invokespecial #65                 // Method org/objectweb/asm/tree/InsnList."<init>":()V
+      67: astore        5
+      69: iconst_m1
+      70: istore        6
+      72: iconst_m1
+      73: istore        7
+      75: iconst_0
+      76: istore        8
+      78: iload         8
+      80: aload         4
+      82: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+      85: invokevirtual #73                 // Method org/objectweb/asm/tree/InsnList.size:()I
+      88: if_icmpge     267
+      91: aload         4
+      93: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+      96: iload         8
+      98: invokevirtual #77                 // Method org/objectweb/asm/tree/InsnList.get:(I)Lorg/objectweb/asm/tree/AbstractInsnNode;
+     101: astore        9
+     103: iload         8
+     105: bipush        9
+     107: iadd
+     108: aload         4
+     110: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     113: invokevirtual #73                 // Method org/objectweb/asm/tree/InsnList.size:()I
+     116: if_icmpge     240
+     119: aload         4
+     121: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     124: iload         8
+     126: bipush        9
+     128: iadd
+     129: invokevirtual #77                 // Method org/objectweb/asm/tree/InsnList.get:(I)Lorg/objectweb/asm/tree/AbstractInsnNode;
+     132: astore        10
+     134: aload         10
+     136: instanceof    #79                 // class org/objectweb/asm/tree/VarInsnNode
+     139: ifeq          240
+     142: aload         10
+     144: checkcast     #79                 // class org/objectweb/asm/tree/VarInsnNode
+     147: getfield      #83                 // Field org/objectweb/asm/tree/VarInsnNode.var:I
+     150: bipush        6
+     152: if_icmpne     240
+     155: aload         10
+     157: invokevirtual #88                 // Method org/objectweb/asm/tree/AbstractInsnNode.getOpcode:()I
+     160: bipush        54
+     162: if_icmpne     240
+     165: iload         8
+     167: istore        6
+     169: iload         8
+     171: bipush        9
+     173: iadd
+     174: istore        7
+     176: aload         5
+     178: new           #79                 // class org/objectweb/asm/tree/VarInsnNode
+     181: dup
+     182: bipush        25
+     184: iconst_0
+     185: invokespecial #91                 // Method org/objectweb/asm/tree/VarInsnNode."<init>":(II)V
+     188: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     191: aload         5
+     193: new           #97                 // class org/objectweb/asm/tree/MethodInsnNode
+     196: dup
+     197: sipush        184
+     200: ldc           #99                 // class com/tihyo/legends/management/asm/ASMClientMethods
+     202: invokestatic  #105                // Method org/objectweb/asm/Type.getInternalName:(Ljava/lang/Class;)Ljava/lang/String;
+     205: ldc           #44                 // String getBrightnessForRender
+     207: new           #107                // class java/lang/StringBuilder
+     210: dup
+     211: invokespecial #108                // Method java/lang/StringBuilder."<init>":()V
+     214: ldc           #110                // String (L
+     216: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     219: getstatic     #116                // Field varEntity:Ljava/lang/String;
+     222: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     225: ldc           #118                // String ;)I
+     227: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     230: invokevirtual #122                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     233: iconst_0
+     234: invokespecial #125                // Method org/objectweb/asm/tree/MethodInsnNode."<init>":(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+     237: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     240: iload         8
+     242: iload         6
+     244: if_icmplt     254
+     247: iload         8
+     249: iload         7
+     251: if_icmplt     261
+     254: aload         5
+     256: aload         9
+     258: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     261: iinc          8, 1
+     264: goto          78
+     267: aload         4
+     269: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     272: invokevirtual #128                // Method org/objectweb/asm/tree/InsnList.clear:()V
+     275: aload         4
+     277: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     280: aload         5
+     282: invokevirtual #131                // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/InsnList;)V
+     285: iconst_1
+     286: istore_2
+     287: goto          753
+     290: aload         4
+     292: getfield      #40                 // Field org/objectweb/asm/tree/MethodNode.name:Ljava/lang/String;
+     295: ldc           #133                // String C
+     297: ldc           #135                // String onEntityUpdate
+     299: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     302: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     305: ifeq          522
+     308: aload         4
+     310: getfield      #59                 // Field org/objectweb/asm/tree/MethodNode.desc:Ljava/lang/String;
+     313: ldc           #136                // String ()V
+     315: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     318: ifeq          522
+     321: new           #63                 // class org/objectweb/asm/tree/InsnList
+     324: dup
+     325: invokespecial #65                 // Method org/objectweb/asm/tree/InsnList."<init>":()V
+     328: astore        5
+     330: iconst_0
+     331: istore        6
+     333: iload         6
+     335: aload         4
+     337: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     340: invokevirtual #73                 // Method org/objectweb/asm/tree/InsnList.size:()I
+     343: if_icmpge     499
+     346: aload         4
+     348: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     351: iload         6
+     353: invokevirtual #77                 // Method org/objectweb/asm/tree/InsnList.get:(I)Lorg/objectweb/asm/tree/AbstractInsnNode;
+     356: astore        7
+     358: aload         7
+     360: instanceof    #97                 // class org/objectweb/asm/tree/MethodInsnNode
+     363: ifeq          486
+     366: aload         7
+     368: checkcast     #97                 // class org/objectweb/asm/tree/MethodInsnNode
+     371: astore        8
+     373: aload         8
+     375: getfield      #137                // Field org/objectweb/asm/tree/MethodInsnNode.name:Ljava/lang/String;
+     378: ldc           #139                // String ao
+     380: ldc           #141                // String isSprinting
+     382: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     385: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     388: ifeq          486
+     391: aload         8
+     393: getfield      #142                // Field org/objectweb/asm/tree/MethodInsnNode.desc:Ljava/lang/String;
+     396: ldc           #143                // String ()Z
+     398: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     401: ifeq          486
+     404: aload         5
+     406: aload         7
+     408: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     411: aload         5
+     413: new           #79                 // class org/objectweb/asm/tree/VarInsnNode
+     416: dup
+     417: bipush        25
+     419: iconst_0
+     420: invokespecial #91                 // Method org/objectweb/asm/tree/VarInsnNode."<init>":(II)V
+     423: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     426: aload         5
+     428: new           #97                 // class org/objectweb/asm/tree/MethodInsnNode
+     431: dup
+     432: sipush        184
+     435: ldc           #145                // class com/tihyo/legends/management/asm/ASMMethods
+     437: invokestatic  #105                // Method org/objectweb/asm/Type.getInternalName:(Ljava/lang/Class;)Ljava/lang/String;
+     440: ldc           #147                // String shouldProduceSprintParticles
+     442: new           #107                // class java/lang/StringBuilder
+     445: dup
+     446: invokespecial #108                // Method java/lang/StringBuilder."<init>":()V
+     449: ldc           #110                // String (L
+     451: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     454: getstatic     #116                // Field varEntity:Ljava/lang/String;
+     457: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     460: ldc           #149                // String ;)Z
+     462: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     465: invokevirtual #122                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     468: iconst_0
+     469: invokespecial #125                // Method org/objectweb/asm/tree/MethodInsnNode."<init>":(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+     472: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     475: aload         5
+     477: invokestatic  #153                // Method com/tihyo/legends/management/asm/ASMHelper.and:()Lorg/objectweb/asm/tree/MethodInsnNode;
+     480: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     483: goto          493
+     486: aload         5
+     488: aload         7
+     490: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     493: iinc          6, 1
+     496: goto          333
+     499: aload         4
+     501: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     504: invokevirtual #128                // Method org/objectweb/asm/tree/InsnList.clear:()V
+     507: aload         4
+     509: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     512: aload         5
+     514: invokevirtual #131                // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/InsnList;)V
+     517: iconst_1
+     518: istore_2
+     519: goto          753
+     522: aload         4
+     524: getfield      #40                 // Field org/objectweb/asm/tree/MethodNode.name:Ljava/lang/String;
+     527: ldc           #155                // String Y
+     529: ldc           #157                // String getShadowSize
+     531: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     534: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     537: ifeq          753
+     540: aload         4
+     542: getfield      #59                 // Field org/objectweb/asm/tree/MethodNode.desc:Ljava/lang/String;
+     545: ldc           #159                // String ()F
+     547: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     550: ifeq          753
+     553: new           #63                 // class org/objectweb/asm/tree/InsnList
+     556: dup
+     557: invokespecial #65                 // Method org/objectweb/asm/tree/InsnList."<init>":()V
+     560: astore        5
+     562: iconst_0
+     563: istore        6
+     565: iload         6
+     567: aload         4
+     569: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     572: invokevirtual #73                 // Method org/objectweb/asm/tree/InsnList.size:()I
+     575: if_icmpge     733
+     578: aload         4
+     580: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     583: iload         6
+     585: invokevirtual #77                 // Method org/objectweb/asm/tree/InsnList.get:(I)Lorg/objectweb/asm/tree/AbstractInsnNode;
+     588: astore        7
+     590: aload         7
+     592: instanceof    #161                // class org/objectweb/asm/tree/FieldInsnNode
+     595: ifeq          720
+     598: aload         7
+     600: checkcast     #161                // class org/objectweb/asm/tree/FieldInsnNode
+     603: astore        8
+     605: aload         8
+     607: getfield      #162                // Field org/objectweb/asm/tree/FieldInsnNode.name:Ljava/lang/String;
+     610: ldc           #164                // String N
+     612: ldc           #166                // String height
+     614: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     617: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     620: ifeq          720
+     623: aload         8
+     625: getfield      #167                // Field org/objectweb/asm/tree/FieldInsnNode.desc:Ljava/lang/String;
+     628: ldc           #169                // String F
+     630: invokevirtual #56                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     633: ifeq          720
+     636: aload         5
+     638: aload         7
+     640: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     643: aload         5
+     645: new           #79                 // class org/objectweb/asm/tree/VarInsnNode
+     648: dup
+     649: bipush        25
+     651: iconst_0
+     652: invokespecial #91                 // Method org/objectweb/asm/tree/VarInsnNode."<init>":(II)V
+     655: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     658: aload         5
+     660: new           #97                 // class org/objectweb/asm/tree/MethodInsnNode
+     663: dup
+     664: sipush        184
+     667: ldc           #145                // class com/tihyo/legends/management/asm/ASMMethods
+     669: invokestatic  #105                // Method org/objectweb/asm/Type.getInternalName:(Ljava/lang/Class;)Ljava/lang/String;
+     672: ldc           #171                // String getEntityScale
+     674: new           #107                // class java/lang/StringBuilder
+     677: dup
+     678: invokespecial #108                // Method java/lang/StringBuilder."<init>":()V
+     681: ldc           #110                // String (L
+     683: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     686: getstatic     #116                // Field varEntity:Ljava/lang/String;
+     689: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     692: ldc           #173                // String ;)F
+     694: invokevirtual #114                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     697: invokevirtual #122                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     700: iconst_0
+     701: invokespecial #125                // Method org/objectweb/asm/tree/MethodInsnNode."<init>":(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+     704: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     707: aload         5
+     709: ldc           #175                // String f
+     711: invokestatic  #179                // Method com/tihyo/legends/management/asm/ASMHelper.multiply:(Ljava/lang/String;)Lorg/objectweb/asm/tree/MethodInsnNode;
+     714: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     717: goto          727
+     720: aload         5
+     722: aload         7
+     724: invokevirtual #95                 // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/AbstractInsnNode;)V
+     727: iinc          6, 1
+     730: goto          565
+     733: aload         4
+     735: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     738: invokevirtual #128                // Method org/objectweb/asm/tree/InsnList.clear:()V
+     741: aload         4
+     743: getfield      #69                 // Field org/objectweb/asm/tree/MethodNode.instructions:Lorg/objectweb/asm/tree/InsnList;
+     746: aload         5
+     748: invokevirtual #131                // Method org/objectweb/asm/tree/InsnList.add:(Lorg/objectweb/asm/tree/InsnList;)V
+     751: iconst_1
+     752: istore_2
+     753: goto          9
+     756: iload_2
+     757: ireturn
+
+  public boolean processFields(java.util.List<org.objectweb.asm.tree.FieldNode>);
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public void setupMappings();
+    Code:
+       0: ldc           #203                // String yz
+       2: ldc           #205                // String net/minecraft/entity/player/EntityPlayer
+       4: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+       7: putstatic     #207                // Field varPlayer:Ljava/lang/String;
+      10: ldc           #209                // String sa
+      12: ldc           #211                // String net/minecraft/entity/Entity
+      14: invokestatic  #50                 // Method com/tihyo/legends/management/asm/ASMHelper.getName:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      17: putstatic     #116                // Field varEntity:Ljava/lang/String;
+      20: return
+}

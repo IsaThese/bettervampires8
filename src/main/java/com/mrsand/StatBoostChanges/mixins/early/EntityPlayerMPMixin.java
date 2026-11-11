@@ -13,9 +13,19 @@ public abstract class EntityPlayerMPMixin {
 
 	@Inject(method = "func_70999_a", at = @At("HEAD"), cancellable = true)
 	private void wakeUpPlayerNotIfVamprisim(boolean immediately, boolean updateWorld, boolean setSpawn, CallbackInfo ci) {
+		EntityPlayerMP player = (EntityPlayerMP) (Object) this;
+		if (Loader.isModLoaded("legends")) {
+			try {
+				if (com.tihyo.legends.management.PlayerHelper.isInCoffin(player)
+						&& !com.mrsand.StatBoostChanges.util.CoffinSleepUtil.isExitAllowed()) {
+					ci.cancel();
+					return;
+				}
+			} catch (Throwable ignored) {
+			}
+		}
 		if(!Loader.isModLoaded("vampirism")) return;
 		else {
-			EntityPlayerMP player = (EntityPlayerMP) (Object) this;
 			boolean allowedToWake = de.teamlapen.vampirism.coremod.CoreHandler.shouldWakePlayer(player, immediately, updateWorld, setSpawn);
 		    if (!allowedToWake) {
 		    	ci.cancel();

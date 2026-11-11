@@ -1,0 +1,449 @@
+﻿Compiled from "EntityHelper.java"
+public class morph.common.core.EntityHelper extends ichun.common.core.EntityHelperBase {
+  public morph.common.core.EntityHelper();
+    Code:
+       0: aload_0
+       1: invokespecial #9                  // Method ichun/common/core/EntityHelperBase."<init>":()V
+       4: return
+
+  public static boolean morphPlayer(net.minecraft.entity.player.EntityPlayerMP, net.minecraft.entity.EntityLivingBase, boolean);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: iconst_0
+       4: invokestatic  #16                 // Method morphPlayer:(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/entity/EntityLivingBase;ZZ)Z
+       7: ireturn
+
+  public static boolean morphPlayer(net.minecraft.entity.player.EntityPlayerMP, net.minecraft.entity.EntityLivingBase, boolean, boolean);
+    Code:
+       0: getstatic     #28                 // Field morph/common/Morph.config:Lichun/common/core/config/Config;
+       3: ldc           #30                 // String childMorphs
+       5: invokevirtual #36                 // Method ichun/common/core/config/Config.getInt:(Ljava/lang/String;)I
+       8: ifne          18
+      11: aload_1
+      12: invokevirtual #42                 // Method net/minecraft/entity/EntityLivingBase.func_70631_g_:()Z
+      15: ifne          70
+      18: getstatic     #28                 // Field morph/common/Morph.config:Lichun/common/core/config/Config;
+      21: ldc           #44                 // String playerMorphs
+      23: invokevirtual #36                 // Method ichun/common/core/config/Config.getInt:(Ljava/lang/String;)I
+      26: ifne          36
+      29: aload_1
+      30: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+      33: ifne          70
+      36: getstatic     #28                 // Field morph/common/Morph.config:Lichun/common/core/config/Config;
+      39: ldc           #48                 // String bossMorphs
+      41: invokevirtual #36                 // Method ichun/common/core/config/Config.getInt:(Ljava/lang/String;)I
+      44: ifne          54
+      47: aload_1
+      48: instanceof    #50                 // class net/minecraft/entity/boss/IBossDisplayData
+      51: ifne          70
+      54: aload_0
+      55: invokevirtual #56                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+      58: ldc           #58                 // class net/minecraftforge/common/util/FakePlayer
+      60: if_acmpeq     70
+      63: aload_0
+      64: getfield      #64                 // Field net/minecraft/entity/player/EntityPlayerMP.field_71135_a:Lnet/minecraft/network/NetHandlerPlayServer;
+      67: ifnonnull     72
+      70: iconst_0
+      71: ireturn
+      72: getstatic     #68                 // Field morph/common/Morph.blacklistedClasses:Ljava/util/ArrayList;
+      75: invokevirtual #74                 // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      78: astore        4
+      80: aload         4
+      82: invokeinterface #79,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      87: ifeq          116
+      90: aload         4
+      92: invokeinterface #83,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      97: checkcast     #85                 // class java/lang/Class
+     100: astore        5
+     102: aload         5
+     104: aload_1
+     105: invokevirtual #89                 // Method java/lang/Class.isInstance:(Ljava/lang/Object;)Z
+     108: ifeq          113
+     111: iconst_0
+     112: ireturn
+     113: goto          80
+     116: getstatic     #92                 // Field morph/common/Morph.playerList:Ljava/util/ArrayList;
+     119: invokevirtual #95                 // Method java/util/ArrayList.isEmpty:()Z
+     122: ifne          167
+     125: getstatic     #28                 // Field morph/common/Morph.config:Lichun/common/core/config/Config;
+     128: ldc           #97                 // String listIsBlacklist
+     130: invokevirtual #36                 // Method ichun/common/core/config/Config.getInt:(Ljava/lang/String;)I
+     133: ifne          152
+     136: getstatic     #92                 // Field morph/common/Morph.playerList:Ljava/util/ArrayList;
+     139: aload_0
+     140: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     143: invokevirtual #104                // Method java/util/ArrayList.contains:(Ljava/lang/Object;)Z
+     146: ifeq          167
+     149: goto          165
+     152: getstatic     #92                 // Field morph/common/Morph.playerList:Ljava/util/ArrayList;
+     155: aload_0
+     156: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     159: invokevirtual #104                // Method java/util/ArrayList.contains:(Ljava/lang/Object;)Z
+     162: ifne          167
+     165: iconst_0
+     166: ireturn
+     167: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     170: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     173: aload_0
+     174: invokevirtual #120                // Method morph/common/core/TickHandlerServer.getPlayerMorphInfo:(Lnet/minecraft/entity/player/EntityPlayer;)Lmorph/common/morph/MorphInfo;
+     177: astore        4
+     179: aload_1
+     180: new           #122                // class net/minecraft/nbt/NBTTagCompound
+     183: dup
+     184: invokespecial #123                // Method net/minecraft/nbt/NBTTagCompound."<init>":()V
+     187: invokevirtual #127                // Method net/minecraft/entity/EntityLivingBase.func_70039_c:(Lnet/minecraft/nbt/NBTTagCompound;)Z
+     190: ifeq          200
+     193: aload_1
+     194: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     197: ifeq          209
+     200: aload_1
+     201: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     204: ifne          209
+     207: iconst_0
+     208: ireturn
+     209: aload         4
+     211: ifnonnull     245
+     214: new           #129                // class morph/common/morph/MorphInfo
+     217: dup
+     218: aload_0
+     219: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     222: aconst_null
+     223: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     226: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     229: aload_0
+     230: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     233: aload_0
+     234: invokevirtual #137                // Method morph/common/core/TickHandlerServer.getSelfState:(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Lmorph/common/morph/MorphState;
+     237: invokespecial #140                // Method morph/common/morph/MorphInfo."<init>":(Ljava/lang/String;Lmorph/common/morph/MorphState;Lmorph/common/morph/MorphState;)V
+     240: astore        4
+     242: goto          267
+     245: aload         4
+     247: invokevirtual #143                // Method morph/common/morph/MorphInfo.getMorphing:()Z
+     250: ifne          265
+     253: aload         4
+     255: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     258: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     261: aload_1
+     262: if_acmpne     267
+     265: iconst_0
+     266: ireturn
+     267: aload         4
+     269: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     272: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     275: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     278: ifeq          292
+     281: aload_1
+     282: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     285: ifeq          292
+     288: iconst_3
+     289: goto          322
+     292: aload         4
+     294: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     297: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     300: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     303: ifeq          310
+     306: iconst_1
+     307: goto          322
+     310: aload_1
+     311: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     314: ifeq          321
+     317: iconst_2
+     318: goto          322
+     321: iconst_0
+     322: i2b
+     323: istore        5
+     325: aload         4
+     327: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     330: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     333: instanceof    #46                 // class net/minecraft/entity/player/EntityPlayer
+     336: ifne          362
+     339: aload         4
+     341: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     344: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     347: new           #122                // class net/minecraft/nbt/NBTTagCompound
+     350: dup
+     351: invokespecial #123                // Method net/minecraft/nbt/NBTTagCompound."<init>":()V
+     354: invokevirtual #127                // Method net/minecraft/entity/EntityLivingBase.func_70039_c:(Lnet/minecraft/nbt/NBTTagCompound;)Z
+     357: ifne          362
+     360: iconst_0
+     361: ireturn
+     362: iload         5
+     364: iconst_1
+     365: if_icmpeq     374
+     368: iload         5
+     370: iconst_3
+     371: if_icmpne     391
+     374: aload         4
+     376: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     379: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     382: checkcast     #46                 // class net/minecraft/entity/player/EntityPlayer
+     385: invokevirtual #153                // Method net/minecraft/entity/player/EntityPlayer.func_70005_c_:()Ljava/lang/String;
+     388: goto          393
+     391: ldc           #155                // String
+     393: astore        6
+     395: iload         5
+     397: iconst_2
+     398: if_icmpeq     407
+     401: iload         5
+     403: iconst_3
+     404: if_icmpne     417
+     407: aload_1
+     408: checkcast     #46                 // class net/minecraft/entity/player/EntityPlayer
+     411: invokevirtual #153                // Method net/minecraft/entity/player/EntityPlayer.func_70005_c_:()Ljava/lang/String;
+     414: goto          419
+     417: ldc           #155                // String
+     419: astore        7
+     421: new           #122                // class net/minecraft/nbt/NBTTagCompound
+     424: dup
+     425: invokespecial #123                // Method net/minecraft/nbt/NBTTagCompound."<init>":()V
+     428: astore        8
+     430: new           #122                // class net/minecraft/nbt/NBTTagCompound
+     433: dup
+     434: invokespecial #123                // Method net/minecraft/nbt/NBTTagCompound."<init>":()V
+     437: astore        9
+     439: aload         4
+     441: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     444: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     447: aload         8
+     449: invokevirtual #127                // Method net/minecraft/entity/EntityLivingBase.func_70039_c:(Lnet/minecraft/nbt/NBTTagCompound;)Z
+     452: pop
+     453: aload_1
+     454: aload         9
+     456: invokevirtual #127                // Method net/minecraft/entity/EntityLivingBase.func_70039_c:(Lnet/minecraft/nbt/NBTTagCompound;)Z
+     459: pop
+     460: new           #149                // class morph/common/morph/MorphState
+     463: dup
+     464: aload_0
+     465: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     468: aload_0
+     469: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     472: aload         6
+     474: aload         8
+     476: iconst_0
+     477: invokespecial #160                // Method morph/common/morph/MorphState."<init>":(Lnet/minecraft/world/World;Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/nbt/NBTTagCompound;Z)V
+     480: astore        10
+     482: new           #149                // class morph/common/morph/MorphState
+     485: dup
+     486: aload_0
+     487: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     490: aload_0
+     491: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     494: aload         7
+     496: aload         9
+     498: iconst_0
+     499: invokespecial #160                // Method morph/common/morph/MorphState."<init>":(Lnet/minecraft/world/World;Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/nbt/NBTTagCompound;Z)V
+     502: astore        11
+     504: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     507: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     510: aload_0
+     511: aload         11
+     513: invokevirtual #164                // Method morph/common/core/TickHandlerServer.hasMorphState:(Lnet/minecraft/entity/player/EntityPlayer;Lmorph/common/morph/MorphState;)Z
+     516: ifne          545
+     519: iload_3
+     520: ifne          547
+     523: getstatic     #170                // Field net/minecraftforge/common/MinecraftForge.EVENT_BUS:Lcpw/mods/fml/common/eventhandler/EventBus;
+     526: new           #172                // class morph/api/MorphAcquiredEvent
+     529: dup
+     530: aload_0
+     531: aload         11
+     533: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     536: invokespecial #175                // Method morph/api/MorphAcquiredEvent."<init>":(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/entity/EntityLivingBase;)V
+     539: invokevirtual #181                // Method cpw/mods/fml/common/eventhandler/EventBus.post:(Lcpw/mods/fml/common/eventhandler/Event;)Z
+     542: ifeq          547
+     545: iconst_0
+     546: ireturn
+     547: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     550: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     553: aload_0
+     554: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     557: aload_0
+     558: invokevirtual #185                // Method morph/common/core/TickHandlerServer.getPlayerMorphs:(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Ljava/util/ArrayList;
+     561: aload         10
+     563: invokestatic  #191                // Method morph/common/morph/MorphHandler.addOrGetMorphState:(Ljava/util/ArrayList;Lmorph/common/morph/MorphState;)Lmorph/common/morph/MorphState;
+     566: astore        10
+     568: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     571: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     574: aload_0
+     575: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     578: aload_0
+     579: invokevirtual #185                // Method morph/common/core/TickHandlerServer.getPlayerMorphs:(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Ljava/util/ArrayList;
+     582: aload         11
+     584: invokestatic  #191                // Method morph/common/morph/MorphHandler.addOrGetMorphState:(Ljava/util/ArrayList;Lmorph/common/morph/MorphState;)Lmorph/common/morph/MorphState;
+     587: astore        11
+     589: aload         11
+     591: getfield      #195                // Field morph/common/morph/MorphState.identifier:Ljava/lang/String;
+     594: aload         4
+     596: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     599: getfield      #195                // Field morph/common/morph/MorphState.identifier:Ljava/lang/String;
+     602: invokevirtual #199                // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+     605: ifeq          610
+     608: iconst_0
+     609: ireturn
+     610: getstatic     #28                 // Field morph/common/Morph.config:Lichun/common/core/config/Config;
+     613: ldc           #201                // String instaMorph
+     615: invokevirtual #36                 // Method ichun/common/core/config/Config.getInt:(Ljava/lang/String;)I
+     618: iconst_1
+     619: if_icmpeq     626
+     622: iload_3
+     623: ifeq          786
+     626: new           #129                // class morph/common/morph/MorphInfo
+     629: dup
+     630: aload_0
+     631: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+     634: aload         10
+     636: aload         11
+     638: invokespecial #140                // Method morph/common/morph/MorphInfo."<init>":(Ljava/lang/String;Lmorph/common/morph/MorphState;Lmorph/common/morph/MorphState;)V
+     641: astore        12
+     643: aload         12
+     645: iconst_1
+     646: invokevirtual #205                // Method morph/common/morph/MorphInfo.setMorphing:(Z)V
+     649: aload         12
+     651: aload_0
+     652: getstatic     #211                // Field net/minecraft/entity/SharedMonsterAttributes.field_111267_a:Lnet/minecraft/entity/ai/attributes/IAttribute;
+     655: invokevirtual #215                // Method net/minecraft/entity/player/EntityPlayerMP.func_110148_a:(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;
+     658: invokeinterface #221,  1          // InterfaceMethod net/minecraft/entity/ai/attributes/IAttributeInstance.func_111125_b:()D
+     663: ldc2_w        #222                // double 20.0d
+     666: dsub
+     667: putfield      #227                // Field morph/common/morph/MorphInfo.healthOffset:D
+     670: aload         12
+     672: aload_0
+     673: invokevirtual #231                // Method net/minecraft/entity/player/EntityPlayerMP.func_110143_aJ:()F
+     676: f2d
+     677: putfield      #234                // Field morph/common/morph/MorphInfo.preMorphHealth:D
+     680: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     683: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     686: aload_0
+     687: invokevirtual #120                // Method morph/common/core/TickHandlerServer.getPlayerMorphInfo:(Lnet/minecraft/entity/player/EntityPlayer;)Lmorph/common/morph/MorphInfo;
+     690: astore        13
+     692: aload         13
+     694: ifnull        717
+     697: aload         12
+     699: aload         13
+     701: getfield      #237                // Field morph/common/morph/MorphInfo.morphAbilities:Ljava/util/ArrayList;
+     704: putfield      #237                // Field morph/common/morph/MorphInfo.morphAbilities:Ljava/util/ArrayList;
+     707: aload         12
+     709: aload         13
+     711: getfield      #227                // Field morph/common/morph/MorphInfo.healthOffset:D
+     714: putfield      #227                // Field morph/common/morph/MorphInfo.healthOffset:D
+     717: getstatic     #170                // Field net/minecraftforge/common/MinecraftForge.EVENT_BUS:Lcpw/mods/fml/common/eventhandler/EventBus;
+     720: new           #239                // class morph/api/MorphEvent
+     723: dup
+     724: aload_0
+     725: aload         12
+     727: getfield      #242                // Field morph/common/morph/MorphInfo.prevState:Lmorph/common/morph/MorphState;
+     730: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     733: aload         12
+     735: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+     738: getfield      #152                // Field morph/common/morph/MorphState.entInstance:Lnet/minecraft/entity/EntityLivingBase;
+     741: invokespecial #245                // Method morph/api/MorphEvent."<init>":(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/EntityLivingBase;)V
+     744: invokevirtual #181                // Method cpw/mods/fml/common/eventhandler/EventBus.post:(Lcpw/mods/fml/common/eventhandler/Event;)Z
+     747: ifne          786
+     750: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     753: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     756: aload_0
+     757: aload         12
+     759: invokevirtual #249                // Method morph/common/core/TickHandlerServer.setPlayerMorphInfo:(Lnet/minecraft/entity/player/EntityPlayer;Lmorph/common/morph/MorphInfo;)V
+     762: getstatic     #253                // Field morph/common/Morph.channels:Ljava/util/EnumMap;
+     765: aload         12
+     767: invokevirtual #257                // Method morph/common/morph/MorphInfo.getMorphInfoAsPacket:()Lmorph/common/packet/PacketMorphInfo;
+     770: invokestatic  #263                // Method ichun/common/core/network/PacketHandler.sendToAll:(Ljava/util/EnumMap;Lichun/common/core/network/AbstractPacket;)V
+     773: aload_0
+     774: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     777: aload_0
+     778: ldc_w         #265                // String morph:morph
+     781: fconst_1
+     782: fconst_1
+     783: invokevirtual #271                // Method net/minecraft/world/World.func_72956_a:(Lnet/minecraft/entity/Entity;Ljava/lang/String;FF)V
+     786: iload_2
+     787: ifeq          815
+     790: getstatic     #253                // Field morph/common/Morph.channels:Ljava/util/EnumMap;
+     793: new           #273                // class morph/common/packet/PacketMorphAcquisition
+     796: dup
+     797: aload_1
+     798: invokevirtual #277                // Method net/minecraft/entity/EntityLivingBase.func_145782_y:()I
+     801: aload_0
+     802: invokevirtual #278                // Method net/minecraft/entity/player/EntityPlayerMP.func_145782_y:()I
+     805: invokespecial #281                // Method morph/common/packet/PacketMorphAcquisition."<init>":(II)V
+     808: aload_0
+     809: getfield      #285                // Field net/minecraft/entity/player/EntityPlayerMP.field_71093_bK:I
+     812: invokestatic  #289                // Method ichun/common/core/network/PacketHandler.sendToDimension:(Ljava/util/EnumMap;Lichun/common/core/network/AbstractPacket;I)V
+     815: aload_0
+     816: aload         11
+     818: iconst_0
+     819: invokestatic  #293                // Method morph/common/morph/MorphHandler.updatePlayerOfMorphStates:(Lnet/minecraft/entity/player/EntityPlayerMP;Lmorph/common/morph/MorphState;Z)V
+     822: iconst_1
+     823: ireturn
+
+  public static boolean demorphPlayer(net.minecraft.entity.player.EntityPlayerMP);
+    Code:
+       0: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+       3: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+       6: aload_0
+       7: invokevirtual #120                // Method morph/common/core/TickHandlerServer.getPlayerMorphInfo:(Lnet/minecraft/entity/player/EntityPlayer;)Lmorph/common/morph/MorphInfo;
+      10: astore_1
+      11: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+      14: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+      17: aload_0
+      18: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+      21: aload_0
+      22: invokevirtual #137                // Method morph/common/core/TickHandlerServer.getSelfState:(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;)Lmorph/common/morph/MorphState;
+      25: astore_3
+      26: aload_1
+      27: ifnull        141
+      30: aload_1
+      31: getfield      #147                // Field morph/common/morph/MorphInfo.nextState:Lmorph/common/morph/MorphState;
+      34: astore_2
+      35: new           #129                // class morph/common/morph/MorphInfo
+      38: dup
+      39: aload_0
+      40: invokevirtual #101                // Method net/minecraft/entity/player/EntityPlayerMP.func_70005_c_:()Ljava/lang/String;
+      43: aload_2
+      44: aload_3
+      45: invokespecial #140                // Method morph/common/morph/MorphInfo."<init>":(Ljava/lang/String;Lmorph/common/morph/MorphState;Lmorph/common/morph/MorphState;)V
+      48: astore        4
+      50: aload         4
+      52: iconst_1
+      53: invokevirtual #205                // Method morph/common/morph/MorphInfo.setMorphing:(Z)V
+      56: aload         4
+      58: aload_0
+      59: invokevirtual #231                // Method net/minecraft/entity/player/EntityPlayerMP.func_110143_aJ:()F
+      62: f2d
+      63: putfield      #234                // Field morph/common/morph/MorphInfo.preMorphHealth:D
+      66: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+      69: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+      72: aload_0
+      73: invokevirtual #120                // Method morph/common/core/TickHandlerServer.getPlayerMorphInfo:(Lnet/minecraft/entity/player/EntityPlayer;)Lmorph/common/morph/MorphInfo;
+      76: astore        5
+      78: aload         5
+      80: ifnull        103
+      83: aload         4
+      85: aload         5
+      87: getfield      #237                // Field morph/common/morph/MorphInfo.morphAbilities:Ljava/util/ArrayList;
+      90: putfield      #237                // Field morph/common/morph/MorphInfo.morphAbilities:Ljava/util/ArrayList;
+      93: aload         4
+      95: aload         5
+      97: getfield      #227                // Field morph/common/morph/MorphInfo.healthOffset:D
+     100: putfield      #227                // Field morph/common/morph/MorphInfo.healthOffset:D
+     103: getstatic     #108                // Field morph/common/Morph.proxy:Lmorph/common/core/CommonProxy;
+     106: getfield      #114                // Field morph/common/core/CommonProxy.tickHandlerServer:Lmorph/common/core/TickHandlerServer;
+     109: aload_0
+     110: aload         4
+     112: invokevirtual #249                // Method morph/common/core/TickHandlerServer.setPlayerMorphInfo:(Lnet/minecraft/entity/player/EntityPlayer;Lmorph/common/morph/MorphInfo;)V
+     115: getstatic     #253                // Field morph/common/Morph.channels:Ljava/util/EnumMap;
+     118: aload         4
+     120: invokevirtual #257                // Method morph/common/morph/MorphInfo.getMorphInfoAsPacket:()Lmorph/common/packet/PacketMorphInfo;
+     123: invokestatic  #263                // Method ichun/common/core/network/PacketHandler.sendToAll:(Ljava/util/EnumMap;Lichun/common/core/network/AbstractPacket;)V
+     126: aload_0
+     127: getfield      #133                // Field net/minecraft/entity/player/EntityPlayerMP.field_70170_p:Lnet/minecraft/world/World;
+     130: aload_0
+     131: ldc_w         #265                // String morph:morph
+     134: fconst_1
+     135: fconst_1
+     136: invokevirtual #271                // Method net/minecraft/world/World.func_72956_a:(Lnet/minecraft/entity/Entity;Ljava/lang/String;FF)V
+     139: iconst_1
+     140: ireturn
+     141: iconst_0
+     142: ireturn
+}

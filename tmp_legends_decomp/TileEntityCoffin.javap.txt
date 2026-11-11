@@ -1,0 +1,102 @@
+﻿Compiled from "TileEntityCoffin.java"
+public class com.tihyo.horror.blocks.tileentities.TileEntityCoffin extends net.minecraft.tileentity.TileEntity {
+  public boolean isOpened;
+
+  public com.tihyo.horror.blocks.tileentities.TileEntityCoffin();
+    Code:
+       0: aload_0
+       1: invokespecial #11                 // Method net/minecraft/tileentity/TileEntity."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #13                 // Field isOpened:Z
+       9: return
+
+  public void func_145845_h();
+    Code:
+       0: return
+
+  public net.minecraft.util.AxisAlignedBB getRenderBoundingBox();
+    Code:
+       0: getstatic     #22                 // Field INFINITE_EXTENT_AABB:Lnet/minecraft/util/AxisAlignedBB;
+       3: areturn
+
+  public void func_145839_a(net.minecraft.nbt.NBTTagCompound);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #26                 // Method net/minecraft/tileentity/TileEntity.func_145839_a:(Lnet/minecraft/nbt/NBTTagCompound;)V
+       5: aload_0
+       6: aload_1
+       7: ldc           #28                 // String opened
+       9: invokevirtual #34                 // Method net/minecraft/nbt/NBTTagCompound.func_74767_n:(Ljava/lang/String;)Z
+      12: putfield      #13                 // Field isOpened:Z
+      15: return
+
+  public void func_145841_b(net.minecraft.nbt.NBTTagCompound);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #39                 // Method net/minecraft/tileentity/TileEntity.func_145841_b:(Lnet/minecraft/nbt/NBTTagCompound;)V
+       5: aload_1
+       6: ldc           #28                 // String opened
+       8: aload_0
+       9: getfield      #13                 // Field isOpened:Z
+      12: invokevirtual #43                 // Method net/minecraft/nbt/NBTTagCompound.func_74757_a:(Ljava/lang/String;Z)V
+      15: return
+
+  public net.minecraft.network.Packet func_145844_m();
+    Code:
+       0: new           #30                 // class net/minecraft/nbt/NBTTagCompound
+       3: dup
+       4: invokespecial #46                 // Method net/minecraft/nbt/NBTTagCompound."<init>":()V
+       7: astore_1
+       8: aload_0
+       9: aload_1
+      10: invokevirtual #47                 // Method func_145841_b:(Lnet/minecraft/nbt/NBTTagCompound;)V
+      13: new           #49                 // class net/minecraft/network/play/server/S35PacketUpdateTileEntity
+      16: dup
+      17: aload_0
+      18: getfield      #53                 // Field field_145851_c:I
+      21: aload_0
+      22: getfield      #56                 // Field field_145848_d:I
+      25: aload_0
+      26: getfield      #59                 // Field field_145849_e:I
+      29: iconst_1
+      30: aload_1
+      31: invokespecial #62                 // Method net/minecraft/network/play/server/S35PacketUpdateTileEntity."<init>":(IIIILnet/minecraft/nbt/NBTTagCompound;)V
+      34: areturn
+
+  public void onDataPacket(net.minecraft.network.NetworkManager, net.minecraft.network.play.server.S35PacketUpdateTileEntity);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: invokevirtual #69                 // Method net/minecraft/network/play/server/S35PacketUpdateTileEntity.func_148857_g:()Lnet/minecraft/nbt/NBTTagCompound;
+       5: invokevirtual #70                 // Method func_145839_a:(Lnet/minecraft/nbt/NBTTagCompound;)V
+       8: return
+
+  public void func_70296_d();
+    Code:
+       0: aload_0
+       1: getfield      #79                 // Field field_145850_b:Lnet/minecraft/world/World;
+       4: aload_0
+       5: getfield      #53                 // Field field_145851_c:I
+       8: aload_0
+       9: getfield      #56                 // Field field_145848_d:I
+      12: aload_0
+      13: getfield      #59                 // Field field_145849_e:I
+      16: invokevirtual #85                 // Method net/minecraft/world/World.func_147471_g:(III)V
+      19: return
+
+  public boolean isOpened();
+    Code:
+       0: aload_0
+       1: getfield      #13                 // Field isOpened:Z
+       4: ireturn
+
+  public void setOpened(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #13                 // Field isOpened:Z
+       5: return
+}

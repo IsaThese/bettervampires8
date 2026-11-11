@@ -1,0 +1,8 @@
+﻿javap.exe : Error: class not found: 
+C:\Users\isaac\Documents\Coding\Gamedev\Minecraft\bettervampires8\tmp_jar_extract\PacketSyncEntitySize.javap.txt
+At C:\Users\isaac\AppData\Local\Temp\ps-script-83524f3d-506e-46c6-80c6-514fb3b0a8f3.ps1:102 char:3
++   & javap -c -p $_.FullName 2>&1 | Out-File -Encoding utf8 ($_.FullNa ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: class no...ySize.javap.txt:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

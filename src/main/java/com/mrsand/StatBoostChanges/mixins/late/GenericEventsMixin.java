@@ -468,26 +468,14 @@ public abstract class GenericEventsMixin {
 				}
 		}
 	}
-	//Fix for vampirism coffin
-//	@Inject(method = "onPlayerSleepInBed", at = @At("HEAD"), cancellable = true)
-//	private void onPlayerSleepInBed(PlayerSleepInBedEvent event, CallbackInfo ci) {
-//
-//	}
-//	@Inject(method = "onPlayerWakeUpEvent", at = @At("HEAD"), cancellable = true)
-//	private void onPlayerWakeUpEventFix(PlayerWakeUpEvent event, CallbackInfo cir) {
-//		cir.cancel();
-//		World world = event.entityPlayer.worldObj;
-//		EntityPlayer player = event.entityPlayer;
-//		GeneralUtil.sendDebugMessage(player, "cancelled original wake up method");
-////		if(Loader.isModLoaded("vampirism")) {
-////			
-////
-////			if (ExtendedPlayer.get(event.entityPlayer).isVampire() && world.getBlock(event.x, event.y, event.z) == Witchery.Blocks.COFFIN) {
-////				GeneralUtil.sendDebugMessage(player, "this is a code error if clicking vampirism block");
-////			}
-////		}
-//	}
-
+	/** BV owns day→night via Legends coffin Space-skip; suppress Witchery coffin time jump. */
+	@Inject(method = "onPlayerWakeUpEvent", at = @At("HEAD"), cancellable = true)
+	private void bvCancelWitcheryCoffinTimeSkip(net.minecraftforge.event.entity.player.PlayerWakeUpEvent event,
+			CallbackInfo ci) {
+		if (event.entityPlayer != null && GeneralUtil.isVampire(event.entityPlayer)) {
+			ci.cancel();
+		}
+	}
 
 }
 

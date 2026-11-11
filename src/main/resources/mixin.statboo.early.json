@@ -11,6 +11,7 @@
     "EntityBlazeMixin",
     "BatSkillMixin",
     "MixinAbstractClientPlayer",
+    "BlockIsBedCoffinMixin",
     "EntityPlayerMPMixin",
     "EntityPlayerMixin",
     "FoodStatsMixin",

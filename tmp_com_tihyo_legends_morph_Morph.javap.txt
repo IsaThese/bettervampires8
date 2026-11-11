@@ -1,0 +1,37 @@
+﻿Compiled from "Morph.java"
+public abstract class com.tihyo.legends.morph.Morph {
+  public com.tihyo.legends.morph.Morph();
+    Code:
+       0: aload_0
+       1: invokespecial #9                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public abstract java.lang.String getName();
+
+  public abstract java.lang.String getDisplayName();
+
+  public abstract float getSize(net.minecraft.entity.player.EntityPlayer);
+
+  public abstract float getScale(net.minecraft.entity.player.EntityPlayer);
+
+  public abstract float getOffset(net.minecraft.entity.player.EntityPlayer);
+
+  public abstract boolean isInstant(net.minecraft.entity.EntityLivingBase);
+
+  public abstract float getIncrSpeed(net.minecraft.entity.EntityLivingBase);
+
+  public abstract net.minecraft.util.ResourceLocation getTexture(net.minecraft.entity.player.EntityPlayer);
+
+  public abstract void renderLeftHand(net.minecraft.client.Minecraft, net.minecraft.entity.player.EntityPlayer);
+
+  public abstract void renderRightHand(net.minecraft.client.Minecraft, net.minecraft.entity.player.EntityPlayer);
+
+  public abstract boolean canWearArmor();
+
+  public java.util.List<java.lang.String> animationBlacklist();
+    Code:
+       0: invokestatic  #37                 // Method com/google/common/collect/Lists.newArrayList:()Ljava/util/ArrayList;
+       3: astore_1
+       4: aload_1
+       5: areturn
+}

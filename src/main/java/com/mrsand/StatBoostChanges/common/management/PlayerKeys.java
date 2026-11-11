@@ -18,5 +18,7 @@ public enum PlayerKeys {
 	/** Timed Demonic Fury (attack blood drain only). */
 	DEMONIC_FURY_TICKS,
 	/** Hypnosis Mastery resource (replaces removed PlayerHelper hypnosis strength). */
-	HYPNOSIS_STRENGTH
+	HYPNOSIS_STRENGTH,
+	/** Post-coffin-leave: server owns leave-stand coords (synced via VExtendedPlayerPacket). */
+	LEAVE_STANDING
 }

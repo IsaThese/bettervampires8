@@ -1,0 +1,697 @@
+﻿Compiled from "PotionResizing.java"
+public class com.emoniph.witchery.brewing.potions.PotionResizing extends com.emoniph.witchery.brewing.potions.PotionBase implements com.emoniph.witchery.brewing.potions.IHandlePreRenderLiving,com.emoniph.witchery.brewing.potions.IHandleRenderLiving,com.emoniph.witchery.brewing.potions.IHandleLivingUpdate,com.emoniph.witchery.brewing.potions.IHandleLivingHurt,com.emoniph.witchery.brewing.potions.IHandleLivingJump,com.emoniph.witchery.brewing.potions.IHandleLivingAttack {
+  private static java.lang.reflect.Method methodEntitySetSize;
+
+  private static java.lang.reflect.Method methodZombieSetSize;
+
+  private static java.lang.reflect.Method methodZombieSetSize2;
+
+  private static java.lang.reflect.Method methodAgeableSetSize;
+
+  private static java.lang.reflect.Method methodAgeableSetSize2;
+
+  public com.emoniph.witchery.brewing.potions.PotionResizing(int, int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: iload_2
+       3: invokespecial #43                 // Method com/emoniph/witchery/brewing/potions/PotionBase."<init>":(II)V
+       6: return
+
+  public void func_111187_a(net.minecraft.entity.EntityLivingBase, net.minecraft.entity.ai.attributes.BaseAttributeMap, int);
+    Code:
+       0: new           #52                 // class com/emoniph/witchery/util/EntitySizeInfo
+       3: dup
+       4: aload_1
+       5: invokespecial #55                 // Method com/emoniph/witchery/util/EntitySizeInfo."<init>":(Lnet/minecraft/entity/EntityLivingBase;)V
+       8: astore        4
+      10: aload_1
+      11: aload         4
+      13: getfield      #59                 // Field com/emoniph/witchery/util/EntitySizeInfo.defaultWidth:F
+      16: aload         4
+      18: getfield      #62                 // Field com/emoniph/witchery/util/EntitySizeInfo.defaultHeight:F
+      21: invokestatic  #66                 // Method setEntitySize:(Lnet/minecraft/entity/Entity;FF)V
+      24: aload_1
+      25: instanceof    #68                 // class net/minecraft/entity/player/EntityPlayer
+      28: ifeq          47
+      31: aload_1
+      32: checkcast     #68                 // class net/minecraft/entity/player/EntityPlayer
+      35: astore        5
+      37: aload         5
+      39: aload         4
+      41: getfield      #71                 // Field com/emoniph/witchery/util/EntitySizeInfo.eyeHeight:F
+      44: putfield      #72                 // Field net/minecraft/entity/player/EntityPlayer.eyeHeight:F
+      47: aload_1
+      48: aload         4
+      50: getfield      #75                 // Field com/emoniph/witchery/util/EntitySizeInfo.stepSize:F
+      53: putfield      #80                 // Field net/minecraft/entity/EntityLivingBase.field_70138_W:F
+      56: getstatic     #86                 // Field com/emoniph/witchery/Witchery.packetPipeline:Lcom/emoniph/witchery/network/PacketPipeline;
+      59: new           #88                 // class com/emoniph/witchery/network/PacketSyncEntitySize
+      62: dup
+      63: aload_1
+      64: invokespecial #91                 // Method com/emoniph/witchery/network/PacketSyncEntitySize."<init>":(Lnet/minecraft/entity/Entity;)V
+      67: invokevirtual #97                 // Method com/emoniph/witchery/network/PacketPipeline.sendToAll:(Lcpw/mods/fml/common/network/simpleimpl/IMessage;)V
+      70: aload_0
+      71: aload_1
+      72: aload_2
+      73: iload_3
+      74: invokespecial #99                 // Method com/emoniph/witchery/brewing/potions/PotionBase.func_111187_a:(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/entity/ai/attributes/BaseAttributeMap;I)V
+      77: return
+
+  public static void setEntitySize(net.minecraft.entity.Entity, float, float);
+    Code:
+       0: aload_0
+       1: instanceof    #116                // class net/minecraft/entity/monster/EntityZombie
+       4: ifeq          150
+       7: getstatic     #118                // Field methodZombieSetSize:Ljava/lang/reflect/Method;
+      10: ifnonnull     60
+      13: ldc           #116                // class net/minecraft/entity/monster/EntityZombie
+      15: aload_0
+      16: checkcast     #116                // class net/minecraft/entity/monster/EntityZombie
+      19: iconst_3
+      20: anewarray     #120                // class java/lang/String
+      23: dup
+      24: iconst_0
+      25: ldc           #122                // String setSize
+      27: aastore
+      28: dup
+      29: iconst_1
+      30: ldc           #124                // String func_70105_a
+      32: aastore
+      33: dup
+      34: iconst_2
+      35: ldc           #126                // String a
+      37: aastore
+      38: iconst_2
+      39: anewarray     #128                // class java/lang/Class
+      42: dup
+      43: iconst_0
+      44: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+      47: aastore
+      48: dup
+      49: iconst_1
+      50: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+      53: aastore
+      54: invokestatic  #140                // Method cpw/mods/fml/relauncher/ReflectionHelper.findMethod:(Ljava/lang/Class;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+      57: putstatic     #118                // Field methodZombieSetSize:Ljava/lang/reflect/Method;
+      60: getstatic     #142                // Field methodZombieSetSize2:Ljava/lang/reflect/Method;
+      63: ifnonnull     102
+      66: ldc           #116                // class net/minecraft/entity/monster/EntityZombie
+      68: aload_0
+      69: checkcast     #116                // class net/minecraft/entity/monster/EntityZombie
+      72: iconst_2
+      73: anewarray     #120                // class java/lang/String
+      76: dup
+      77: iconst_0
+      78: ldc           #144                // String func_146069_a
+      80: aastore
+      81: dup
+      82: iconst_1
+      83: ldc           #126                // String a
+      85: aastore
+      86: iconst_1
+      87: anewarray     #128                // class java/lang/Class
+      90: dup
+      91: iconst_0
+      92: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+      95: aastore
+      96: invokestatic  #140                // Method cpw/mods/fml/relauncher/ReflectionHelper.findMethod:(Ljava/lang/Class;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+      99: putstatic     #142                // Field methodZombieSetSize2:Ljava/lang/reflect/Method;
+     102: getstatic     #118                // Field methodZombieSetSize:Ljava/lang/reflect/Method;
+     105: aload_0
+     106: iconst_2
+     107: anewarray     #146                // class java/lang/Object
+     110: dup
+     111: iconst_0
+     112: fload_1
+     113: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     116: aastore
+     117: dup
+     118: iconst_1
+     119: fload_2
+     120: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     123: aastore
+     124: invokevirtual #156                // Method java/lang/reflect/Method.invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+     127: pop
+     128: getstatic     #142                // Field methodZombieSetSize2:Ljava/lang/reflect/Method;
+     131: aload_0
+     132: iconst_1
+     133: anewarray     #146                // class java/lang/Object
+     136: dup
+     137: iconst_0
+     138: fconst_1
+     139: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     142: aastore
+     143: invokevirtual #156                // Method java/lang/reflect/Method.invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+     146: pop
+     147: goto          381
+     150: aload_0
+     151: instanceof    #158                // class net/minecraft/entity/EntityAgeable
+     154: ifeq          305
+     157: getstatic     #160                // Field methodAgeableSetSize:Ljava/lang/reflect/Method;
+     160: ifnonnull     210
+     163: ldc           #158                // class net/minecraft/entity/EntityAgeable
+     165: aload_0
+     166: checkcast     #158                // class net/minecraft/entity/EntityAgeable
+     169: iconst_3
+     170: anewarray     #120                // class java/lang/String
+     173: dup
+     174: iconst_0
+     175: ldc           #122                // String setSize
+     177: aastore
+     178: dup
+     179: iconst_1
+     180: ldc           #124                // String func_70105_a
+     182: aastore
+     183: dup
+     184: iconst_2
+     185: ldc           #126                // String a
+     187: aastore
+     188: iconst_2
+     189: anewarray     #128                // class java/lang/Class
+     192: dup
+     193: iconst_0
+     194: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+     197: aastore
+     198: dup
+     199: iconst_1
+     200: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+     203: aastore
+     204: invokestatic  #140                // Method cpw/mods/fml/relauncher/ReflectionHelper.findMethod:(Ljava/lang/Class;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+     207: putstatic     #160                // Field methodAgeableSetSize:Ljava/lang/reflect/Method;
+     210: getstatic     #162                // Field methodAgeableSetSize2:Ljava/lang/reflect/Method;
+     213: ifnonnull     257
+     216: ldc           #158                // class net/minecraft/entity/EntityAgeable
+     218: aload_0
+     219: checkcast     #158                // class net/minecraft/entity/EntityAgeable
+     222: iconst_3
+     223: anewarray     #120                // class java/lang/String
+     226: dup
+     227: iconst_0
+     228: ldc           #164                // String setScale
+     230: aastore
+     231: dup
+     232: iconst_1
+     233: ldc           #166                // String func_98055_j
+     235: aastore
+     236: dup
+     237: iconst_2
+     238: ldc           #126                // String a
+     240: aastore
+     241: iconst_1
+     242: anewarray     #128                // class java/lang/Class
+     245: dup
+     246: iconst_0
+     247: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+     250: aastore
+     251: invokestatic  #140                // Method cpw/mods/fml/relauncher/ReflectionHelper.findMethod:(Ljava/lang/Class;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+     254: putstatic     #162                // Field methodAgeableSetSize2:Ljava/lang/reflect/Method;
+     257: getstatic     #160                // Field methodAgeableSetSize:Ljava/lang/reflect/Method;
+     260: aload_0
+     261: iconst_2
+     262: anewarray     #146                // class java/lang/Object
+     265: dup
+     266: iconst_0
+     267: fload_1
+     268: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     271: aastore
+     272: dup
+     273: iconst_1
+     274: fload_2
+     275: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     278: aastore
+     279: invokevirtual #156                // Method java/lang/reflect/Method.invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+     282: pop
+     283: getstatic     #162                // Field methodAgeableSetSize2:Ljava/lang/reflect/Method;
+     286: aload_0
+     287: iconst_1
+     288: anewarray     #146                // class java/lang/Object
+     291: dup
+     292: iconst_0
+     293: fconst_1
+     294: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     297: aastore
+     298: invokevirtual #156                // Method java/lang/reflect/Method.invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+     301: pop
+     302: goto          381
+     305: getstatic     #168                // Field methodEntitySetSize:Ljava/lang/reflect/Method;
+     308: ifnonnull     355
+     311: ldc           #170                // class net/minecraft/entity/Entity
+     313: aload_0
+     314: iconst_3
+     315: anewarray     #120                // class java/lang/String
+     318: dup
+     319: iconst_0
+     320: ldc           #122                // String setSize
+     322: aastore
+     323: dup
+     324: iconst_1
+     325: ldc           #124                // String func_70105_a
+     327: aastore
+     328: dup
+     329: iconst_2
+     330: ldc           #126                // String a
+     332: aastore
+     333: iconst_2
+     334: anewarray     #128                // class java/lang/Class
+     337: dup
+     338: iconst_0
+     339: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+     342: aastore
+     343: dup
+     344: iconst_1
+     345: getstatic     #134                // Field java/lang/Float.TYPE:Ljava/lang/Class;
+     348: aastore
+     349: invokestatic  #140                // Method cpw/mods/fml/relauncher/ReflectionHelper.findMethod:(Ljava/lang/Class;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+     352: putstatic     #168                // Field methodEntitySetSize:Ljava/lang/reflect/Method;
+     355: getstatic     #168                // Field methodEntitySetSize:Ljava/lang/reflect/Method;
+     358: aload_0
+     359: iconst_2
+     360: anewarray     #146                // class java/lang/Object
+     363: dup
+     364: iconst_0
+     365: fload_1
+     366: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     369: aastore
+     370: dup
+     371: iconst_1
+     372: fload_2
+     373: invokestatic  #150                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+     376: aastore
+     377: invokevirtual #156                // Method java/lang/reflect/Method.invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+     380: pop
+     381: goto          393
+     384: astore_3
+     385: goto          393
+     388: astore_3
+     389: goto          393
+     392: astore_3
+     393: return
+    Exception table:
+       from    to  target type
+           0   381   384   Class java/lang/IllegalAccessException
+           0   381   388   Class java/lang/IllegalArgumentException
+           0   381   392   Class java/lang/reflect/InvocationTargetException
+
+  public void onLivingRender(net.minecraft.world.World, net.minecraft.entity.EntityLivingBase, net.minecraftforge.client.event.RenderLivingEvent$Pre, int);
+    Code:
+       0: invokestatic  #185                // Method org/lwjgl/opengl/GL11.glPushMatrix:()V
+       3: aload_3
+       4: getfield      #189                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.x:D
+       7: aload_3
+       8: getfield      #192                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.y:D
+      11: aload_3
+      12: getfield      #195                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.z:D
+      15: invokestatic  #199                // Method org/lwjgl/opengl/GL11.glTranslated:(DDD)V
+      18: aload_2
+      19: iload         4
+      21: invokestatic  #203                // Method getModifiedScaleFactor:(Lnet/minecraft/entity/EntityLivingBase;I)F
+      24: fstore        5
+      26: fload         5
+      28: fload         5
+      30: fload         5
+      32: invokestatic  #207                // Method org/lwjgl/opengl/GL11.glScalef:(FFF)V
+      35: aload_3
+      36: getfield      #189                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.x:D
+      39: dneg
+      40: aload_3
+      41: getfield      #192                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.y:D
+      44: dneg
+      45: aload_3
+      46: getfield      #195                // Field net/minecraftforge/client/event/RenderLivingEvent$Pre.z:D
+      49: dneg
+      50: invokestatic  #199                // Method org/lwjgl/opengl/GL11.glTranslated:(DDD)V
+      53: return
+
+  public static float getModifiedScaleFactor(net.minecraft.entity.EntityLivingBase, int);
+    Code:
+       0: aload_0
+       1: getfield      #215                // Field net/minecraft/entity/EntityLivingBase.field_70131_O:F
+       4: fstore_2
+       5: new           #52                 // class com/emoniph/witchery/util/EntitySizeInfo
+       8: dup
+       9: aload_0
+      10: invokespecial #55                 // Method com/emoniph/witchery/util/EntitySizeInfo."<init>":(Lnet/minecraft/entity/EntityLivingBase;)V
+      13: astore_3
+      14: fload_2
+      15: aload_3
+      16: getfield      #62                 // Field com/emoniph/witchery/util/EntitySizeInfo.defaultHeight:F
+      19: fdiv
+      20: fstore        4
+      22: iload_1
+      23: invokestatic  #219                // Method getScaleFactor:(I)F
+      26: fstore        5
+      28: fload         5
+      30: fconst_1
+      31: fcmpg
+      32: ifge          45
+      35: fload         4
+      37: fload         5
+      39: invokestatic  #225                // Method java/lang/Math.max:(FF)F
+      42: goto          52
+      45: fload         4
+      47: fload         5
+      49: invokestatic  #228                // Method java/lang/Math.min:(FF)F
+      52: fstore        6
+      54: fload         6
+      56: freturn
+
+  public void onLivingRender(net.minecraft.world.World, net.minecraft.entity.EntityLivingBase, net.minecraftforge.client.event.RenderLivingEvent$Post, int);
+    Code:
+       0: invokestatic  #235                // Method org/lwjgl/opengl/GL11.glPopMatrix:()V
+       3: return
+
+  public void onLivingUpdate(net.minecraft.world.World, net.minecraft.entity.EntityLivingBase, net.minecraftforge.event.entity.living.LivingEvent$LivingUpdateEvent, int, int);
+    Code:
+       0: ldc           #239                // float 0.03f
+       2: aload_3
+       3: getfield      #241                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entity:Lnet/minecraft/entity/Entity;
+       6: getfield      #244                // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+       9: getfield      #250                // Field net/minecraft/world/World.field_72995_K:Z
+      12: ifeq          19
+      15: iconst_1
+      16: goto          21
+      19: bipush        20
+      21: i2f
+      22: fmul
+      23: fstore        6
+      25: aload_1
+      26: getfield      #250                // Field net/minecraft/world/World.field_72995_K:Z
+      29: ifne          42
+      32: aload_2
+      33: getfield      #253                // Field net/minecraft/entity/EntityLivingBase.field_70173_aa:I
+      36: bipush        20
+      38: irem
+      39: ifne          208
+      42: new           #52                 // class com/emoniph/witchery/util/EntitySizeInfo
+      45: dup
+      46: aload_2
+      47: invokespecial #55                 // Method com/emoniph/witchery/util/EntitySizeInfo."<init>":(Lnet/minecraft/entity/EntityLivingBase;)V
+      50: astore        7
+      52: iload         4
+      54: invokestatic  #219                // Method getScaleFactor:(I)F
+      57: fstore        8
+      59: aload         7
+      61: getfield      #62                 // Field com/emoniph/witchery/util/EntitySizeInfo.defaultHeight:F
+      64: fload         8
+      66: fmul
+      67: fstore        9
+      69: aload         7
+      71: getfield      #59                 // Field com/emoniph/witchery/util/EntitySizeInfo.defaultWidth:F
+      74: fload         8
+      76: fmul
+      77: fstore        10
+      79: aload_3
+      80: getfield      #256                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingUpdateEvent.entityLiving:Lnet/minecraft/entity/EntityLivingBase;
+      83: getfield      #215                // Field net/minecraft/entity/EntityLivingBase.field_70131_O:F
+      86: fstore        11
+      88: fload         9
+      90: fload         11
+      92: fcmpl
+      93: ifeq          208
+      96: aload_2
+      97: instanceof    #68                 // class net/minecraft/entity/player/EntityPlayer
+     100: ifeq          127
+     103: aload_2
+     104: checkcast     #68                 // class net/minecraft/entity/player/EntityPlayer
+     107: astore        12
+     109: aload_1
+     110: getfield      #250                // Field net/minecraft/world/World.field_72995_K:Z
+     113: ifne          127
+     116: aload         12
+     118: fload         11
+     120: ldc_w         #257                // float 0.92f
+     123: fmul
+     124: putfield      #72                 // Field net/minecraft/entity/player/EntityPlayer.eyeHeight:F
+     127: aload_2
+     128: fload         8
+     130: fconst_1
+     131: fcmpg
+     132: ifge          139
+     135: fconst_0
+     136: goto          143
+     139: fload         8
+     141: fconst_1
+     142: fsub
+     143: putfield      #80                 // Field net/minecraft/entity/EntityLivingBase.field_70138_W:F
+     146: fload         8
+     148: fconst_1
+     149: fcmpg
+     150: ifge          182
+     153: aload_2
+     154: aload_2
+     155: getfield      #260                // Field net/minecraft/entity/EntityLivingBase.field_70130_N:F
+     158: fload         6
+     160: fsub
+     161: fload         10
+     163: invokestatic  #225                // Method java/lang/Math.max:(FF)F
+     166: fload         11
+     168: fload         6
+     170: fsub
+     171: fload         9
+     173: invokestatic  #225                // Method java/lang/Math.max:(FF)F
+     176: invokestatic  #66                 // Method setEntitySize:(Lnet/minecraft/entity/Entity;FF)V
+     179: goto          208
+     182: aload_2
+     183: aload_2
+     184: getfield      #260                // Field net/minecraft/entity/EntityLivingBase.field_70130_N:F
+     187: fload         6
+     189: fadd
+     190: fload         10
+     192: invokestatic  #228                // Method java/lang/Math.min:(FF)F
+     195: fload         11
+     197: fload         6
+     199: fadd
+     200: fload         9
+     202: invokestatic  #228                // Method java/lang/Math.min:(FF)F
+     205: invokestatic  #66                 // Method setEntitySize:(Lnet/minecraft/entity/Entity;FF)V
+     208: return
+
+  public boolean handleAllHurtEvents();
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public void onLivingHurt(net.minecraft.world.World, net.minecraft.entity.EntityLivingBase, net.minecraftforge.event.entity.living.LivingHurtEvent, int);
+    Code:
+       0: aload_1
+       1: getfield      #250                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          170
+       7: aload_2
+       8: aload_0
+       9: invokevirtual #273                // Method net/minecraft/entity/EntityLivingBase.func_70660_b:(Lnet/minecraft/potion/Potion;)Lnet/minecraft/potion/PotionEffect;
+      12: astore        5
+      14: aload         5
+      16: ifnull        23
+      19: iconst_1
+      20: goto          24
+      23: iconst_0
+      24: istore        6
+      26: aload_3
+      27: getfield      #281                // Field net/minecraftforge/event/entity/living/LivingHurtEvent.source:Lnet/minecraft/util/DamageSource;
+      30: astore        7
+      32: aload         7
+      34: invokevirtual #287                // Method net/minecraft/util/DamageSource.func_76355_l:()Ljava/lang/String;
+      37: ldc_w         #289                // String mob
+      40: if_acmpeq     54
+      43: aload         7
+      45: invokevirtual #287                // Method net/minecraft/util/DamageSource.func_76355_l:()Ljava/lang/String;
+      48: ldc_w         #290                // String player
+      51: if_acmpne     136
+      54: aload         7
+      56: invokevirtual #294                // Method net/minecraft/util/DamageSource.func_76346_g:()Lnet/minecraft/entity/Entity;
+      59: ifnull        170
+      62: aload         7
+      64: invokevirtual #294                // Method net/minecraft/util/DamageSource.func_76346_g:()Lnet/minecraft/entity/Entity;
+      67: instanceof    #77                 // class net/minecraft/entity/EntityLivingBase
+      70: ifeq          170
+      73: aload         7
+      75: invokevirtual #294                // Method net/minecraft/util/DamageSource.func_76346_g:()Lnet/minecraft/entity/Entity;
+      78: checkcast     #77                 // class net/minecraft/entity/EntityLivingBase
+      81: astore        8
+      83: aload         8
+      85: aload_0
+      86: invokevirtual #273                // Method net/minecraft/entity/EntityLivingBase.func_70660_b:(Lnet/minecraft/potion/Potion;)Lnet/minecraft/potion/PotionEffect;
+      89: astore        9
+      91: iload         6
+      93: ifne          101
+      96: aload         9
+      98: ifnull        133
+     101: aload         9
+     103: aload         5
+     105: invokestatic  #298                // Method getDamageMultiplier:(Lnet/minecraft/potion/PotionEffect;Lnet/minecraft/potion/PotionEffect;)F
+     108: fstore        10
+     110: aload_3
+     111: dup
+     112: getfield      #301                // Field net/minecraftforge/event/entity/living/LivingHurtEvent.ammount:F
+     115: fload         10
+     117: ldc_w         #302                // float 3.0f
+     120: invokestatic  #228                // Method java/lang/Math.min:(FF)F
+     123: ldc_w         #303                // float 0.5f
+     126: invokestatic  #225                // Method java/lang/Math.max:(FF)F
+     129: fmul
+     130: putfield      #301                // Field net/minecraftforge/event/entity/living/LivingHurtEvent.ammount:F
+     133: goto          170
+     136: aload         7
+     138: getstatic     #306                // Field net/minecraft/util/DamageSource.field_76379_h:Lnet/minecraft/util/DamageSource;
+     141: if_acmpne     170
+     144: iload         6
+     146: ifeq          170
+     149: aload         5
+     151: invokevirtual #310                // Method net/minecraft/potion/PotionEffect.func_76458_c:()I
+     154: invokestatic  #219                // Method getScaleFactor:(I)F
+     157: aload_3
+     158: getfield      #301                // Field net/minecraftforge/event/entity/living/LivingHurtEvent.ammount:F
+     161: fcmpl
+     162: ifle          170
+     165: aload_3
+     166: iconst_1
+     167: invokevirtual #314                // Method net/minecraftforge/event/entity/living/LivingHurtEvent.setCanceled:(Z)V
+     170: return
+
+  public void onLivingAttack(net.minecraft.world.World, net.minecraft.entity.EntityLivingBase, net.minecraftforge.event.entity.living.LivingAttackEvent, int);
+    Code:
+       0: getstatic     #326                // Field com/emoniph/witchery/Witchery.modHooks:Lcom/emoniph/witchery/integration/ModHookManager;
+       3: getfield      #331                // Field com/emoniph/witchery/integration/ModHookManager.isAM2Present:Z
+       6: ifeq          90
+       9: aload_1
+      10: getfield      #250                // Field net/minecraft/world/World.field_72995_K:Z
+      13: ifne          90
+      16: aload_3
+      17: getfield      #334                // Field net/minecraftforge/event/entity/living/LivingAttackEvent.source:Lnet/minecraft/util/DamageSource;
+      20: getstatic     #337                // Field net/minecraft/util/DamageSource.field_76368_d:Lnet/minecraft/util/DamageSource;
+      23: if_acmpne     90
+      26: iload         4
+      28: iconst_1
+      29: if_icmpgt     90
+      32: aload_2
+      33: instanceof    #68                 // class net/minecraft/entity/player/EntityPlayer
+      36: ifeq          90
+      39: aload_3
+      40: getfield      #338                // Field net/minecraftforge/event/entity/living/LivingAttackEvent.entity:Lnet/minecraft/entity/Entity;
+      43: getfield      #244                // Field net/minecraft/entity/Entity.field_70170_p:Lnet/minecraft/world/World;
+      46: aload_3
+      47: getfield      #338                // Field net/minecraftforge/event/entity/living/LivingAttackEvent.entity:Lnet/minecraft/entity/Entity;
+      50: getfield      #341                // Field net/minecraft/entity/Entity.field_70165_t:D
+      53: invokestatic  #347                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+      56: aload_3
+      57: getfield      #338                // Field net/minecraftforge/event/entity/living/LivingAttackEvent.entity:Lnet/minecraft/entity/Entity;
+      60: getfield      #350                // Field net/minecraft/entity/Entity.field_70163_u:D
+      63: invokestatic  #347                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+      66: aload_3
+      67: getfield      #338                // Field net/minecraftforge/event/entity/living/LivingAttackEvent.entity:Lnet/minecraft/entity/Entity;
+      70: getfield      #353                // Field net/minecraft/entity/Entity.field_70161_v:D
+      73: invokestatic  #347                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+      76: invokevirtual #357                // Method net/minecraft/world/World.func_147439_a:(III)Lnet/minecraft/block/Block;
+      79: invokevirtual #362                // Method net/minecraft/block/Block.func_149721_r:()Z
+      82: ifne          90
+      85: aload_3
+      86: iconst_1
+      87: invokevirtual #363                // Method net/minecraftforge/event/entity/living/LivingAttackEvent.setCanceled:(Z)V
+      90: return
+
+  public static float getScaleFactor(int);
+    Code:
+       0: iload_0
+       1: tableswitch   { // 0 to 3
+
+                     0: 32
+
+                     1: 36
+
+                     2: 40
+
+                     3: 42
+               default: 32
+          }
+      32: ldc_w         #365                // float 0.25f
+      35: freturn
+      36: ldc_w         #366                // float 0.4f
+      39: freturn
+      40: fconst_2
+      41: freturn
+      42: ldc_w         #302                // float 3.0f
+      45: freturn
+
+  private static int getSize(net.minecraft.potion.PotionEffect);
+    Code:
+       0: aload_0
+       1: ifnonnull     6
+       4: iconst_3
+       5: ireturn
+       6: aload_0
+       7: invokevirtual #310                // Method net/minecraft/potion/PotionEffect.func_76458_c:()I
+      10: tableswitch   { // 0 to 3
+
+                     0: 42
+
+                     1: 44
+
+                     2: 46
+
+                     3: 48
+               default: 40
+          }
+      40: iconst_3
+      41: ireturn
+      42: iconst_1
+      43: ireturn
+      44: iconst_2
+      45: ireturn
+      46: iconst_4
+      47: ireturn
+      48: iconst_5
+      49: ireturn
+
+  public static float getDamageMultiplier(net.minecraft.potion.PotionEffect, net.minecraft.potion.PotionEffect);
+    Code:
+       0: aload_0
+       1: invokestatic  #370                // Method getSize:(Lnet/minecraft/potion/PotionEffect;)I
+       4: istore_2
+       5: aload_1
+       6: invokestatic  #370                // Method getSize:(Lnet/minecraft/potion/PotionEffect;)I
+       9: istore_3
+      10: iload_2
+      11: iload_3
+      12: idiv
+      13: i2f
+      14: fstore        4
+      16: fload         4
+      18: freturn
+
+  public void onLivingJump(net.minecraft.world.World, net.minecraft.entity.EntityLivingBase, net.minecraftforge.event.entity.living.LivingEvent$LivingJumpEvent, int);
+    Code:
+       0: iload         4
+       2: invokestatic  #219                // Method getScaleFactor:(I)F
+       5: fstore        5
+       7: fload         5
+       9: fconst_1
+      10: fcmpl
+      11: ifle          40
+      14: aload_3
+      15: getfield      #378                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingJumpEvent.entityLiving:Lnet/minecraft/entity/EntityLivingBase;
+      18: dup
+      19: getfield      #381                // Field net/minecraft/entity/EntityLivingBase.field_70181_x:D
+      22: fload         5
+      24: f2d
+      25: ldc2_w        #382                // double 0.5d
+      28: dmul
+      29: ldc2_w        #382                // double 0.5d
+      32: dadd
+      33: dmul
+      34: putfield      #381                // Field net/minecraft/entity/EntityLivingBase.field_70181_x:D
+      37: goto          65
+      40: aload_3
+      41: getfield      #378                // Field net/minecraftforge/event/entity/living/LivingEvent$LivingJumpEvent.entityLiving:Lnet/minecraft/entity/EntityLivingBase;
+      44: dup
+      45: getfield      #381                // Field net/minecraft/entity/EntityLivingBase.field_70181_x:D
+      48: fload         5
+      50: f2d
+      51: ldc2_w        #382                // double 0.5d
+      54: invokestatic  #386                // Method java/lang/Math.max:(DD)D
+      57: ldc2_w        #387                // double 1.5d
+      60: dmul
+      61: dmul
+      62: putfield      #381                // Field net/minecraft/entity/EntityLivingBase.field_70181_x:D
+      65: return
+}

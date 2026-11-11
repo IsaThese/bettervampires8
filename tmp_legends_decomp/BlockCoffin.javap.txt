@@ -1,0 +1,643 @@
+﻿Compiled from "BlockCoffin.java"
+public class com.tihyo.horror.blocks.BlockCoffin extends net.minecraft.block.BlockContainer {
+  private boolean opened;
+
+  public com.tihyo.horror.blocks.BlockCoffin(net.minecraft.block.material.Material, boolean);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #12                 // Method net/minecraft/block/BlockContainer."<init>":(Lnet/minecraft/block/material/Material;)V
+       5: aload_0
+       6: iconst_0
+       7: putfield      #14                 // Field opened:Z
+      10: aload_0
+      11: iload_2
+      12: putfield      #14                 // Field opened:Z
+      15: aload_0
+      16: fconst_0
+      17: fconst_0
+      18: fconst_0
+      19: fconst_1
+      20: ldc           #15                 // float 0.56f
+      22: fconst_1
+      23: invokevirtual #19                 // Method func_149676_a:(FFFFFF)V
+      26: iload_2
+      27: ifne          56
+      30: getstatic     #24                 // Field com/tihyo/legends/management/LegendsPacks.horror:Z
+      33: ifeq          47
+      36: aload_0
+      37: getstatic     #30                 // Field com/tihyo/horror/management/HorrorCreativeTabs.blocksTab:Lnet/minecraft/creativetab/CreativeTabs;
+      40: invokevirtual #34                 // Method func_149647_a:(Lnet/minecraft/creativetab/CreativeTabs;)Lnet/minecraft/block/Block;
+      43: pop
+      44: goto          62
+      47: aload_0
+      48: aconst_null
+      49: invokevirtual #34                 // Method func_149647_a:(Lnet/minecraft/creativetab/CreativeTabs;)Lnet/minecraft/block/Block;
+      52: pop
+      53: goto          62
+      56: aload_0
+      57: aconst_null
+      58: invokevirtual #34                 // Method func_149647_a:(Lnet/minecraft/creativetab/CreativeTabs;)Lnet/minecraft/block/Block;
+      61: pop
+      62: return
+
+  public void func_149651_a(net.minecraft.client.renderer.texture.IIconRegister);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: ldc           #45                 // String legends:blank
+       4: invokeinterface #51,  2           // InterfaceMethod net/minecraft/client/renderer/texture/IIconRegister.func_94245_a:(Ljava/lang/String;)Lnet/minecraft/util/IIcon;
+       9: putfield      #55                 // Field field_149761_L:Lnet/minecraft/util/IIcon;
+      12: return
+
+  public net.minecraft.item.Item func_149650_a(int, java.util.Random, int);
+    Code:
+       0: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+       3: invokestatic  #71                 // Method net/minecraft/item/Item.func_150898_a:(Lnet/minecraft/block/Block;)Lnet/minecraft/item/Item;
+       6: areturn
+
+  public int quantityDropped();
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public int func_149645_b();
+    Code:
+       0: iconst_m1
+       1: ireturn
+
+  public boolean func_149727_a(net.minecraft.world.World, int, int, int, net.minecraft.entity.player.EntityPlayer, int, float, float, float);
+    Code:
+       0: aload_0
+       1: getfield      #14                 // Field opened:Z
+       4: ifne          181
+       7: aload_1
+       8: iload_2
+       9: iload_3
+      10: iload         4
+      12: invokevirtual #87                 // Method net/minecraft/world/World.func_147438_o:(III)Lnet/minecraft/tileentity/TileEntity;
+      15: checkcast     #89                 // class com/tihyo/horror/blocks/tileentities/TileEntityCoffin
+      18: astore        10
+      20: aload         10
+      22: ifnull        178
+      25: aload         5
+      27: invokestatic  #95                 // Method com/tihyo/legends/management/PlayerHelper.isMorphed:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+      30: ifeq          43
+      33: aload         5
+      35: invokestatic  #99                 // Method com/tihyo/legends/management/PlayerHelper.getSize:(Lnet/minecraft/entity/player/EntityPlayer;)F
+      38: fconst_1
+      39: fcmpg
+      40: ifgt          138
+      43: aload         5
+      45: invokevirtual #105                // Method net/minecraft/entity/player/EntityPlayer.func_70093_af:()Z
+      48: ifeq          95
+      51: aload_1
+      52: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+      55: ifne          178
+      58: aload_0
+      59: getfield      #14                 // Field opened:Z
+      62: ifne          80
+      65: aload_0
+      66: getstatic     #111                // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffinOpen:Lnet/minecraft/block/Block;
+      69: aload_1
+      70: iload_2
+      71: iload_3
+      72: iload         4
+      74: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      77: goto          178
+      80: aload_0
+      81: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+      84: aload_1
+      85: iload_2
+      86: iload_3
+      87: iload         4
+      89: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      92: goto          178
+      95: aload_1
+      96: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+      99: ifne          178
+     102: aload         5
+     104: new           #117                // class net/minecraft/util/ChatComponentText
+     107: dup
+     108: new           #119                // class java/lang/StringBuilder
+     111: dup
+     112: invokespecial #122                // Method java/lang/StringBuilder."<init>":()V
+     115: getstatic     #128                // Field com/tihyo/legends/management/LegendsChatFormat.red:Ljava/lang/String;
+     118: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     121: ldc           #134                // String Must open coffin first.
+     123: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     126: invokevirtual #138                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     129: invokespecial #141                // Method net/minecraft/util/ChatComponentText."<init>":(Ljava/lang/String;)V
+     132: invokevirtual #145                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     135: goto          178
+     138: aload_1
+     139: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+     142: ifne          178
+     145: aload         5
+     147: new           #117                // class net/minecraft/util/ChatComponentText
+     150: dup
+     151: new           #119                // class java/lang/StringBuilder
+     154: dup
+     155: invokespecial #122                // Method java/lang/StringBuilder."<init>":()V
+     158: getstatic     #128                // Field com/tihyo/legends/management/LegendsChatFormat.red:Ljava/lang/String;
+     161: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     164: ldc           #147                // String Can't fit in coffin.
+     166: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     169: invokevirtual #138                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     172: invokespecial #141                // Method net/minecraft/util/ChatComponentText."<init>":(Ljava/lang/String;)V
+     175: invokevirtual #145                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     178: goto          458
+     181: aload_1
+     182: iload_2
+     183: iload_3
+     184: iload         4
+     186: invokevirtual #87                 // Method net/minecraft/world/World.func_147438_o:(III)Lnet/minecraft/tileentity/TileEntity;
+     189: checkcast     #149                // class com/tihyo/horror/blocks/tileentities/TileEntityCoffinOpened
+     192: astore        10
+     194: aload         10
+     196: ifnull        458
+     199: aload         5
+     201: invokestatic  #95                 // Method com/tihyo/legends/management/PlayerHelper.isMorphed:(Lnet/minecraft/entity/player/EntityPlayer;)Z
+     204: ifeq          217
+     207: aload         5
+     209: invokestatic  #99                 // Method com/tihyo/legends/management/PlayerHelper.getSize:(Lnet/minecraft/entity/player/EntityPlayer;)F
+     212: fconst_1
+     213: fcmpg
+     214: ifgt          418
+     217: aload         5
+     219: invokevirtual #105                // Method net/minecraft/entity/player/EntityPlayer.func_70093_af:()Z
+     222: ifeq          269
+     225: aload_1
+     226: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+     229: ifne          458
+     232: aload_0
+     233: getfield      #14                 // Field opened:Z
+     236: ifne          254
+     239: aload_0
+     240: getstatic     #111                // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffinOpen:Lnet/minecraft/block/Block;
+     243: aload_1
+     244: iload_2
+     245: iload_3
+     246: iload         4
+     248: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+     251: goto          458
+     254: aload_0
+     255: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+     258: aload_1
+     259: iload_2
+     260: iload_3
+     261: iload         4
+     263: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+     266: goto          458
+     269: aload_1
+     270: iload_2
+     271: iload_3
+     272: iload         4
+     274: invokevirtual #153                // Method net/minecraft/world/World.func_72899_e:(III)Z
+     277: ifeq          458
+     280: aload_1
+     281: iload_2
+     282: iload_3
+     283: iload         4
+     285: invokevirtual #157                // Method net/minecraft/world/World.func_147439_a:(III)Lnet/minecraft/block/Block;
+     288: aload_1
+     289: iload_2
+     290: iload_3
+     291: iload         4
+     293: invokevirtual #163                // Method net/minecraft/block/Block.getBedDirection:(Lnet/minecraft/world/IBlockAccess;III)I
+     296: istore        11
+     298: ldc           #164                // float 0.5f
+     300: fstore        12
+     302: ldc           #164                // float 0.5f
+     304: fstore        13
+     306: fconst_0
+     307: fstore        14
+     309: iload         11
+     311: tableswitch   { // 0 to 3
+
+                     0: 340
+
+                     1: 351
+
+                     2: 362
+
+                     3: 373
+               default: 380
+          }
+     340: ldc           #164                // float 0.5f
+     342: fstore        13
+     344: ldc           #165                // float 90.0f
+     346: fstore        14
+     348: goto          380
+     351: ldc           #164                // float 0.5f
+     353: fstore        12
+     355: ldc           #166                // float -90.0f
+     357: fstore        14
+     359: goto          380
+     362: ldc           #164                // float 0.5f
+     364: fstore        13
+     366: ldc           #167                // float 180.0f
+     368: fstore        14
+     370: goto          380
+     373: ldc           #164                // float 0.5f
+     375: fstore        12
+     377: fconst_0
+     378: fstore        14
+     380: aload         5
+     382: iconst_1
+     383: fload         14
+     385: invokestatic  #171                // Method com/tihyo/legends/management/PlayerHelper.setInCoffin:(Lnet/minecraft/entity/player/EntityPlayer;ZF)V
+     388: aload         5
+     390: iload_2
+     391: i2f
+     392: fload         12
+     394: fadd
+     395: f2d
+     396: iload_3
+     397: i2f
+     398: ldc           #172                // float 0.9375f
+     400: fadd
+     401: f2d
+     402: iload         4
+     404: i2f
+     405: fload         13
+     407: fadd
+     408: f2d
+     409: fload         14
+     411: fconst_0
+     412: invokevirtual #176                // Method net/minecraft/entity/player/EntityPlayer.func_70080_a:(DDDFF)V
+     415: goto          458
+     418: aload_1
+     419: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+     422: ifne          458
+     425: aload         5
+     427: new           #117                // class net/minecraft/util/ChatComponentText
+     430: dup
+     431: new           #119                // class java/lang/StringBuilder
+     434: dup
+     435: invokespecial #122                // Method java/lang/StringBuilder."<init>":()V
+     438: getstatic     #128                // Field com/tihyo/legends/management/LegendsChatFormat.red:Ljava/lang/String;
+     441: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     444: ldc           #147                // String Can't fit in coffin.
+     446: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     449: invokevirtual #138                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     452: invokespecial #141                // Method net/minecraft/util/ChatComponentText."<init>":(Ljava/lang/String;)V
+     455: invokevirtual #145                // Method net/minecraft/entity/player/EntityPlayer.func_145747_a:(Lnet/minecraft/util/IChatComponent;)V
+     458: iconst_1
+     459: ireturn
+
+  public boolean func_149662_c();
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public boolean func_149716_u();
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public boolean func_149686_d();
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public net.minecraft.tileentity.TileEntity func_149915_a(net.minecraft.world.World, int);
+    Code:
+       0: aload_0
+       1: getfield      #14                 // Field opened:Z
+       4: ifeq          15
+       7: new           #149                // class com/tihyo/horror/blocks/tileentities/TileEntityCoffinOpened
+      10: dup
+      11: invokespecial #201                // Method com/tihyo/horror/blocks/tileentities/TileEntityCoffinOpened."<init>":()V
+      14: areturn
+      15: new           #89                 // class com/tihyo/horror/blocks/tileentities/TileEntityCoffin
+      18: dup
+      19: invokespecial #202                // Method com/tihyo/horror/blocks/tileentities/TileEntityCoffin."<init>":()V
+      22: areturn
+
+  private void func_149930_e(net.minecraft.world.World, int, int, int);
+    Code:
+       0: aload_1
+       1: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          146
+       7: aload_1
+       8: iload_2
+       9: iload_3
+      10: iload         4
+      12: iconst_1
+      13: isub
+      14: invokevirtual #157                // Method net/minecraft/world/World.func_147439_a:(III)Lnet/minecraft/block/Block;
+      17: astore        5
+      19: aload_1
+      20: iload_2
+      21: iload_3
+      22: iload         4
+      24: iconst_1
+      25: iadd
+      26: invokevirtual #157                // Method net/minecraft/world/World.func_147439_a:(III)Lnet/minecraft/block/Block;
+      29: astore        6
+      31: aload_1
+      32: iload_2
+      33: iconst_1
+      34: isub
+      35: iload_3
+      36: iload         4
+      38: invokevirtual #157                // Method net/minecraft/world/World.func_147439_a:(III)Lnet/minecraft/block/Block;
+      41: astore        7
+      43: aload_1
+      44: iload_2
+      45: iconst_1
+      46: iadd
+      47: iload_3
+      48: iload         4
+      50: invokevirtual #157                // Method net/minecraft/world/World.func_147439_a:(III)Lnet/minecraft/block/Block;
+      53: astore        8
+      55: iconst_3
+      56: istore        9
+      58: aload         5
+      60: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+      63: ifeq          77
+      66: aload         6
+      68: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+      71: ifne          77
+      74: iconst_3
+      75: istore        9
+      77: aload         6
+      79: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+      82: ifeq          96
+      85: aload         5
+      87: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+      90: ifne          96
+      93: iconst_2
+      94: istore        9
+      96: aload         7
+      98: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+     101: ifeq          115
+     104: aload         8
+     106: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+     109: ifne          115
+     112: iconst_5
+     113: istore        9
+     115: aload         8
+     117: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+     120: ifeq          134
+     123: aload         7
+     125: invokevirtual #208                // Method net/minecraft/block/Block.func_149730_j:()Z
+     128: ifne          134
+     131: iconst_4
+     132: istore        9
+     134: aload_1
+     135: iload_2
+     136: iload_3
+     137: iload         4
+     139: iload         9
+     141: iconst_2
+     142: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+     145: pop
+     146: return
+
+  private void updateRotations(net.minecraft.block.Block, net.minecraft.world.World, int, int, int);
+    Code:
+       0: aload_2
+       1: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          121
+       7: aload_0
+       8: getfield      #14                 // Field opened:Z
+      11: ifne          69
+      14: aload_2
+      15: iload_3
+      16: iload         4
+      18: iload         5
+      20: invokevirtual #87                 // Method net/minecraft/world/World.func_147438_o:(III)Lnet/minecraft/tileentity/TileEntity;
+      23: checkcast     #89                 // class com/tihyo/horror/blocks/tileentities/TileEntityCoffin
+      26: astore        6
+      28: aload         6
+      30: ifnull        66
+      33: aload_2
+      34: iload_3
+      35: iload         4
+      37: iload         5
+      39: aload_1
+      40: aload         6
+      42: invokevirtual #224                // Method com/tihyo/horror/blocks/tileentities/TileEntityCoffin.func_145832_p:()I
+      45: iconst_2
+      46: invokevirtual #228                // Method net/minecraft/world/World.func_147465_d:(IIILnet/minecraft/block/Block;II)Z
+      49: pop
+      50: aload_2
+      51: iload_3
+      52: iload         4
+      54: iload         5
+      56: aload         6
+      58: invokevirtual #224                // Method com/tihyo/horror/blocks/tileentities/TileEntityCoffin.func_145832_p:()I
+      61: iconst_2
+      62: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+      65: pop
+      66: goto          121
+      69: aload_2
+      70: iload_3
+      71: iload         4
+      73: iload         5
+      75: invokevirtual #87                 // Method net/minecraft/world/World.func_147438_o:(III)Lnet/minecraft/tileentity/TileEntity;
+      78: checkcast     #149                // class com/tihyo/horror/blocks/tileentities/TileEntityCoffinOpened
+      81: astore        6
+      83: aload         6
+      85: ifnull        121
+      88: aload_2
+      89: iload_3
+      90: iload         4
+      92: iload         5
+      94: aload_1
+      95: aload         6
+      97: invokevirtual #229                // Method com/tihyo/horror/blocks/tileentities/TileEntityCoffinOpened.func_145832_p:()I
+     100: iconst_2
+     101: invokevirtual #228                // Method net/minecraft/world/World.func_147465_d:(IIILnet/minecraft/block/Block;II)Z
+     104: pop
+     105: aload_2
+     106: iload_3
+     107: iload         4
+     109: iload         5
+     111: aload         6
+     113: invokevirtual #229                // Method com/tihyo/horror/blocks/tileentities/TileEntityCoffinOpened.func_145832_p:()I
+     116: iconst_2
+     117: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+     120: pop
+     121: return
+
+  public void func_149689_a(net.minecraft.world.World, int, int, int, net.minecraft.entity.EntityLivingBase, net.minecraft.item.ItemStack);
+    Code:
+       0: aload         5
+       2: getfield      #237                // Field net/minecraft/entity/EntityLivingBase.field_70177_z:F
+       5: ldc           #238                // float 4.0f
+       7: fmul
+       8: ldc           #239                // float 360.0f
+      10: fdiv
+      11: f2d
+      12: ldc2_w        #240                // double 0.5d
+      15: dadd
+      16: invokestatic  #247                // Method net/minecraft/util/MathHelper.func_76128_c:(D)I
+      19: iconst_3
+      20: iand
+      21: istore        7
+      23: iload         7
+      25: ifne          39
+      28: aload_1
+      29: iload_2
+      30: iload_3
+      31: iload         4
+      33: iconst_2
+      34: iconst_2
+      35: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+      38: pop
+      39: iload         7
+      41: iconst_1
+      42: if_icmpne     56
+      45: aload_1
+      46: iload_2
+      47: iload_3
+      48: iload         4
+      50: iconst_5
+      51: iconst_2
+      52: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+      55: pop
+      56: iload         7
+      58: iconst_2
+      59: if_icmpne     73
+      62: aload_1
+      63: iload_2
+      64: iload_3
+      65: iload         4
+      67: iconst_3
+      68: iconst_2
+      69: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+      72: pop
+      73: iload         7
+      75: iconst_3
+      76: if_icmpne     90
+      79: aload_1
+      80: iload_2
+      81: iload_3
+      82: iload         4
+      84: iconst_4
+      85: iconst_2
+      86: invokevirtual #212                // Method net/minecraft/world/World.func_72921_c:(IIIII)Z
+      89: pop
+      90: return
+
+  public net.minecraft.item.Item func_149694_d(net.minecraft.world.World, int, int, int);
+    Code:
+       0: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+       3: invokestatic  #71                 // Method net/minecraft/item/Item.func_150898_a:(Lnet/minecraft/block/Block;)Lnet/minecraft/item/Item;
+       6: areturn
+
+  public void func_149699_a(net.minecraft.world.World, int, int, int, net.minecraft.entity.player.EntityPlayer);
+    Code:
+       0: aload_1
+       1: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          41
+       7: aload_0
+       8: getfield      #14                 // Field opened:Z
+      11: ifne          29
+      14: aload_0
+      15: getstatic     #111                // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffinOpen:Lnet/minecraft/block/Block;
+      18: aload_1
+      19: iload_2
+      20: iload_3
+      21: iload         4
+      23: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      26: goto          41
+      29: aload_0
+      30: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+      33: aload_1
+      34: iload_2
+      35: iload_3
+      36: iload         4
+      38: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      41: return
+
+  public void func_149726_b(net.minecraft.world.World, int, int, int);
+    Code:
+       0: aload_1
+       1: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          58
+       7: aload_0
+       8: getfield      #14                 // Field opened:Z
+      11: ifeq          39
+      14: aload_1
+      15: iload_2
+      16: iload_3
+      17: iload         4
+      19: aload_0
+      20: iconst_4
+      21: invokevirtual #268                // Method net/minecraft/world/World.func_147464_a:(IIILnet/minecraft/block/Block;I)V
+      24: aload_0
+      25: getstatic     #111                // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffinOpen:Lnet/minecraft/block/Block;
+      28: aload_1
+      29: iload_2
+      30: iload_3
+      31: iload         4
+      33: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      36: goto          58
+      39: aload_0
+      40: getfield      #14                 // Field opened:Z
+      43: ifne          58
+      46: aload_0
+      47: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+      50: aload_1
+      51: iload_2
+      52: iload_3
+      53: iload         4
+      55: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      58: return
+
+  public void func_149695_a(net.minecraft.world.World, int, int, int, net.minecraft.block.Block);
+    Code:
+       0: aload_1
+       1: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          58
+       7: aload_0
+       8: getfield      #14                 // Field opened:Z
+      11: ifeq          39
+      14: aload_1
+      15: iload_2
+      16: iload_3
+      17: iload         4
+      19: aload_0
+      20: iconst_4
+      21: invokevirtual #268                // Method net/minecraft/world/World.func_147464_a:(IIILnet/minecraft/block/Block;I)V
+      24: aload_0
+      25: getstatic     #111                // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffinOpen:Lnet/minecraft/block/Block;
+      28: aload_1
+      29: iload_2
+      30: iload_3
+      31: iload         4
+      33: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      36: goto          58
+      39: aload_0
+      40: getfield      #14                 // Field opened:Z
+      43: ifne          58
+      46: aload_0
+      47: getstatic     #65                 // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffin:Lnet/minecraft/block/Block;
+      50: aload_1
+      51: iload_2
+      52: iload_3
+      53: iload         4
+      55: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      58: return
+
+  public void func_149674_a(net.minecraft.world.World, int, int, int, java.util.Random);
+    Code:
+       0: aload_1
+       1: getfield      #108                // Field net/minecraft/world/World.field_72995_K:Z
+       4: ifne          26
+       7: aload_0
+       8: getfield      #14                 // Field opened:Z
+      11: ifeq          26
+      14: aload_0
+      15: getstatic     #111                // Field com/tihyo/horror/blocks/RegisterBlocksHorror.coffinOpen:Lnet/minecraft/block/Block;
+      18: aload_1
+      19: iload_2
+      20: iload_3
+      21: iload         4
+      23: invokespecial #115                // Method updateRotations:(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;III)V
+      26: return
+}

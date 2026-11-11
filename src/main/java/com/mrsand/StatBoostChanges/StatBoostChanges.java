@@ -8,6 +8,7 @@ import com.mrsand.StatBoostChanges.common.handlers.LegendsVisualHandler;
 import com.mrsand.StatBoostChanges.common.handlers.SyncHandlerTarget;
 import com.mrsand.StatBoostChanges.common.handlers.SyncVisualHandler;
 import com.mrsand.StatBoostChanges.common.handlers.WitcheryEventHandler;
+import com.mrsand.StatBoostChanges.common.packets.PacketCoffinPassDay;
 import com.mrsand.StatBoostChanges.common.packets.PacketSyncTarget;
 import com.mrsand.StatBoostChanges.common.packets.PacketVignette;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket;
@@ -15,6 +16,7 @@ import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket.SyncVExt
 import com.mrsand.StatBoostChanges.common.packets.VExtendedVillagerPacket;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedVillagerPacket.VExtendedVillagerHandler;
 import com.mrsand.StatBoostChanges.common.packets.VisualPacketFromServer;
+import com.mrsand.StatBoostChanges.util.CoffinRecipeMerge;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -70,6 +72,7 @@ public class StatBoostChanges {
 		network.registerMessage(SyncVisualHandler.class, VisualPacketFromServer.class, 3, Side.CLIENT);
 		network.registerMessage(VExtendedVillagerHandler.class, VExtendedVillagerPacket.class, 4, Side.CLIENT);
 		network.registerMessage(PacketVignette.Handler.class, PacketVignette.class, 5, Side.CLIENT);
+		network.registerMessage(PacketCoffinPassDay.Handler.class, PacketCoffinPassDay.class, 6, Side.SERVER);
 
 		GeneralEventHandler handler = new GeneralEventHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
@@ -116,6 +119,7 @@ public class StatBoostChanges {
 		if (Loader.isModLoaded("witchery")) {
 			com.emoniph.witchery.Witchery.Items.BLOOD_GOBLET.setMaxStackSize(64);
 		}
+		CoffinRecipeMerge.register();
 	}
 }
 

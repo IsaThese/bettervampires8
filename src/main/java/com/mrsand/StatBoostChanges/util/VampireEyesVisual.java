@@ -1,5 +1,6 @@
 package com.mrsand.StatBoostChanges.util;
 
+import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.tihyo.legends.management.PlayerHelper;
@@ -34,8 +35,8 @@ public final class VampireEyesVisual {
 	/**
 	 * True while synced {@code HYPNOTIZING} (mesmerize / mastery), hypnosis raise-hand
 	 * (Legends {@code AIMING_RIGHT} type 0 — same Replay-stable signal as the arm),
-	 * L10 otherform, blood vision, starve OTHERFORM, or vampire-legacy bite channels
-	 * (Vampiric Bite, Vampire's Wrath, Blood Lust).
+	 * L10 otherform, blood vision, starve OTHERFORM, vampire-legacy bite channels
+	 * (Vampiric Bite, Vampire's Wrath, Blood Lust), or Vampire Lord nested in a coffin.
 	 * <p>
 	 * Do not gate on mastery key duration — that is local-only.
 	 */
@@ -50,7 +51,9 @@ public final class VampireEyesVisual {
 		if (v != null && v.getBoolean(PlayerKeys.OTHERFORM)) return true;
 		if (v != null && v.getBoolean(PlayerKeys.IS_STARVING)) return true;
 		if (LegendsUtil.bloodVision(player)) return true;
-		return isVampireBiteChannelEyes(player);
+		if (isVampireBiteChannelEyes(player)) return true;
+		// Lord of darkness resting: glow while sealed in a Legends nest.
+		return DaywalkerControl.isVampireLord(player) && CoffinSleepUtil.isInCoffin(player);
 	}
 
 	/** Vampire legacy: Bite / Wrath / Blood Lust show powers-only eyes for the channel. */

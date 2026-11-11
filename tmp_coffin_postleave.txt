@@ -1,0 +1,117 @@
+﻿=== NOCLIP_FLIP FULL ===
+[16:53:44] [Server thread/INFO]: [CoffinPose S/NOCLIP_FLIP] tick=652 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.500,70.620,721.500 dPrevY=0.000 size=0.60x1.80 yOff=1.620 eyeH=0.120 defEye=1.620 getEye=0.120 aabbY=69.000..70.800 aabbXZ=0.600x0.600 onGround=true collided=false noClip=false insideOpaque=false sleepTimer=0 sleeping=false nestY=69 deltaNestY=1.620 aabbMinVsNest=0.000 forcedRot=0.0 cantMove=false isLying=false action=none slow=false morphSize=1.00 morphed=false vampSleepCoffin=false was=true now=false
+[16:53:44] [Client thread/INFO]: [CoffinPose C/NOCLIP_FLIP] tick=167 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.500,70.620,721.500 dPrevY=0.000 size=0.60x1.80 yOff=1.620 eyeH=0.120 defEye=0.120 getEye=0.120 aabbY=69.000..70.800 aabbXZ=0.600x0.600 onGround=true collided=false noClip=false insideOpaque=false sleepTimer=0 sleeping=false nestY=69 deltaNestY=1.620 aabbMinVsNest=0.000 forcedRot=0.0 cantMove=false isLying=false action=none slow=false morphSize=1.00 morphed=false vampSleepCoffin=false thirdPerson=0 was=true now=false
+=== CoffinDebug ALL ===
+[16:53:34] [Client thread/INFO]: [CHAT] [CoffinDebug] Coffin debug ON � Space/close/enter in latest.log
+[16:53:41] [Client thread/INFO]: [CHAT] [CoffinDebug] ENTER 76,69,721 spawn bound
+=== ALL lines with eyeH after 16:53:44 that are not 0.120 OR posY changes ===
+=== eyeH values seen AFTER leave ===
+eyeH=0.120 count=161
+eyeH=1.620 count=134
+=== First 40 post-leave CoffinPose lines (raw head+key) ===
+[16:53:44] [Server thread/INFO]: [CoffinPose S/FORCED_LEAVE] tick=652 inCoffin=false stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=7
+[16:53:44] [Server thread/INFO]: [CoffinPose S/LEAVE_EDGE_BEFORE] tick=652 inCoffin=false stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinBlack open=true closed=false 
+[16:53:44] [Server thread/INFO]: [CoffinPose S/EXIT_AFTER_POS stand=77,69,721 targetY=70.620] tick=652 inCoffin=false stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinB
+[16:53:44] [Server thread/INFO]: [CoffinPose S/NOCLIP_FLIP] tick=652 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=7
+[16:53:44] [Server thread/INFO]: [CoffinPose S/LEAVE_EDGE_AFTER] tick=652 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastT
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=652 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=166 inCoffin=true stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=76.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=167 inCoffin=false stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.
+[16:53:44] [Client thread/INFO]: [CoffinPose C/LEAVE_Y_FIX targetY=70.620] tick=167 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=167 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/NOCLIP_FLIP] tick=167 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=7
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=653 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=653 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=653 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=653 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=168 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=168 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.540,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=654 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=654 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=169 inCoffin=false stored=none nest=none pos=77.500,72.240,721.500 prev=77.500,72.240,721.500 lastTick=77.500,72.240,721.500 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=169 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=655 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=655 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=655 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=655 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/RENDER] tick=169 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.500
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=170 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=170 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=656 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=656 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=171 inCoffin=false stored=none nest=none pos=77.500,72.240,721.500 prev=77.500,72.240,721.500 lastTick=77.500,72.240,721.500 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=171 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=657 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=657 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=657 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=657 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=172 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=172 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=658 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=658 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=173 inCoffin=false stored=none nest=none pos=77.500,72.240,721.500 prev=77.500,72.240,721.500 lastTick=77.500,72.240,721.500 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=173 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=659 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=659 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=659 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=659 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/RENDER] tick=173 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.500
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=174 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=174 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=660 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=660 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=175 inCoffin=false stored=none nest=none pos=77.500,72.240,721.500 prev=77.500,72.240,721.500 lastTick=77.500,72.240,721.500 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=175 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=661 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=661 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=661 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=661 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=176 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_END] tick=176 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77.5
+[16:53:44] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=662 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.500,70.620,721.500 prev=77.500,70.620,721.500 lastTick=77
+=== Last 30 CoffinPose lines in log ===
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=705 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=705 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=705 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:46] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=219 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=706 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=706 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:46] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=220 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=707 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=707 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=707 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:46] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=707 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:46] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=221 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=708 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=708 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:47] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=222 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:47] [Client thread/INFO]: [CoffinPose C/RENDER] tick=222 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOff=1.
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=709 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=709 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=709 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=709 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:47] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=223 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=710 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=710 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:47] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=224 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=711 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=711 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=711 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_END] tick=711 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77.5
+[16:53:47] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=225 inCoffin=false stored=none nest=none pos=77.576,72.240,721.481 prev=77.576,72.240,721.481 lastTick=77.576,72.240,721.481 dPrevY=0.000 size=0.60x1.80 yOf
+[16:53:47] [Server thread/INFO]: [CoffinPose S/TICK_START] tick=712 inCoffin=false stored=none nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=77.576,70.620,721.481 prev=77.576,70.620,721.481 lastTick=77
+=== Any inCoffin=true AFTER leave ===
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=166 inCoffin=true stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=76.5
+=== forcedRot != 0 after leave ===
+[16:53:44] [Client thread/INFO]: [CoffinPose C/TICK_START] tick=166 inCoffin=true stored=76,69,721 storedBlock=BlockCoffinBlack open=true closed=false nest=76,69,721 block=BlockCoffinBlack open=true closed=false pos=76.5
+=== Size/yOffset samples around leave ===
+[16:53:44] [CoffinPose S/EXIT_AFTER_POS stand=77,69,721 targetY=70.620] size=[16:53:44] yOff=[CoffinPose S/EXIT_AFTER_POS stand=77,69,721 targetY=70.620] eyeH= defEye= getEye=
+[16:53:44] [CoffinPose S/NOCLIP_FLIP] size=[16:53:44] yOff=[CoffinPose S/NOCLIP_FLIP] eyeH= defEye= getEye=
+[16:53:44] [CoffinPose S/LEAVE_EDGE_AFTER] size=[16:53:44] yOff=[CoffinPose S/LEAVE_EDGE_AFTER] eyeH= defEye= getEye=
+[16:53:44] [CoffinPose C/LEAVE_Y_FIX targetY=70.620] size=[16:53:44] yOff=[CoffinPose C/LEAVE_Y_FIX targetY=70.620] eyeH= defEye= getEye=
+[16:53:44] [CoffinPose C/NOCLIP_FLIP] size=[16:53:44] yOff=[CoffinPose C/NOCLIP_FLIP] eyeH= defEye= getEye=
+[16:53:45] [CoffinPose C/RENDER] size=[16:53:45] yOff=[CoffinPose C/RENDER] eyeH= defEye= getEye=
+[16:53:45] [CoffinPose C/RENDER] size=[16:53:45] yOff=[CoffinPose C/RENDER] eyeH= defEye= getEye=
+[16:53:46] [CoffinPose C/RENDER] size=[16:53:46] yOff=[CoffinPose C/RENDER] eyeH= defEye= getEye=
+[16:53:46] [CoffinPose C/RENDER] size=[16:53:46] yOff=[CoffinPose C/RENDER] eyeH= defEye= getEye=
+

@@ -3,6 +3,7 @@ package com.mrsand.StatBoostChanges.common.packets;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.StringPlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
+import com.mrsand.StatBoostChanges.util.CoffinSleepUtil;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
 import com.mrsand.StatBoostChanges.util.VampireEyesDebug;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
@@ -16,11 +17,16 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChunkCoordinates;
 
 public class VExtendedPlayerPacket implements IMessage {
 	private int entityID;
 	private int[] dataValues;
 	private String[] stringValues;
+	private boolean hasLeaveStand;
+	private int leaveStandX;
+	private int leaveStandY;
+	private int leaveStandZ;
 
 	public VExtendedPlayerPacket() {}
 	public VExtendedPlayerPacket(EntityPlayer player, VExtendedPlayer vExtended) {
@@ -42,6 +48,15 @@ public class VExtendedPlayerPacket implements IMessage {
 			this.stringValues[i] = vExtended.getString(strings[i]);
 		}
 
+		ChunkCoordinates stand = vExtended.getLeaveStand();
+		if (stand != null && vExtended.getBoolean(PlayerKeys.LEAVE_STANDING)) {
+			this.hasLeaveStand = true;
+			this.leaveStandX = stand.posX;
+			this.leaveStandY = stand.posY;
+			this.leaveStandZ = stand.posZ;
+		} else {
+			this.hasLeaveStand = false;
+		}
 	}
 
 	@Override
@@ -55,6 +70,12 @@ public class VExtendedPlayerPacket implements IMessage {
 		for (String value : this.stringValues) {
 			// ByteBufUtils handles string length prefixes automatically
 			ByteBufUtils.writeUTF8String(buffer, value != null ? value : "");
+		}
+		buffer.writeBoolean(this.hasLeaveStand);
+		if (this.hasLeaveStand) {
+			buffer.writeInt(this.leaveStandX);
+			buffer.writeInt(this.leaveStandY);
+			buffer.writeInt(this.leaveStandZ);
 		}
 	}
 
@@ -72,10 +93,21 @@ public class VExtendedPlayerPacket implements IMessage {
 		for (int i = 0; i < stringLen; i++) {
 			this.stringValues[i] = ByteBufUtils.readUTF8String(buffer);
 		}
+
+		this.hasLeaveStand = buffer.readBoolean();
+		if (this.hasLeaveStand) {
+			this.leaveStandX = buffer.readInt();
+			this.leaveStandY = buffer.readInt();
+			this.leaveStandZ = buffer.readInt();
+		}
 	}
 	public int getPlayerID() { return entityID; }
 	public int[] getDataValues() { return dataValues; }
 	public String[] getStringValues() { return stringValues; }
+	public boolean hasLeaveStand() { return hasLeaveStand; }
+	public int getLeaveStandX() { return leaveStandX; }
+	public int getLeaveStandY() { return leaveStandY; }
+	public int getLeaveStandZ() { return leaveStandZ; }
 
 
 	public static class SyncVExtendedPlayerHandler implements IMessageHandler<VExtendedPlayerPacket, IMessage> {
@@ -89,7 +121,7 @@ public class VExtendedPlayerPacket implements IMessage {
 				if (serverPlayer != null) {
 					VExtendedPlayer props = VExtendedPlayer.get(serverPlayer);
 					boolean hypnoBefore = props != null && props.getBoolean(PlayerKeys.HYPNOTIZING);
-					handleSync(serverPlayer, props, message.getDataValues(), message.getStringValues(), Side.SERVER);
+					handleSync(serverPlayer, props, message, Side.SERVER);
 					// Mesmerize is client-toggled; rebroadcast only when HYPNOTIZING actually changes.
 					if (props != null) {
 						boolean hypnoAfter = props.getBoolean(PlayerKeys.HYPNOTIZING);
@@ -114,18 +146,33 @@ public class VExtendedPlayerPacket implements IMessage {
 				if (props == null) return null;
 				boolean hypnoBefore = props.getBoolean(PlayerKeys.HYPNOTIZING);
 				boolean otherBefore = props.getBoolean(PlayerKeys.OTHERFORM);
-				handleSync(targetPlayer, props, message.getDataValues(), message.getStringValues(), Side.CLIENT);
+				boolean leaveBefore = props.getBoolean(PlayerKeys.LEAVE_STANDING);
+				handleSync(targetPlayer, props, message, Side.CLIENT);
 				boolean hypnoAfter = props.getBoolean(PlayerKeys.HYPNOTIZING);
 				boolean otherAfter = props.getBoolean(PlayerKeys.OTHERFORM);
 				if (hypnoBefore != hypnoAfter || otherBefore != otherAfter) {
 					VampireEyesDebug.logState(targetPlayer, "packet-apply-client");
 				}
+				applyLeaveStandClient(targetPlayer, props, leaveBefore);
 			}
 
 			return null;
 		}
 
-		private void handleSync(EntityPlayer player, VExtendedPlayer props, int[] receivedData, String[] receivedStrings, Side side) {
+		private void applyLeaveStandClient(EntityPlayer player, VExtendedPlayer props, boolean leaveBefore) {
+			boolean leaveAfter = props.getBoolean(PlayerKeys.LEAVE_STANDING);
+			ChunkCoordinates stand = props.getLeaveStand();
+			if (leaveAfter && stand != null) {
+				CoffinSleepUtil.applyLeaveStandFromServer(player, stand);
+			} else if (leaveBefore && !leaveAfter) {
+				CoffinSleepUtil.clearClientLeaveLock(player);
+				CoffinSleepUtil.clearLeaveStand(player);
+			}
+		}
+
+		private void handleSync(EntityPlayer player, VExtendedPlayer props, VExtendedPlayerPacket message, Side side) {
+			int[] receivedData = message.getDataValues();
+			String[] receivedStrings = message.getStringValues();
 			if (props != null && receivedData != null) {
 				PlayerKeys[] keys = PlayerKeys.values();
 				int limit = Math.min(keys.length, receivedData.length);
@@ -134,7 +181,8 @@ public class VExtendedPlayerPacket implements IMessage {
 
 				for (int i = 0; i < limit; i++) {
 					// Updating the IEEP data
-					if (side == Side.SERVER && (keys[i] == PlayerKeys.LOCATION || keys[i] == PlayerKeys.SECONDSLOT)) {
+					if (side == Side.SERVER && (keys[i] == PlayerKeys.LOCATION || keys[i] == PlayerKeys.SECONDSLOT
+							|| keys[i] == PlayerKeys.LEAVE_STANDING)) {
 						continue; // server owns these; ignore client uploads
 					}
 					// Mastery channel owns HYPNOTIZING on the server — don't let a stale client upload clear it.
@@ -153,6 +201,15 @@ public class VExtendedPlayerPacket implements IMessage {
 					int max = Math.min(strings.length, receivedStrings.length);
 					for(int i = 0; i < max; i ++) {
 						props.setString(strings[i], receivedStrings[i]);
+					}
+				}
+
+				// Leave stand coords: server owns; client applies from packet payload.
+				if (side == Side.CLIENT) {
+					if (message.hasLeaveStand()) {
+						props.setLeaveStand(message.getLeaveStandX(), message.getLeaveStandY(), message.getLeaveStandZ());
+					} else {
+						props.clearLeaveStand();
 					}
 				}
 

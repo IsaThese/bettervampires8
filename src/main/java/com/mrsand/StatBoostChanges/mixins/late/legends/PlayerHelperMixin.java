@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.mrsand.StatBoostChanges.util.CoffinSleepUtil;
 import com.mrsand.StatBoostChanges.util.LegendsAbilityBridge;
 import com.mrsand.StatBoostChanges.util.VampireBloodChannels;
 import com.tihyo.legends.management.LegendsGameRules;
@@ -18,6 +19,32 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @Mixin(value = PlayerHelper.class, remap = false)
 public abstract class PlayerHelperMixin {
+
+	@Inject(method = "setInCoffin", at = @At("RETURN"))
+	private static void bvAfterSetInCoffin(EntityPlayer player, boolean inCoffin, float yaw, CallbackInfo ci) {
+		if (player == null || player.worldObj == null) return;
+		if (inCoffin) {
+			CoffinSleepUtil.afterSetInCoffinTrue(player);
+		} else if (!CoffinSleepUtil.isExitAllowed()) {
+			// Legends cleared the flag without BV exitCoffin — full leave (size/eye/rot/teleport).
+			CoffinSleepUtil.onNestFlagCleared(player);
+		}
+	}
+
+	/**
+	 * Coffin nest must not trigger Legends {@code cantMove} (head lock + slowness).
+	 * Keep real lying and bath.
+	 */
+	@Redirect(
+			method = "cantMove",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/PlayerHelper;isLying(Lnet/minecraft/entity/player/EntityPlayer;)Z"
+			)
+	)
+	private static boolean bvCantMoveIsLyingIgnoreCoffin(EntityPlayer player) {
+		return CoffinSleepUtil.isLyingIgnoringCoffin(player);
+	}
 
 	/**
 	 * Stock Vampiric Drain tooltip claims a flat +20; suppress that while

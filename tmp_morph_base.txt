@@ -1,0 +1,8 @@
+﻿javap : Error: class not found: 
+C:\Users\isaac\Documents\Coding\Gamedev\Minecraft\bettervampires8\com\tihyo\legends\morph\Morph.class
+At C:\Users\isaac\AppData\Local\Temp\ps-script-35adc796-eafb-4394-ab40-a1846193c9b8.ps1:102 char:1
++ javap -c -p "$base\com\tihyo\legends\morph\Morph.class" 2>&1 | Out-Fi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: class no...rph\Morph.class:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

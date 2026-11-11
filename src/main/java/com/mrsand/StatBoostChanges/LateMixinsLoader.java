@@ -39,6 +39,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 			mixins.add("legends.EntitySmartWaterCreatureHostilityMixin");
 			mixins.add("legends.EntityVampireMixin");
 			mixins.add("legends.BattlebournBatHordeMixin");
+			mixins.add("legends.BlockHorrorCoffinMixin");
 			mixins.add("legends.HorrorCommonEventHandlerMixin");
 			mixins.add("legends.LegendsAbilitiesPacketMixin");
 			mixins.add("legends.LegacyHelperMixin");
