@@ -3,6 +3,7 @@ package com.mrsand.StatBoostChanges.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import cpw.mods.fml.common.Loader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -61,6 +62,7 @@ public class GeneralUtil {
 		if (player == null || player.worldObj == null) return false;
 		if (Loader.isModLoaded("vampirism") && VampirismUtil.isInSunSafeBiome(player))
 			return false;
+		if(StatBoostConfig.daylightOnlyAffectsOverworld && player.dimension != 0) return false;
 		long worldTime = player.worldObj.getWorldTime() % 24000L;
 		return (worldTime < 12500 || worldTime > 23500);
 	}

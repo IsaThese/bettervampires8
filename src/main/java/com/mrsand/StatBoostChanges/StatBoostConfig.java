@@ -51,6 +51,8 @@ public class StatBoostConfig {
 	 */
 	public static boolean showVampireEyesModeChat = true;
 
+	public static boolean daylightOnlyAffectsOverworld = true;
+
 	/**
 	 * Legends fullbright multiplier for vampire eye overlays.
 	 * {@code 1.0} = stock {@code setLighting(61680)}; {@code 0.0} = ambient lighting only.
@@ -92,6 +94,11 @@ public class StatBoostConfig {
 				"combat",
 				true,
 				"When true, Vampire Lord wearing a full Witchery vampire clothes set soft-caps damage from living attackers (e.g. OreSpawn bosses). Fire, starve, drown, void, and sun are not capped.");
+		daylightOnlyAffectsOverworld = config.getBoolean(
+				"daylightOnlyAffectsOverworld",
+				"gameplay",
+				true,
+				"Sunlight weaknesses only apply during the overworld");
 		removeLegacyDaywalker = config.getBoolean(
 				"removeLegacyDaywalker",
 				"legacy",
