@@ -51,10 +51,9 @@ public class LegacyPowerBvVampireBite extends LegacyPower {
 		int key = getAssignedKey(player);
 		if (key <= 0) return;
 		if (LegacyHelper.getCooldown(player, key) != LegacyHelper.getCooldownMax(player, key)) return;
-		if (LegacyHelper.getLegacyClass(player) == null
-				|| LegacyHelper.getLegacyClass(player).getWeaknesses(player)) {
-			return;
-		}
+		if (LegacyHelper.getLegacyClass(player) == null) return;
+		// Daylight packet allowlist already lets this key through getWeaknesses;
+		// match stock vampireBite and do not re-block here.
 		if (!player.worldObj.isRemote) {
 			if (LegendsUtil.isDraculaTrueForm(player)) {
 				LegendsUtil.furySwipes(player, FURY_SWIPES_SECONDS);

@@ -14,10 +14,10 @@ import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
+import com.mrsand.StatBoostChanges.util.HypnosisRayTrace;
 import com.mrsand.StatBoostChanges.util.VampireEyesDebug;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.legends.abilities.LegendsAbilities;
-import com.tihyo.legends.effects.LegendsEffects;
 import com.tihyo.legends.entities.mobs.EntityPunchingBag;
 import com.tihyo.legends.entities.mobs.EntityStand;
 import com.tihyo.legends.handlers.PowersHandler;
@@ -48,9 +48,9 @@ import net.minecraft.util.Vec3;
 /**
  * Hypnosis Mastery: hold to control.
  * <ul>
- *   <li>Stand — free terrain/ledge drag; look down (hand gesture) = bite magnet standoff.</li>
- *   <li>Sneak — stun in place and build a one-session bind (~6s).</li>
- *   <li>Sneak again on a bind you own — same ~6s session releases thrall/tame/paralyse.</li>
+ *   <li>Default — free terrain/ledge drag; look down (hand gesture) = bite magnet standoff.</li>
+ *   <li>Use item (right-click) toggles enslavement — stun in place and build a one-session bind (~6s).</li>
+ *   <li>Use item again into enslavement on a bind you own — same ~6s session releases thrall/tame/paralyse.</li>
  * </ul>
  * Purple bar does not drain while channeling.
  */
@@ -62,6 +62,8 @@ public final class HypnosisMasteryLogic {
 	private static final int TAME_THRESHOLD = 24;
 	private static final int THRALL_THRESHOLD = 24;
 	private static final int SESSION_GAP_TICKS = 10;
+	/** Debounce use-item toggles (RIGHT_CLICK_BLOCK repeats while held). */
+	private static final int USE_TOGGLE_DEBOUNCE = 10;
 	private static final int THRALL_DURATION_SECS = 240;
 	/** Max approach speed (blocks/tick) — arrive slows further when close. */
 	private static final double SPEED_CAP = 0.38D;
@@ -109,10 +111,15 @@ public final class HypnosisMasteryLogic {
 	 */
 	private static final double MAGNET_SPEED_SCALE = 0.58D;
 	/**
-	 * Look vector Y at/below this = downward hand gesture → bite magnet.
-	 * Logs: -0.35 required a deep nod; many intentional mild-downs sat at -0.20..-0.34.
+	 * Look-down bite magnet thresholds (look vector Y). Level height keeps the mild nod;
+	 * elevated above the target lerps toward near-straight-down so hovering ~3.5 blocks
+	 * above a mob while aiming at it does not force magnet.
 	 */
-	private static final double LOOK_DOWN_MAGNET = -0.20D;
+	private static final double LOOK_DOWN_MAGNET_LEVEL = -0.20D;
+	/** ~89° pitch (within ~1–2° of vertical). */
+	private static final double LOOK_DOWN_MAGNET_ELEVATED = -0.9994D;
+	/** Feet-to-feet elevation where the elevated threshold is fully required. */
+	private static final double MAGNET_ELEV_FULL = 3.5D;
 	/** Heavy slowness on dragged non-players so they cannot walk out of the yank. */
 	private static final int DRAG_SLOWNESS_AMPLIFIER = 5;
 	private static final int DRAG_SLOWNESS_TICKS = 30;
@@ -137,6 +144,43 @@ public final class HypnosisMasteryLogic {
 		int targetId = -1;
 		int lastChannelTick;
 		boolean boundThisSession;
+		/** Use-item toggle: false = movement, true = stun/bind. */
+		boolean enslavementMode;
+		/** Debounce use-item presses while channeling. */
+		int lastUseToggleTick;
+	}
+
+	/**
+	 * Use-item (right-click) while channeling: flip movement ↔ enslavement.
+	 * Returns true when mastery is channeling so callers can cancel place/use.
+	 * Debounced presses still return true without flipping again.
+	 */
+	public static boolean tryToggleEnslavementFromUse(EntityPlayer player) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) {
+			return false;
+		}
+		if (!VampireRestoredAbilities.isHypnosisMasteryChanneling(player)) {
+			return false;
+		}
+		int now = LegendsHelper.getTicks(player);
+		touchSession(player, now);
+		Session session = SESSIONS.get(player.getUniqueID());
+		if (session == null) {
+			return true;
+		}
+		if (session.lastUseToggleTick != 0
+				&& now - session.lastUseToggleTick >= 0
+				&& now - session.lastUseToggleTick < USE_TOGGLE_DEBOUNCE) {
+			return true;
+		}
+		session.lastUseToggleTick = now == 0 ? 1 : now;
+		session.enslavementMode = !session.enslavementMode;
+		if (session.enslavementMode) {
+			notifyBind(player, "You focus on domination");
+		} else {
+			notifyBind(player, "You focus on control");
+		}
+		return true;
 	}
 
 	/**
@@ -237,19 +281,18 @@ public final class HypnosisMasteryLogic {
 				VampireEyesDebug.logState(player, "mastery-eyes-end");
 			}
 		}
+		clearCurrentTargetId(player);
 	}
 
 	/**
 	 * Call every tick while holding (client + server). Client pass refreshes aim pose +
-	 * crosshair target; server pass aims / stun-or-pull / bind progress.
+	 * pinned target; server pass aims / stun-or-pull / bind progress.
 	 */
 	public static void tickChannel(EntityPlayer player) {
 		if (player == null) return;
 
-		EntityLivingBase target = LegendsHelper.getTarget(player, 25.0D);
-
 		if (player.worldObj.isRemote) {
-			refreshAimingPose(player);
+			refreshClientTarget(player);
 			return;
 		}
 
@@ -261,30 +304,30 @@ public final class HypnosisMasteryLogic {
 
 		refreshAimingPose(player);
 
-		boolean touched = target != null && PlayerHelper.canBeTouched(player, target);
-		boolean controllable = canControlTarget(target);
-		boolean sneaking = player.isSneaking();
+		Session session = SESSIONS.get(player.getUniqueID());
+		boolean enslavement = session != null && session.enslavementMode;
+
+		EntityLivingBase target = resolveStickyTarget(player, session, now);
 
 		if (HypnosisDebug.enabled() && now % 10 == 0) {
 			int key = BvVampirePowers.hypnosisMastery.getAssignedKey(player);
 			int duration = key > 0 ? LegacyHelper.getDuration(player, key) : -1;
-			Session s = SESSIONS.get(player.getUniqueID());
 			Vec3 lookDbg = player.getLook(1.0F);
 			Integer aim = (Integer) LegendsProperties.AIMING_RIGHT.get(player);
 			HypnosisDebug.logMastery(player,
 					"str=" + VampireRestoredAbilities.getHypnosisStrength(player)
 							+ " key=" + key + " dur=" + duration
-							+ " sneak=" + sneaking
+							+ " enslave=" + enslavement
 							+ " aim=" + (aim == null ? 0 : aim.intValue())
 							+ " isAiming=" + PlayerHelper.isAimingRightArm(player)
 							+ " target=" + (target == null ? "null" : target.getCommandSenderName())
-							+ " touched=" + touched + " control=" + controllable
-							+ " sessBound=" + (s != null && s.boundThisSession)
+							+ " locked=" + (session != null && session.targetId > 0)
+							+ " sessBound=" + (session != null && session.boundThisSession)
 							+ " att=" + (target == null ? 0 : target.getEntityData().getInteger("VampireHypnosisAttempts"))
 							+ String.format(" look=%.2f,%.2f,%.2f", lookDbg.xCoord, lookDbg.yCoord, lookDbg.zCoord));
 		}
 
-		if (target == null || !touched || !controllable) {
+		if (target == null) {
 			return;
 		}
 
@@ -292,12 +335,7 @@ public final class HypnosisMasteryLogic {
 			return;
 		}
 
-		updateSessionTarget(player, target, now);
-
-		if (player.isSwingInProgress) {
-			target.addPotionEffect(new PotionEffect(LegendsEffects.hypnosis.id, 200, 0));
-			return;
-		}
+		pinCurrentTargetId(player, target);
 
 		LegendsAbilities.hypnosis(target);
 
@@ -314,13 +352,13 @@ public final class HypnosisMasteryLogic {
 			((EntityCreeper) target).setCreeperState(-1);
 		}
 
-		if (sneaking) {
+		if (enslavement) {
 			// Enslavement focus: stun in place (no pull) and build bind.
 			applyStun(target);
 			tickBindProgress(player, target, now);
 		} else {
 			double lookY = player.getLook(1.0F).yCoord;
-			if (lookY <= LOOK_DOWN_MAGNET) {
+			if (lookY <= lookDownMagnetThreshold(player, target)) {
 				applyBiteStandoffPull(player, target);
 			} else {
 				applyPsychicMoveToBlock(player, target);
@@ -330,7 +368,7 @@ public final class HypnosisMasteryLogic {
 		if (HypnosisDebug.enabled() && now % 10 == 0) {
 			HypnosisDebug.logMastery(player,
 					String.format("%s %s motion=%.3f,%.3f,%.3f",
-							sneaking ? "stun" : "blockPull",
+							enslavement ? "stun" : "blockPull",
 							target.getCommandSenderName(), target.motionX, target.motionY, target.motionZ));
 		}
 	}
@@ -346,10 +384,27 @@ public final class HypnosisMasteryLogic {
 		}
 	}
 
-	/** Client-only: force a getTarget pass so CURRENT_TARGET_ID syncs while key is held. */
+	/**
+	 * Client: keep CURRENT_TARGET_ID sticky while channeling; acquire via Legends
+	 * getTarget (stock pin sync) when unset, with skip-ray as plant fallback.
+	 * Does not swap mid-hold when looking at another entity.
+	 */
 	public static void refreshClientTarget(EntityPlayer player) {
 		if (player == null || !player.worldObj.isRemote) return;
-		LegendsHelper.getTarget(player, 25.0D);
+		EntityLivingBase locked = resolvePinnedTarget(player);
+		if (locked == null) {
+			// Stock Legends getTarget updates+syncs CURRENT_TARGET_ID on client.
+			EntityLivingBase crosshair = LegendsHelper.getTarget(player, PSYCHIC_RANGE);
+			if (crosshair == null) {
+				crosshair = HypnosisRayTrace.getLivingFromCrosshairs(player, 1.0F, PSYCHIC_RANGE);
+				if (crosshair != null && canControlTarget(crosshair)
+						&& !(crosshair instanceof EntityPlayer
+								&& ((EntityPlayer) crosshair).capabilities.isCreativeMode)) {
+					// Skip-ray plant fallback — use notifying set so server can acquire.
+					LegendsProperties.CURRENT_TARGET_ID.set(player, Integer.valueOf(crosshair.getEntityId()));
+				}
+			}
+		}
 		refreshAimingPose(player);
 	}
 
@@ -372,9 +427,9 @@ public final class HypnosisMasteryLogic {
 		Vec3 start = eye.addVector(look.xCoord * past, look.yCoord * past, look.zCoord * past);
 		Vec3 end = eye.addVector(look.xCoord * PSYCHIC_RANGE, look.yCoord * PSYCHIC_RANGE, look.zCoord * PSYCHIC_RANGE);
 		MovingObjectPosition pastHit = past < PSYCHIC_RANGE
-				? player.worldObj.func_147447_a(start, end, false, false, true)
+				? HypnosisRayTrace.rayTraceSkipPassThrough(player.worldObj, start, end)
 				: null;
-		MovingObjectPosition aimHit = player.rayTrace(PSYCHIC_RANGE, 1.0F);
+		MovingObjectPosition aimHit = HypnosisRayTrace.rayTraceFromEyes(player, PSYCHIC_RANGE, 1.0F);
 
 		DestPick pick = pickPsychicDest(player, target, aimHit, pastHit);
 		// Unlocked: never reel in via floor-between-you aim — prefer past when aim is inbound.
@@ -508,6 +563,25 @@ public final class HypnosisMasteryLogic {
 	}
 
 	/**
+	 * Look-Y threshold for bite magnet: mild at level height, near-vertical when the player
+	 * is {@link #MAGNET_ELEV_FULL}+ blocks above the target (feet-to-feet).
+	 */
+	private static double lookDownMagnetThreshold(EntityPlayer player, EntityLivingBase target) {
+		double elev = player.posY - target.posY;
+		if (elev <= 0.0D) return LOOK_DOWN_MAGNET_LEVEL;
+		double t = elev / MAGNET_ELEV_FULL;
+		if (t > 1.0D) t = 1.0D;
+		return LOOK_DOWN_MAGNET_LEVEL
+				+ (LOOK_DOWN_MAGNET_ELEVATED - LOOK_DOWN_MAGNET_LEVEL) * t;
+	}
+
+	/** True when player is above target by at most {@link #MAGNET_ELEV_FULL} (feet-to-feet). */
+	private static boolean withinMagnetElevGate(EntityPlayer player, EntityLivingBase target) {
+		double elev = player.posY - target.posY;
+		return elev > 0.15D && elev <= MAGNET_ELEV_FULL;
+	}
+
+	/**
 	 * Bite magnet ring: hitbox touch (+ pad), or mob melee-ish reach ({@code width*2}), capped at
 	 * {@link #STANDOFF_MAX}.
 	 */
@@ -544,16 +618,19 @@ public final class HypnosisMasteryLogic {
 	/**
 	 * Look-down bite magnet: reel in only when farther than the hold band; at/inside use
 	 * Vampirism-style freeze (Zod combat logs: AI walked out → micro-pull jitter).
-	 * Optional lift if aim hits a higher block near the mob while reeling.
+	 * When the player is levitating within the elev gate, lift the target to player feet Y.
+	 * Optional block-aim lift when not matching player elevation.
 	 */
 	private static void applyBiteStandoffPull(EntityPlayer player, EntityLivingBase target) {
 		double lookY = player.getLook(1.0F).yCoord;
 		double standoff = biteStandoffDistance(player, target);
 		double targetToPlayer = horizDist(target.posX, target.posZ, player.posX, player.posZ);
 		boolean nonPlayer = !(target instanceof EntityPlayer);
+		boolean matchPlayerElev = withinMagnetElevGate(player, target);
 
-		// Already in bite range (at or inside hold band): hard freeze — no rim micro-adjust.
-		if (targetToPlayer <= standoff + STANDOFF_HOLD_SLACK) {
+		// Already in bite range (at or inside hold band): hard freeze — unless still catching
+		// player hover elevation (levitating vampire within 3.5 blocks above).
+		if (targetToPlayer <= standoff + STANDOFF_HOLD_SLACK && !matchPlayerElev) {
 			if (nonPlayer) {
 				applyBiteFreeze(target);
 			} else {
@@ -585,17 +662,23 @@ public final class HypnosisMasteryLogic {
 		double destX = player.posX + rdx * standoff;
 		double destZ = player.posZ + rdz * standoff;
 		double destY = target.posY;
-
-		// Optional mount while reeling: aim higher block near the mob.
-		MovingObjectPosition aimHit = player.rayTrace(PSYCHIC_RANGE, 1.0F);
-		DestPick aim = destFromHit(player, target, aimHit, "aim");
 		boolean needLift = false;
-		if (aim != null) {
-			double ahx = aim.destX - target.posX;
-			double ahz = aim.destZ - target.posZ;
-			if (Math.sqrt(ahx * ahx + ahz * ahz) <= AIM_DEST_RANGE && aim.destY > target.posY + 0.15D) {
-				destY = aim.destY;
-				needLift = true;
+
+		// Levitating player within elev gate: hover the target up to the player's feet Y.
+		if (matchPlayerElev) {
+			destY = player.posY;
+			needLift = true;
+		} else {
+			// Optional mount while reeling: aim higher block near the mob.
+			MovingObjectPosition aimHit = HypnosisRayTrace.rayTraceFromEyes(player, PSYCHIC_RANGE, 1.0F);
+			DestPick aim = destFromHit(player, target, aimHit, "aim");
+			if (aim != null) {
+				double ahx = aim.destX - target.posX;
+				double ahz = aim.destZ - target.posZ;
+				if (Math.sqrt(ahx * ahx + ahz * ahz) <= AIM_DEST_RANGE && aim.destY > target.posY + 0.15D) {
+					destY = aim.destY;
+					needLift = true;
+				}
 			}
 		}
 
@@ -789,7 +872,7 @@ public final class HypnosisMasteryLogic {
 		return top;
 	}
 
-	/** Hold them still without yanking (sneak / enslavement focus). */
+	/** Hold them still without yanking (enslavement focus). */
 	private static void applyStun(EntityLivingBase target) {
 		target.motionX = 0.0D;
 		target.motionZ = 0.0D;
@@ -953,10 +1036,11 @@ public final class HypnosisMasteryLogic {
 		int attempt = nbt.getInteger("VampireHypnosisAttempts") + 1;
 		nbt.setInteger("VampireHypnosisAttempts", attempt);
 		if (HypnosisDebug.dragEnabled()) {
+			Session s = SESSIONS.get(player.getUniqueID());
 			HypnosisDebug.logBind(player,
-					String.format("masteryBump id=%d name=%s sneak=%s attempt=%d/%d",
+					String.format("masteryBump id=%d name=%s enslave=%s attempt=%d/%d",
 							target.getEntityId(), target.getCommandSenderName(),
-							player.isSneaking(), attempt, threshold));
+							s != null && s.enslavementMode, attempt, threshold));
 		}
 		playBindProgress(player, attempt, threshold);
 		return attempt;
@@ -966,7 +1050,9 @@ public final class HypnosisMasteryLogic {
 	private static void playBindProgress(EntityPlayer player, int attempt, int threshold) {
 		if (attempt == 1) {
 			if (HypnosisDebug.dragEnabled()) {
-				HypnosisDebug.logBind(player, "ding random.orb attempt=1 sneak=" + player.isSneaking());
+				Session s = SESSIONS.get(player.getUniqueID());
+				HypnosisDebug.logBind(player, "ding random.orb attempt=1 enslave="
+						+ (s != null && s.enslavementMode));
 			}
 			player.worldObj.playSoundAtEntity(player, "random.orb", 1.0F, 5.0F);
 			return;
@@ -1002,25 +1088,103 @@ public final class HypnosisMasteryLogic {
 		s.lastChannelTick = now;
 	}
 
-	private static void updateSessionTarget(EntityPlayer player, EntityLivingBase target, int now) {
-		Session s = SESSIONS.get(player.getUniqueID());
-		if (s == null) {
-			touchSession(player, now);
-			s = SESSIONS.get(player.getUniqueID());
+	/**
+	 * Sticky lock: once set, never swap to another entity until the session ends.
+	 * Alive + within psychic range keeps control even if crosshair misses.
+	 */
+	private static EntityLivingBase resolveStickyTarget(EntityPlayer player, Session session, int now) {
+		if (session == null) return null;
+
+		EntityLivingBase locked = getLockedTarget(player, session);
+		if (locked != null) {
+			session.lastChannelTick = now;
+			return locked;
 		}
-		int id = target.getEntityId();
-		if (s.targetId != id) {
-			if (s.targetId > 0) {
-				Entity old = player.worldObj.getEntityByID(s.targetId);
-				if (old instanceof EntityLivingBase) {
-					WitcheryUtil.resetHypnosisAttempts((EntityLivingBase) old);
-				}
+
+		// Lock cleared / invalid — acquire via stock Legends pin/crosshair (server reads
+		// CURRENT_TARGET_ID synced from client). Skip-ray is plant fallback only.
+		if (session.targetId > 0) {
+			clearLockedTarget(player, session);
+		}
+
+		EntityLivingBase legends = LegendsHelper.getTarget(player, PSYCHIC_RANGE);
+		EntityLivingBase acquire = legends != null ? legends
+				: HypnosisRayTrace.getLivingFromCrosshairs(player, 1.0F, PSYCHIC_RANGE);
+		if (acquire == null || !canControlTarget(acquire)) {
+			return null;
+		}
+		if (acquire instanceof EntityPlayer && ((EntityPlayer) acquire).capabilities.isCreativeMode) {
+			return null;
+		}
+		// First lock still requires touch range; stickiness ignores brief LoS gaps after.
+		if (!PlayerHelper.canBeTouched(player, acquire)) {
+			return null;
+		}
+
+		session.targetId = acquire.getEntityId();
+		session.boundThisSession = false;
+		session.lastChannelTick = now;
+		WitcheryUtil.resetHypnosisAttempts(acquire);
+		return acquire;
+	}
+
+	private static EntityLivingBase getLockedTarget(EntityPlayer player, Session session) {
+		if (player == null || session == null || session.targetId <= 0) return null;
+		Entity entity = player.worldObj.getEntityByID(session.targetId);
+		if (!(entity instanceof EntityLivingBase)) return null;
+		EntityLivingBase living = (EntityLivingBase) entity;
+		if (!living.isEntityAlive()) return null;
+		if (player.getDistanceToEntity(living) > PSYCHIC_RANGE) return null;
+		if (!canControlTarget(living)) return null;
+		return living;
+	}
+
+	private static void clearLockedTarget(EntityPlayer player, Session session) {
+		if (session == null) return;
+		if (session.targetId > 0 && player != null && player.worldObj != null) {
+			Entity old = player.worldObj.getEntityByID(session.targetId);
+			if (old instanceof EntityLivingBase) {
+				WitcheryUtil.resetHypnosisAttempts((EntityLivingBase) old);
 			}
-			s.targetId = id;
-			s.boundThisSession = false;
-			WitcheryUtil.resetHypnosisAttempts(target);
 		}
-		s.lastChannelTick = now;
+		session.targetId = -1;
+		session.boundThisSession = false;
+	}
+
+	private static void pinCurrentTargetId(EntityPlayer player, EntityLivingBase target) {
+		if (player == null || target == null) return;
+		int id = target.getEntityId();
+		Integer cur = (Integer) LegendsProperties.CURRENT_TARGET_ID.get(player);
+		if (cur != null && cur.intValue() == id) return;
+		if (player.worldObj.isRemote) {
+			LegendsProperties.CURRENT_TARGET_ID.setWithoutNotify(player, Integer.valueOf(id));
+		} else {
+			LegendsProperties.CURRENT_TARGET_ID.set(player, Integer.valueOf(id));
+		}
+	}
+
+	private static EntityLivingBase resolvePinnedTarget(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return null;
+		Integer cur = (Integer) LegendsProperties.CURRENT_TARGET_ID.get(player);
+		if (cur == null || cur.intValue() <= 0) return null;
+		Entity entity = player.worldObj.getEntityByID(cur.intValue());
+		if (!(entity instanceof EntityLivingBase)) return null;
+		EntityLivingBase living = (EntityLivingBase) entity;
+		if (!living.isEntityAlive()) return null;
+		if (player.getDistanceToEntity(living) > PSYCHIC_RANGE) return null;
+		if (!canControlTarget(living)) return null;
+		return living;
+	}
+
+	private static void clearCurrentTargetId(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return;
+		Integer cur = (Integer) LegendsProperties.CURRENT_TARGET_ID.get(player);
+		if (cur == null || cur.intValue() == 0) return;
+		if (player.worldObj.isRemote) {
+			LegendsProperties.CURRENT_TARGET_ID.setWithoutNotify(player, Integer.valueOf(0));
+		} else {
+			LegendsProperties.CURRENT_TARGET_ID.set(player, Integer.valueOf(0));
+		}
 	}
 
 	private static void endSession(EntityPlayer player, Session s, net.minecraft.world.World world) {
@@ -1032,6 +1196,7 @@ public final class HypnosisMasteryLogic {
 			}
 		}
 		SESSIONS.remove(player.getUniqueID());
+		clearCurrentTargetId(player);
 	}
 
 	/** Inlined Legends 5.4 {@code LegendsHelper.canLiftTarget} eligibility. */

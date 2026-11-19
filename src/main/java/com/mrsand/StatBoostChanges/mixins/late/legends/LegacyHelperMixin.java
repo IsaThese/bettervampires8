@@ -22,7 +22,13 @@ import net.minecraft.entity.player.EntityPlayer;
  * BetterVampires restored powers: shown on tree, never purchasable; owned only by
  * Vampirism vampire lords (Hypnosis Mastery, Demonic Form/Fury, True Form, Teleport,
  * Hellfire, Intangibility).
- * Transvection: hover must not count as "using an ability" so other keys still fire.
+ * <p>
+ * Form movement: {@code isUsingAbility} only treats TRANSVECTION and {@code Stat.dash}
+ * as busy among movement effects. Demonic flight ({@code Stat.flight*}) and the speed
+ * pulse ({@code Stat.speed}) are not read there. Ignore TRANSVECTION always (humanoid
+ * keyed hover, demonic beast, true form) so hover does not block Bat Attack / bite /
+ * toggle-off / other keys — same as {@code PlayerHelper.canPerformAbility}. Real casts
+ * (VAMPIRE_BITE, HYPNOSIS, BAT_SWARMING, dash, etc.) still busy.
  */
 @Mixin(value = LegacyHelper.class, remap = false)
 public abstract class LegacyHelperMixin {
@@ -53,7 +59,10 @@ public abstract class LegacyHelperMixin {
 		cir.setReturnValue(Boolean.FALSE);
 	}
 
-	/** Treat TRANSVECTION as idle so hypnosis / bat attack / etc. can keyPress while hovering. */
+	/**
+	 * TRANSVECTION hover must not report as "using an ability" (any form).
+	 * Flight and speed pulses are not checked by {@code isUsingAbility}.
+	 */
 	@Redirect(
 			method = "isUsingAbility",
 			at = @At(
@@ -61,7 +70,7 @@ public abstract class LegacyHelperMixin {
 					target = "Lcom/tihyo/legends/management/properties/LegendsProperties;get(Lnet/minecraft/entity/Entity;)Ljava/lang/Object;"
 			)
 	)
-	private static Object bvIgnoreTransvectionBusy(LegendsProperties props, Entity entity) {
+	private static Object bvIgnoreFormMovementBusy(LegendsProperties props, Entity entity) {
 		if (props == LegendsProperties.TRANSVECTION) {
 			return Boolean.FALSE;
 		}

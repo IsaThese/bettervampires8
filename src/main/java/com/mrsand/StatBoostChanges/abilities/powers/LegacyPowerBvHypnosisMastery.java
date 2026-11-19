@@ -69,7 +69,7 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 
 		if (!canHypnotizeInCurrentForm(player)) {
 			if (LegendsHelper.getTicks(player) % 10 == 0) {
-				warn(player, "Must be humanoid, True Form, or Demonic Form to hypnotize.");
+				warn(player, "Must be humanoid or True Form to hypnotize.");
 			}
 			return;
 		}
@@ -107,10 +107,10 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 		HypnosisMasteryLogic.tickChannel(player);
 	}
 
-	/** Humanoid, Demonic Form, or True Form — not bat/wolf/mist/other morphs. */
+	/** Humanoid or True Form — not demonic form, bat, wolf, mist, or other morphs. */
 	private static boolean canHypnotizeInCurrentForm(EntityPlayer player) {
 		if (!MorphHelper.isMorphed(player)) return true;
-		return MorphHelper.isVampireBeast(player) || MorphHelper.isDraculaTrueForm(player);
+		return MorphHelper.isDraculaTrueForm(player);
 	}
 
 	@Override
@@ -130,10 +130,10 @@ public class LegacyPowerBvHypnosisMastery extends LegacyPower {
 
 	@Override
 	public String getDescription(EntityPlayer player) {
-		return "Hold to hypnotize (humanoid, True Form, or Demonic Form). "
+		return "Hold to hypnotize (humanoid or True Form). "
 				+ "Drag the target toward the block behind them along your gaze. "
-				+ "Sneak to stun and, after ~6s of focus, enthrall / tame / paralyse them (blood cost; one success message). "
-				+ "The purple bar does not drain. Punch applies standard hypnosis.";
+				+ "Use item (right-click) toggles stun/enslavement focus; after ~6s of focus, enthrall / tame / paralyse them "
+				+ "(blood cost; one success message). The purple bar does not drain.";
 	}
 
 	@Override

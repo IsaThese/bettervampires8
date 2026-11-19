@@ -396,6 +396,27 @@ public class LegendsUtil {
 		}
 	}
 
+	/**
+	 * Player-keyed Transvection hover (not BV true-form auto). Humanoid cancel rules
+	 * apply only here: keybind toggle-off / ability unequip — not right-click.
+	 */
+	public static boolean isHumanoidKeyedTransvectionHover(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null) return false;
+		Object tv = LegendsProperties.TRANSVECTION.get(player);
+		if (!(tv instanceof Boolean) || !((Boolean) tv).booleanValue()) return false;
+		if (MorphHelper.isDraculaTrueForm(player)) return false;
+		if (player.getEntityData().getBoolean("bvTrueFormTransvection")) return false;
+		return true;
+	}
+
+	/** Clear humanoid keyed hover when Transvection is no longer on a hotbar key. */
+	public static void tickHumanoidTransvectionAbilityLoss(EntityPlayer player) {
+		if (player == null || player.worldObj == null || player.worldObj.isRemote) return;
+		if (!isHumanoidKeyedTransvectionHover(player)) return;
+		if (isAbilityEquipped(player, "transvection")) return;
+		PowersHandler.transvection(player, false);
+	}
+
 	/** Castlevania Dracula teleport (Horror tick spawns EntityDraculaTeleport). */
 	public static void draculaTeleport(EntityPlayer player, int durationSeconds) {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
@@ -418,7 +439,7 @@ public class LegendsUtil {
 
 	public static void vampireBite(EntityPlayer player, int durationSeconds) {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
-		if (VampireSunRules.generalPowersBlocked(player)) return;
+		// Allowed through VampireSunRules daylight key exception (bvVampireBite / fangs).
 		PowersHandler.vampireBite(player, Math.max(1, durationSeconds));
 	}
 
@@ -431,7 +452,7 @@ public class LegendsUtil {
 
 	public static void furySwipes(EntityPlayer player, int durationSeconds) {
 		if (!Loader.isModLoaded("legends") || player == null || player.worldObj.isRemote) return;
-		if (VampireSunRules.generalPowersBlocked(player)) return;
+		// True-form bvVampireBite; same daylight exception as the bite path.
 		PowersHandler.furySwipes(player, Math.max(1, durationSeconds));
 	}
 

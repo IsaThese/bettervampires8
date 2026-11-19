@@ -9,6 +9,7 @@
     "EntitySpiderMixin",
     "EntityGhastMixin",
     "EntityBlazeMixin",
+    "EntityBatMixin",
     "BatSkillMixin",
     "MixinAbstractClientPlayer",
     "BlockIsBedCoffinMixin",

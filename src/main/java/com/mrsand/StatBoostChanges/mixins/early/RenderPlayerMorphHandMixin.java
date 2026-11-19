@@ -13,7 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Legends' RenderPlayerHand / Morph.renderRightHand path often never runs in this pack;
  * ItemRenderer still calls RenderPlayer.renderFirstPersonArm with the vanilla skin.
- * Replace that draw for bat/wolf morphs.
+ * Replace that draw for bat/wolf, demonic form, and true form.
  */
 @Mixin(RenderPlayer.class)
 public abstract class RenderPlayerMorphHandMixin {

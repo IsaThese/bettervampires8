@@ -308,6 +308,8 @@ public class LegendsEventHandler {
 		if (!Loader.isModLoaded("legends")) return;
 		// After Horror Transvection flight: sneak+jump holds altitude for horizontal-only move.
 		PhysicsUtil.tickTransvectionAltitudeLock(player);
+		// Humanoid keyed hover: clear if Transvection is no longer on a hotbar key.
+		LegendsUtil.tickHumanoidTransvectionAbilityLoss(player);
 		if (!LegendsAbilityBridge.isMist(player)) return;
 		// Re-apply full mist physics after Legends (clears noClip + may add flight motionY).
 		PhysicsUtil.handleMistPhasing(player);

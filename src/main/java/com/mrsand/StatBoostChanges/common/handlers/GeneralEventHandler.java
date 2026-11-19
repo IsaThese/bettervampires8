@@ -18,10 +18,12 @@ import com.mrsand.StatBoostChanges.ModCompat;
 import com.mrsand.StatBoostChanges.StatBoostChanges;
 import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
+import com.mrsand.StatBoostChanges.abilities.HypnosisMasteryLogic;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager;
+import com.mrsand.StatBoostChanges.common.packets.PacketHypnosisToggle;
 import com.mrsand.StatBoostChanges.common.packets.PacketSyncTarget;
 import com.mrsand.StatBoostChanges.common.packets.PacketVignette;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket;
@@ -497,6 +499,32 @@ public class GeneralEventHandler {
 		}
 
 		if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
+			if (VampireRestoredAbilities.isHypnosisMasteryChanneling(player)) {
+				// Held item: BLOCK then AIR in one click — only process AIR when holding.
+				// Empty hand may only get BLOCK; debounce lives in tryToggleEnslavementFromUse.
+				boolean skipHeldBlock = held != null && event.action != Action.RIGHT_CLICK_AIR;
+				if (skipHeldBlock) {
+					event.setCanceled(true);
+					event.setResult(Result.DENY);
+					return;
+				}
+				// Empty-hand AIR/BLOCK is often client-only once canceled here — C2S packet
+				// so toggle works without looking at the entity (EntityInteract path).
+				if (world.isRemote) {
+					NBTTagCompound nbt = player.getEntityData();
+					int now = player.ticksExisted;
+					int last = nbt.getInteger("bvHypMasteryToggleTick");
+					if (last == 0 || now - last < 0 || now - last >= 10) {
+						nbt.setInteger("bvHypMasteryToggleTick", now == 0 ? 1 : now);
+						StatBoostChanges.network.sendToServer(new PacketHypnosisToggle());
+					}
+				} else {
+					HypnosisMasteryLogic.tryToggleEnslavementFromUse(player);
+				}
+				event.setCanceled(true);
+				event.setResult(Result.DENY);
+				return;
+			}
 			ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 			if (playerEx.isVampire() && !GeneralUtil.isInLight(player)) {
 				VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
@@ -649,6 +677,11 @@ public class GeneralEventHandler {
 	public void onEntityInteractForm(EntityInteractEvent event) {
 		EntityPlayer player = event.entityPlayer;
 		if (player == null) return;
+		if (VampireRestoredAbilities.isHypnosisMasteryChanneling(player)) {
+			HypnosisMasteryLogic.tryToggleEnslavementFromUse(player);
+			event.setCanceled(true);
+			return;
+		}
 		if (LegendsUtil.blocksItemUse(player)) {
 			if (LegendsUtil.isMist(player)) {
 				player.addChatComponentMessage(new ChatComponentText("You're in mist form").setChatStyle(new ChatStyle().setBold(true).setItalic(true)));
@@ -662,6 +695,16 @@ public class GeneralEventHandler {
 		EntityPlayer player = event.entityPlayer;
 		if (player == null) return;
 		if (LegendsUtil.blocksEntityAttack(player)) {
+			event.setCanceled(true);
+		}
+	}
+
+	/** While channeling, punch should not damage the thrall. */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelAttackDuringHypnosisMastery(AttackEntityEvent event) {
+		EntityPlayer player = event.entityPlayer;
+		if (player == null) return;
+		if (VampireRestoredAbilities.isHypnosisMasteryChanneling(player)) {
 			event.setCanceled(true);
 		}
 	}

@@ -34,6 +34,8 @@
       "legends.LegendsPropertiesMixin",
       "legends.LegendsAbilitiesPacketMixin",
       "legends.LegacyHelperMixin",
+      "legends.LegacyPowerFormAbilityMixin",
+      "legends.LegacyPowerTransvectionMixin",
       "legends.LegacyPowerEyeSizeMixin",
       "legends.LegacyPowerMorphBatMixin",
       "legends.LegacyPowerMorphMistMixin",

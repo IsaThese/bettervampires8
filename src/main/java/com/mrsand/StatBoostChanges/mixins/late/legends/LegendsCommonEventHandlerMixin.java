@@ -7,7 +7,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 import com.mrsand.StatBoostChanges.util.CoffinSleepUtil;
+import com.mrsand.StatBoostChanges.util.LegendsUtil;
 import com.tihyo.legends.handlers.LegendsCommonEventHandler;
+import com.tihyo.legends.management.properties.LegendsProperties;
 
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -20,6 +22,9 @@ import net.minecraft.entity.player.EntityPlayer;
  * setSprinting @1287 → setInCoffin(false) @1318.
  * Slice isInCoffin → setInCoffin (not setSprinting — earlier setSprinting makes a negative slice).
  * isLying motion÷100 @1322 → isCrawling @1357.
+ *
+ * Humanoid Transvection: stock {@code onInteract} right-click clears hover — skip that for
+ * player-keyed hover (keybind / ability loss cancel instead).
  */
 @Mixin(value = LegendsCommonEventHandler.class, remap = false)
 public abstract class LegendsCommonEventHandlerMixin {
@@ -89,5 +94,26 @@ public abstract class LegendsCommonEventHandlerMixin {
 	)
 	private boolean bvIsLyingIgnoreCoffinForCrawl(EntityPlayer player) {
 		return CoffinSleepUtil.isLyingIgnoringCoffin(player);
+	}
+
+	/**
+	 * Stock {@code onInteract}: RIGHT_CLICK_* → {@code TRANSVECTION.set(false)}.
+	 * Keep hover for humanoid keyed Transvection; other properties pass through.
+	 */
+	@Redirect(
+			method = "onInteract",
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/properties/LegendsProperties;set(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z"
+			)
+	)
+	private boolean bvSkipHumanoidTransvectionRightClickCancel(LegendsProperties props, EntityPlayer player, Object value) {
+		if (props == LegendsProperties.TRANSVECTION
+				&& value instanceof Boolean
+				&& !((Boolean) value).booleanValue()
+				&& LegendsUtil.isHumanoidKeyedTransvectionHover(player)) {
+			return false;
+		}
+		return props.set(player, value);
 	}
 }

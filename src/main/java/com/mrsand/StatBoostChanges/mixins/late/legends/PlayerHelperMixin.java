@@ -3,6 +3,7 @@ package com.mrsand.StatBoostChanges.mixins.late.legends;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -47,15 +48,12 @@ public abstract class PlayerHelperMixin {
 	}
 
 	/**
-	 * Stock Vampiric Drain tooltip claims a flat +20; suppress that while
-	 * {@code BLOOD_DRAIN} is active so BV's bite-rate pulses own the gain.
+	 * Stock Vampiric Drain grants +20 on the same look-at hit as damage.
+	 * Retune that amount to slightly under Vampiric Bite while drain is active.
 	 */
-	@Inject(method = "increaseBloodMeter", at = @At("HEAD"), cancellable = true)
-	private static void bvSuppressDrainFlatGrant(EntityPlayer player, int amount, boolean unused,
-			CallbackInfo ci) {
-		if (VampireBloodChannels.shouldSuppressDrainFlatGrant(player, amount)) {
-			ci.cancel();
-		}
+	@ModifyVariable(method = "increaseBloodMeter", at = @At("HEAD"), argsOnly = true, ordinal = 0)
+	private static int bvRetuneDrainBloodGrant(int amount, EntityPlayer player) {
+		return VampireBloodChannels.retuneDrainBloodAmount(player, amount);
 	}
 
 	@Inject(method = "isInvincible", at = @At("HEAD"), cancellable = true)

@@ -2,7 +2,9 @@ package com.mrsand.StatBoostChanges.mixins.late.legends;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.client.WitcheryApparelRender;
@@ -11,6 +13,7 @@ import com.tihyo.legends.client.models.ModelPlayer;
 
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -35,6 +38,22 @@ public abstract class ModelDraculaMixin {
 	private static final ResourceLocation CAPE_2 = new ResourceLocation(
 			"horror", PACK_DIR + "cape_2.png");
 
+	/**
+	 * Stock cape body is EntityPlayer-only (EntityStand branch otherwise).
+	 * Witchery {@code EntityVampire} wears the same coat — draw apparel cape and skip stock.
+	 */
+	@Inject(method = "renderCape", at = @At("HEAD"), cancellable = true)
+	private static void betterVampires$npcWitcheryCape(ModelPlayer model, Entity entity, int capeLength,
+			CallbackInfo ci) {
+		if (entity instanceof EntityPlayer
+				|| !(entity instanceof EntityLivingBase)
+				|| !WitcheryApparelRender.wearsWitcheryVampireChest((EntityLivingBase) entity)) {
+			return;
+		}
+		WitcheryApparelRender.renderLivingWitcheryCape(model, (EntityLivingBase) entity, capeLength);
+		ci.cancel();
+	}
+
 	@Redirect(
 			method = "renderCape",
 			at = @At(
@@ -43,15 +62,15 @@ public abstract class ModelDraculaMixin {
 					remap = true))
 	private static void betterVampires$bindWitcheryCape(TextureManager textureManager, ResourceLocation location,
 			ModelPlayer model, Entity entity, int capeLength) {
-		if (entity instanceof EntityPlayer
-				&& WitcheryApparelRender.wearsWitcheryVampireChest((EntityPlayer) entity)
+		if (entity instanceof EntityLivingBase
+				&& WitcheryApparelRender.wearsWitcheryVampireChest((EntityLivingBase) entity)
 				&& location != null
 				&& "horror".equals(location.getResourceDomain())
 				&& location.getResourcePath() != null
 				&& location.getResourcePath().startsWith(STOCK_CAPE_PREFIX)) {
-			ResourceLocation remapped = resolveWitcheryCape(location.getResourcePath());
-			if (remapped != null) {
-				textureManager.bindTexture(remapped);
+			ResourceLocation pack = resolveWitcheryCape(location.getResourcePath());
+			if (pack != null) {
+				textureManager.bindTexture(pack);
 				return;
 			}
 		}

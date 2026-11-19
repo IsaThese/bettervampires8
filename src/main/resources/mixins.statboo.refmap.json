@@ -1,5 +1,10 @@
 {
   "mappings": {
+    "com/mrsand/StatBoostChanges/mixins/early/EntityBatMixin": {
+      "Lnet/minecraft/block/Block;isNormalCube()Z": "Lnet/minecraft/block/Block;func_149721_r()Z",
+      "Lnet/minecraft/world/World;getClosestPlayerToEntity(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;": "Lnet/minecraft/world/World;func_72890_a(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;",
+      "updateAITasks": "Lnet/minecraft/entity/passive/EntityBat;func_70619_bc()V"
+    },
     "com/mrsand/StatBoostChanges/mixins/early/EntityBlazeMixin": {
       "attackEntity": "Lnet/minecraft/entity/monster/EntityBlaze;func_70785_a(Lnet/minecraft/entity/Entity;F)V"
     },
@@ -13,6 +18,11 @@
   },
   "data": {
     "searge": {
+      "com/mrsand/StatBoostChanges/mixins/early/EntityBatMixin": {
+        "Lnet/minecraft/block/Block;isNormalCube()Z": "Lnet/minecraft/block/Block;func_149721_r()Z",
+        "Lnet/minecraft/world/World;getClosestPlayerToEntity(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;": "Lnet/minecraft/world/World;func_72890_a(Lnet/minecraft/entity/Entity;D)Lnet/minecraft/entity/player/EntityPlayer;",
+        "updateAITasks": "Lnet/minecraft/entity/passive/EntityBat;func_70619_bc()V"
+      },
       "com/mrsand/StatBoostChanges/mixins/early/EntityBlazeMixin": {
         "attackEntity": "Lnet/minecraft/entity/monster/EntityBlaze;func_70785_a(Lnet/minecraft/entity/Entity;F)V"
       },

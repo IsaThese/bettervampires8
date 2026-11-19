@@ -15,7 +15,8 @@ import net.minecraft.util.ChatComponentText;
 /**
  * Retunes Legends blood-channel abilities for BV:
  * <ul>
- *   <li>Vampiric Drain ({@code BLOOD_DRAIN}) — same +5 / 10t as Vampiric Bite</li>
+ *   <li>Vampiric Drain ({@code BLOOD_DRAIN}) — stock damage hits grant +4 / 10t
+ *       (slightly under Vampiric Bite's +5); no separate BV range pulse</li>
  *   <li>Vampire's Wrath ({@code VAMPIRES_WRATH}) — ≥30% blood on successful contact</li>
  *   <li>Fury Swipes ({@code FURY_SWIPES}) — +10 / 10t on claw contact</li>
  *   <li>Demonic Form upkeep — 1% max Witchery blood / second while beasted</li>
@@ -24,9 +25,11 @@ import net.minecraft.util.ChatComponentText;
 public final class VampireBloodChannels {
 
 	public static final int BITE_PULSE_AMOUNT = 5;
+	/** Stock drain grants +20 on hit; retune to slightly under bite. */
+	public static final int DRAIN_PULSE_AMOUNT = 4;
 	public static final int FURY_SWIPES_PULSE_AMOUNT = 10;
 	public static final int BITE_PULSE_INTERVAL = 10;
-	public static final double DRAIN_RANGE = 2.0D;
+	public static final double FURY_RANGE = 2.0D;
 	public static final double WRATH_RANGE = 3.0D;
 	public static final int WRATH_MIN_BLOOD = 30;
 	public static final float DEMONIC_UPKEEP_PERCENT = 0.01F;
@@ -35,15 +38,21 @@ public final class VampireBloodChannels {
 	private static final String TAG_WRATH_GAINED = "bvWrathGained";
 	private static final String TAG_WRATH_CONTACT = "bvWrathContact";
 	private static final String TAG_WRATH_LAST_BLOOD = "bvWrathLastBlood";
-	/** Suppress stock flat +20 during drain so only bite-rate pulses apply. */
-	private static final ThreadLocal<Boolean> SUPPRESS_DRAIN_FLAT = new ThreadLocal<Boolean>();
 
 	private VampireBloodChannels() {}
 
-	public static boolean shouldSuppressDrainFlatGrant(EntityPlayer player, int amount) {
-		if (amount != 20 || player == null) return false;
-		if (Boolean.TRUE.equals(SUPPRESS_DRAIN_FLAT.get())) return false;
-		return LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) > 0;
+	/**
+	 * Stock drain blood rides the same look-at hit as damage (+20 / 10t).
+	 * Scale that grant to {@link #DRAIN_PULSE_AMOUNT} while {@code BLOOD_DRAIN} is active.
+	 */
+	public static int retuneDrainBloodAmount(EntityPlayer player, int amount) {
+		if (amount != 20 || player == null) {
+			return amount;
+		}
+		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) <= 0) {
+			return amount;
+		}
+		return DRAIN_PULSE_AMOUNT;
 	}
 
 	/** Server player tick (Phase.END preferred so Horror wrath pulses are visible). */
@@ -52,17 +61,9 @@ public final class VampireBloodChannels {
 				|| player.worldObj.isRemote) {
 			return;
 		}
-		tickBloodDrain(player);
 		tickFurySwipes(player);
 		tickVampiresWrath(player);
 		tickDemonicFormUpkeep(player);
-	}
-
-	private static void tickBloodDrain(EntityPlayer player) {
-		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) <= 0) {
-			return;
-		}
-		pulseBloodOnContact(player, BITE_PULSE_AMOUNT);
 	}
 
 	private static void tickFurySwipes(EntityPlayer player) {
@@ -76,16 +77,11 @@ public final class VampireBloodChannels {
 		if (LegendsHelper.getTicks(player) % BITE_PULSE_INTERVAL != 0) {
 			return;
 		}
-		EntityLivingBase target = LegendsHelper.getTarget(player, DRAIN_RANGE);
+		EntityLivingBase target = LegendsHelper.getTarget(player, FURY_RANGE);
 		if (!isValidBloodContact(player, target)) {
 			return;
 		}
-		SUPPRESS_DRAIN_FLAT.set(Boolean.TRUE);
-		try {
-			PlayerHelper.increaseBloodMeter(player, amount, false);
-		} finally {
-			SUPPRESS_DRAIN_FLAT.set(Boolean.FALSE);
-		}
+		PlayerHelper.increaseBloodMeter(player, amount, false);
 	}
 
 	/** 1% max Witchery blood per second while in Demonic Form; demorph if empty. */

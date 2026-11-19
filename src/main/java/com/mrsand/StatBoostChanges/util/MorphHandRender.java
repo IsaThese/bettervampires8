@@ -52,6 +52,7 @@ public final class MorphHandRender {
 
 	/**
 	 * Called from {@code RenderPlayer.renderFirstPersonArm} while ItemRenderer matrix is active.
+	 * Demonic form and true form cancel the vanilla arm and draw {@code Morph.renderRightHand}.
 	 * @return true if vanilla arm draw should be canceled
 	 */
 	public static boolean tryReplaceFirstPersonArm(EntityPlayer player, RenderPlayer render) {
@@ -59,7 +60,9 @@ public final class MorphHandRender {
 		if (mc == null || mc.thePlayer == null || player != mc.thePlayer) return false;
 		if (!Loader.isModLoaded("legends")) return false;
 		try {
-			if (MorphHelper.isVampireBeast(player)) {
+			// Demonic form and true form both supply Morph.renderRightHand.
+			// Crazy Craft's FP renderer is plain RenderPlayer, which never reaches Legends' morph arm.
+			if (MorphHelper.isVampireBeast(player) || MorphHelper.isDraculaTrueForm(player)) {
 				Morph morph = MorphHelper.getMorphClass(player);
 				if (morph == null) return false;
 				morph.renderRightHand(mc, player);

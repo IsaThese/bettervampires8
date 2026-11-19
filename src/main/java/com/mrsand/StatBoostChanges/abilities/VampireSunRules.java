@@ -180,7 +180,8 @@ public final class VampireSunRules {
 			if (power == null) return false;
 			String name = power.getName();
 			if (name == null) return false;
-			if ("fangs".equals(name) || "fangs2".equals(name) || "vampireBite".equals(name)) {
+			if ("fangs".equals(name) || "fangs2".equals(name)
+					|| "vampireBite".equals(name) || "bvVampireBite".equals(name)) {
 				if (DEBUG) {
 					LOG.info("[SunRules] allow keyTag={} slot={} power={}", keyTag, slot, name);
 				}

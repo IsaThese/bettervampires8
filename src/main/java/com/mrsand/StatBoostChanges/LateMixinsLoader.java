@@ -43,6 +43,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 			mixins.add("legends.HorrorCommonEventHandlerMixin");
 			mixins.add("legends.LegendsAbilitiesPacketMixin");
 			mixins.add("legends.LegacyHelperMixin");
+			mixins.add("legends.LegacyPowerFormAbilityMixin");
 			mixins.add("legends.ModelDraculaMixin");
 			mixins.add("legends.ModelVampireTeethMixin");
 			mixins.add("legends.MorphBatMixin");

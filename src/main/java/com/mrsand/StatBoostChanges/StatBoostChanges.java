@@ -9,6 +9,7 @@ import com.mrsand.StatBoostChanges.common.handlers.SyncHandlerTarget;
 import com.mrsand.StatBoostChanges.common.handlers.SyncVisualHandler;
 import com.mrsand.StatBoostChanges.common.handlers.WitcheryEventHandler;
 import com.mrsand.StatBoostChanges.common.packets.PacketCoffinPassDay;
+import com.mrsand.StatBoostChanges.common.packets.PacketHypnosisToggle;
 import com.mrsand.StatBoostChanges.common.packets.PacketSyncTarget;
 import com.mrsand.StatBoostChanges.common.packets.PacketVignette;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket;
@@ -73,6 +74,7 @@ public class StatBoostChanges {
 		network.registerMessage(VExtendedVillagerHandler.class, VExtendedVillagerPacket.class, 4, Side.CLIENT);
 		network.registerMessage(PacketVignette.Handler.class, PacketVignette.class, 5, Side.CLIENT);
 		network.registerMessage(PacketCoffinPassDay.Handler.class, PacketCoffinPassDay.class, 6, Side.SERVER);
+		network.registerMessage(PacketHypnosisToggle.Handler.class, PacketHypnosisToggle.class, 7, Side.SERVER);
 
 		GeneralEventHandler handler = new GeneralEventHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
