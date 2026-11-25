@@ -52,6 +52,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 			mixins.add("legends.PlayerHelperMixin");
 			mixins.add("legends.RegisterBlocksMixin");
 			mixins.add("legends.RegisterHorrorBlocksMixin");
+			mixins.add("legends.StatusAcrobaticsMixin");
 
 		}
 

@@ -24,6 +24,8 @@ import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import com.tihyo.horror.legacy.LegacyVampire;
 import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.abilities.LegendsImmunities;
+import com.tihyo.legends.abilities.Stat;
+import com.tihyo.legends.abilities.StatHelper;
 import com.tihyo.legends.abilities.status.StatusAbility;
 import com.tihyo.legends.effects.LegendsEffects;
 import com.tihyo.legends.handlers.PowersHandler;
@@ -46,8 +48,8 @@ public abstract class LegacyVampireMixin {
 
 	/**
 	 * Legends 8 stubbed getWeaknesses to always false. With Daywalker removed,
-	 * restore ability blocking: non-lords in sunlight; lords all daytime
-	 * (mist/weather under-roof allowlist is handled outside getWeaknesses).
+	 * restore ability blocking: non-lords in sunlight; lords all daytime.
+	 * Mist/weather under roof or in rain are allowlisted outside getWeaknesses.
 	 * Sun burn exemption for lords stays in {@link com.mrsand.StatBoostChanges.abilities.BvSunDamage}.
 	 */
 	@Inject(method = "getWeaknesses", at = @At("HEAD"), cancellable = true)
@@ -117,6 +119,17 @@ public abstract class LegacyVampireMixin {
 		cir.cancel();
 		ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
+
+		// Always strip Form of Double Jump while Transvection hover is on (any time of day).
+		Object tvEarly = LegendsProperties.TRANSVECTION.get(player);
+		if (tvEarly instanceof Boolean && ((Boolean) tvEarly).booleanValue()) {
+			if (StatHelper.isAbilityActive(player, Stat.acrobatics)) {
+				StatHelper.removeEffect(player, Stat.acrobatics);
+			}
+			if (StatHelper.isAbilityActive(player, Stat.doubleJump)) {
+				StatHelper.removeEffect(player, Stat.doubleJump);
+			}
+		}
 		VampireRestoredAbilities.ensureAutoGranted(player);
 
 		// Witchery vampires mirror blood onto the Legends meter — do not wipe it.
@@ -141,13 +154,12 @@ public abstract class LegacyVampireMixin {
 					LegendsUtil.ifMorphedTurnHuman(player);
 				}
 				VampireRestoredAbilities.clearDemonicFury(player);
-				if (LegendsAbilityBridge.isBloodVision(player)) {
-					PowersHandler.bloodVision(player, false);
-				}
-				// Fangs + vampire bite stay available in sun/day (original BV); do not clear.
+				// Blood vision stays available in sun/day (same as fangs / bite); do not clear.
 				if (LegendsAbilityBridge.isBloodLust(player)) {
 					LegendsAbilityBridge.clearBloodLust(player);
 				}
+				// Hover must drop in day/sun — toggle-on alone left existing TV active.
+				LegendsUtil.clearTransvectionIfSunBlocked(player);
 			}
 			if (VampireSunRules.shouldForceClearMist(player) && LegendsAbilityBridge.isMist(player)) {
 				LegendsUtil.clearMistForm(player);
@@ -215,7 +227,9 @@ public abstract class LegacyVampireMixin {
 					StatusAbility.speed.run(player, speedAmp, -1 + bloodLustBoost);
 				}
 
-				if (!MorphHelper.isWolf(player)) {
+				Object tvProp = LegendsProperties.TRANSVECTION.get(player);
+				boolean inTransvection = tvProp instanceof Boolean && ((Boolean) tvProp).booleanValue();
+				if (!inTransvection && !MorphHelper.isWolf(player)) {
 					int acro = player.isPotionActive(LegendsEffects.werewolfVenom.id)
 							? ((MorphHelper.isVampireBeast(player) ? 6 : 4) / 2)
 							: (MorphHelper.isVampireBeast(player) ? 6 : 4);
@@ -243,7 +257,11 @@ public abstract class LegacyVampireMixin {
 			if (MorphHelper.isWolf(player)) {
 				LegendsAbilities.stepAssist(player, 1);
 				StatusAbility.speed.run(player, 17, 17);
-				StatusAbility.acrobatics.run(player, 5);
+				Object tvWolf = LegendsProperties.TRANSVECTION.get(player);
+				boolean tv = tvWolf instanceof Boolean && ((Boolean) tvWolf).booleanValue();
+				if (!tv) {
+					StatusAbility.acrobatics.run(player, 5);
+				}
 			}
 		}
 	}

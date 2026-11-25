@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
@@ -27,8 +28,8 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 
 /**
- * Wolf power toggle/cooldown only. FP wolf arm is drawn by {@code MorphWolfMixin}
- * (LegacyPowerMorphWolf has no {@code renderRightHand}).
+ * Own wolf morph entirely — stock {@code keyPressed} hard-codes {@code mob.wolf.howl}
+ * at 2.0F and stock {@code execute} is empty (Legends 8). Mirror bat mixin pattern.
  */
 @Mixin(value = LegacyPowerMorphWolf.class, remap = false)
 public abstract class LegacyPowerMorphWolfMixin {
@@ -36,71 +37,75 @@ public abstract class LegacyPowerMorphWolfMixin {
 	@Shadow
 	public abstract int getAssignedKey(EntityPlayer player);
 
-	/**
-	 * Stock keyPressed calls {@code setCooldown(key, 200)} which sets max=200 and current=0
-	 * (ready only when current == max). Force max=0 so current==max immediately.
-	 */
-	@Inject(method = "keyPressed", at = @At("RETURN"))
-	private void clearWolfCooldown(EntityPlayer player, CallbackInfo ci) {
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+	private void bvWolfKeyPressed(EntityPlayer player, CallbackInfo ci) {
+		ci.cancel();
 		int key = getAssignedKey(player);
-		if (key <= 0 || player.worldObj.isRemote) return;
+		if (key <= 0) return;
+		if (player.worldObj == null || player.worldObj.isRemote) return;
+
+		if (LegacyHelper.getCooldown(player, key) != LegacyHelper.getCooldownMax(player, key)) {
+			return;
+		}
+		if (LegacyHelper.getLegacyClass(player) != null
+				&& LegacyHelper.getLegacyClass(player).getWeaknesses(player)) {
+			return;
+		}
+		if (player.isInWater() && !MorphHelper.isWolf(player)) {
+			return;
+		}
+
+		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
+		if (vPlayer != null && vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE)
+				&& vPlayer.getBoolean(PlayerKeys.IS_STARVING) && !MorphHelper.isWolf(player)) {
+			GeneralUtil.sendDebugMessage(player, new ChatComponentText("Still thirsty")
+					.setChatStyle(new ChatStyle().setBold(true).setColor(EnumChatFormatting.RED)));
+			return;
+		}
+
+		NBTTagCompound nbt = player.getEntityData();
+		if (nbt.getInteger("isInCombat") == 1 && MorphHelper.isVampireBeast(player)
+				&& !MorphHelper.isWolf(player)) {
+			int combatSec = nbt.getInteger("isInCombatTimer") / 20;
+			GeneralUtil.sendDebugMessage(player, new ChatComponentText(
+					"Can't change in combat while in this form, timer: " + combatSec + "s")
+					.setChatStyle(new ChatStyle().setBold(true).setColor(EnumChatFormatting.RED)));
+			return;
+		}
+
+		if (player instanceof EntityPlayerMP && Loader.isModLoaded("Morph")) {
+			EntityPlayerMP playerMP = (EntityPlayerMP) player;
+			if (MorphUtil.isPlayerMorphed(playerMP) && !MorphHelper.isWolf(player)) {
+				MorphUtil.saveMorph(playerMP);
+				MorphUtil.forceDemorph(playerMP);
+			}
+		}
+
+		if (MorphHelper.isWolf(player)) {
+			LegendsUtil.ifMorphedTurnHuman(player);
+			LegacyHelper.setCooldown(player, key, 0);
+			return;
+		}
+
+		// Stock refuses morph-from-other-forms except already wolf; allow demorph-first.
+		if (MorphHelper.isMorphed(player)) {
+			LegendsUtil.ifMorphedTurnHuman(player);
+		}
+
+		if (Loader.isModLoaded("witchery") && !WitcheryUtil.hasBloodPower(player, 0, .05F)) {
+			return;
+		}
+
+		player.worldObj.playSoundAtEntity(player, "mob.wolf.howl",
+				StatBoostConfig.wolfMorphVolume, 1.0F);
+		MorphHelper.morph(player, MorphRegistry.wolf);
+		SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D, "", true, true);
 		LegacyHelper.setCooldown(player, key, 0);
 	}
 
+	/** Stock execute is empty; cancel so tick spam cannot re-enter old morph logic. */
 	@Inject(method = "execute", at = @At("HEAD"), cancellable = true)
-	private void executeMorph(EntityPlayer player, CallbackInfo cir) {	
-		if (LegacyHelper.useAbility(player, getAssignedKey(player)) && !LegacyHelper.getLegacyClass(player).getWeaknesses(player) && !player.isInWater()) {
-//			boolean success = false;
-			VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
-			if(vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE) && vPlayer.getBoolean(PlayerKeys.IS_STARVING)) {
-				GeneralUtil.sendDebugMessage(player, new ChatComponentText("Still thirsty").setChatStyle(new ChatStyle().setBold(true).setColor(EnumChatFormatting.RED)));
-				cir.cancel();
-				return;
-
-			}
-			
-			
-			
-			NBTTagCompound nbt = player.getEntityData();
-			if(nbt.getInteger("isInCombat") == 1 && MorphHelper.isVampireBeast(player)) {
-				cir.cancel();
-				int combatSec = nbt.getInteger("isInCombatTimer") / 20;
-				GeneralUtil.sendDebugMessage(player, new ChatComponentText("Can't change in combat while in this form, timer: " + combatSec + "s").setChatStyle(new ChatStyle().setBold(true).setColor(EnumChatFormatting.RED)));
-				return;
-			}
-
-			
-			if(!MorphHelper.isWolf(player))
-				LegendsUtil.ifMorphedTurnHuman(player);
-			if(Loader.isModLoaded("witchery")) {
-				if(player.worldObj.isRemote) return;
-				cir.cancel();
-				if(!MorphHelper.isWolf(player)) {
-					if(WitcheryUtil.hasBloodPower(player, 0, .05F)) {
-						player.worldObj.playSoundAtEntity(player, "mob.wolf.howl", 1.0F, 1.0F);
-						MorphHelper.morph(player, MorphRegistry.wolf);
-					}
-				} else {
-					LegendsUtil.ifMorphedTurnHuman(player);
-				}
-
-			}
-			if(!(player instanceof EntityPlayerMP)) return;
-			if(player.worldObj.isRemote) return;
-
-			EntityPlayerMP playerMP = (EntityPlayerMP) player;
-			if(Loader.isModLoaded("Morph")) {
-				if (MorphUtil.isPlayerMorphed(playerMP)) {
-					MorphUtil.saveMorph(playerMP);
-					MorphUtil.forceDemorph(playerMP);
-				}
-				else if(MorphHelper.isWolf(playerMP)) {
-					MorphUtil.reMorphIntoLast(playerMP);
-				}
-			}
-			//			player.worldObj.playSoundAtEntity((Entity)player, "mob.wolf.howl", 2.0F, 1.0F);
-			SuspicionUtil.checkForSuspicionWitnesses(player, 5000, 12.0D, "", true, true);
-		}				
-
+	private void bvCancelExecute(EntityPlayer player, CallbackInfo ci) {
+		ci.cancel();
 	}
 }

@@ -8,6 +8,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
+import com.mrsand.StatBoostChanges.client.WitcheryApparelRender;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
@@ -67,17 +68,23 @@ public class LegendsVisualHandler {
             // Day/night Legends apparel force-swap (config: enableDayNightVampireApparel)
             if (!StatBoostConfig.enableDayNightVampireApparel) return;
 
+            // Do not replace worn Witchery vampire clothes with Apparel V1 — that path
+            // uses WitcheryApparelRender (Dracula coat) + lordDaylightShowVampireApparel.
+            if (WitcheryApparelRender.wearsWitcheryVampireChest(player)) {
+                return;
+            }
+
             // Prepare static armor pieces if not already initialized
             initializeVampireArmor();
 
             ItemStack[] realArmor = player.inventory.armorInventory;
             this.armorCache.put(player, Arrays.copyOf(realArmor, realArmor.length));
 
-            // Calendar daytime (+ sun-safe / vampire biomes as night), same as Witchery apparel
-            boolean daytime = VampireSunRules.isDaytime(player);
+            // True sunlight (shade keeps apparel), same gate as Witchery lord apparel.
+            boolean inSun = VampireSunRules.isInSunlight(player);
 
             for (int i = 0; i < realArmor.length; i++) {
-                if (daytime) {
+                if (inSun) {
                     realArmor[i] = null;
                 } else {
                     // Performance Fix: Reuses static ItemStacks instead of calling "new" 60+ times a second

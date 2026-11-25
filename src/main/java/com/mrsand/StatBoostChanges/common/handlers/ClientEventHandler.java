@@ -3,9 +3,11 @@ package com.mrsand.StatBoostChanges.common.handlers;
 import org.lwjgl.input.Keyboard;
 
 import com.mrsand.StatBoostChanges.StatBoostChanges;
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.client.CoffinCamera;
 import com.mrsand.StatBoostChanges.client.HypnosisBarHud;
 import com.mrsand.StatBoostChanges.common.packets.PacketCoffinPassDay;
+import com.mrsand.StatBoostChanges.common.packets.PacketTransvectionToggle;
 import com.mrsand.StatBoostChanges.util.CoffinDebug;
 import com.mrsand.StatBoostChanges.util.CoffinPoseDebug;
 import com.mrsand.StatBoostChanges.util.CoffinSleepUtil;
@@ -43,6 +45,10 @@ public class ClientEventHandler {
 
 	private boolean coffinJumpWasDown;
 	private long lastPassDayPacketMs;
+	/** Double-tap Space → transvection (creative-style). */
+	private boolean transvectionJumpWasDown;
+	private long lastTransvectionJumpMs;
+	private static final long TRANSVECTION_DOUBLE_TAP_MS = 350L;
 	/** Tracks nest membership for a one-shot standing restore on leave. */
 	private boolean wasInCoffin;
 	/** Re-assert standing eyeH/yOff for several ticks after leave (Legends sticks 0.12). */
@@ -111,6 +117,30 @@ public class ClientEventHandler {
 		CoffinDebug.log(p, "KEY Space while nested " + CoffinSleepUtil.describeNestState(p)
 				+ " closed=" + CoffinSleepUtil.isInClosedLegendsCoffin(p));
 		trySendPassDay(p);
+	}
+
+	/** Rising-edge Space for double-tap transvection (not while nested / GUI open). */
+	private void tickDoubleJumpTransvection(Minecraft mc, EntityPlayer p) {
+		if (!StatBoostConfig.enableDoubleJumpTransvection) {
+			transvectionJumpWasDown = false;
+			return;
+		}
+		if (PlayerHelper.isInCoffin(p) || mc.currentScreen != null) {
+			transvectionJumpWasDown = false;
+			return;
+		}
+		KeyBinding jump = mc.gameSettings.keyBindJump;
+		boolean jumpDown = jump.getIsKeyPressed() || Keyboard.isKeyDown(jump.getKeyCode());
+		if (jumpDown && !transvectionJumpWasDown) {
+			long now = System.currentTimeMillis();
+			if (now - lastTransvectionJumpMs <= TRANSVECTION_DOUBLE_TAP_MS) {
+				StatBoostChanges.network.sendToServer(new PacketTransvectionToggle());
+				lastTransvectionJumpMs = 0L;
+			} else {
+				lastTransvectionJumpMs = now;
+			}
+		}
+		transvectionJumpWasDown = jumpDown;
 	}
 
 	/** Before other LivingUpdate handlers: snapshot Y for leave-lift probe. */
@@ -201,6 +231,7 @@ public class ClientEventHandler {
 			} else {
 				coffinJumpWasDown = false;
 				slumberHintShown = false;
+				tickDoubleJumpTransvection(mc, p);
 				// Leave edge: offsets + noClip hold; leaveNestPhysics already snapped stand Y.
 				if (wasInCoffin) {
 					CoffinCamera.onLeave(p);

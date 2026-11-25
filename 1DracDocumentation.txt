@@ -1,6 +1,14 @@
 Castlevania Dracula ability slots (vampire lord BV powers)
 ==========================================================
 
+Netherite | Soul Soil | Netherite
+Soul Soil | Soul Soil | Soul Soil
+Netherite | Soul Soil | Netherite
+
+Coagulated Blood | Coagulated Blood | Coagulated Blood
+Coagulated Blood | Soul Catcher      | Coagulated Blood
+Coagulated Blood | Coagulated Blood | Coagulated Blood
+
 Lords assign each BV power to a Legends ability key. True Form swaps the
 effect/name on paired combat slots (same power, different move).
 

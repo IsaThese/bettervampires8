@@ -1,6 +1,2 @@
-Wolf Sounds need to follow master and have a configurable soundness. Already does with friendly.
-Wolf sound needs to be adjusted by about 1/2 quitter then. With config option as that as default.
-Config to use basic vampire apparel or your regular skin in daylight.
-By default use regular skin.
-Pressing space twice, like creative mode activates transvection ability.
-Bat sound config/change
+Transvection needs to disable double jump
+Buffing/Thinking around op items and defeating the queen.

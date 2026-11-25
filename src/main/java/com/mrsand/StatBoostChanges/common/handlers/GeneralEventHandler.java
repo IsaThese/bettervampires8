@@ -34,6 +34,7 @@ import com.mrsand.StatBoostChanges.util.DamageCalculator;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
+import com.mrsand.StatBoostChanges.util.LordWeather;
 import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
 import com.mrsand.StatBoostChanges.util.PlayerDataUtil;
@@ -144,6 +145,7 @@ public class GeneralEventHandler {
 
 		if (event.phase == Phase.END && !player.worldObj.isRemote && ModCompat.LEGENDS) {
 			LegendsUtil.tickMistDemist(player);
+			LordWeather.tickDaylightMist(player);
 		}
 
 		if (event.phase == Phase.END && player.worldObj != null && player.worldObj.isRemote) {

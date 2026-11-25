@@ -1,5 +1,8 @@
 package com.mrsand.StatBoostChanges.util;
 
+import java.util.List;
+
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
@@ -9,6 +12,7 @@ import com.tihyo.legends.abilities.LegendsAbilities;
 import com.tihyo.legends.abilities.timed.TimedAbility;
 import com.tihyo.legends.handlers.PowersHandler;
 import com.tihyo.legends.legacy.LegacyHelper;
+import com.tihyo.legends.legacy.LegacyPower;
 import com.tihyo.legends.legacy.LegacyRegistry;
 import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.management.properties.LegendsProperties;
@@ -227,7 +231,7 @@ public class LegendsUtil {
 	 */
 	public static boolean morphBat(EntityPlayer player, boolean transform) {
 		if (player == null || player.worldObj == null) return false;
-		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff", 3.0F, 1.0F);
+		// Sound plays once in toggleBatForm / exit path — avoid double takeoff on enter.
 		if (player.worldObj.isRemote) {
 			return true;
 		}
@@ -252,10 +256,17 @@ public class LegendsUtil {
 		// Disable: always allowed (day/sun must not trap the player as bat).
 		if (MorphHelper.isBat(player)) {
 			BatFormDebug.log(player, "morphBat(false)", "exit");
+			playBatTakeoff(player);
 			markBatFormForEject(player);
 			MorphHelper.morph(player, MorphRegistry.bat);
 		}
 		return true;
+	}
+
+	private static void playBatTakeoff(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return;
+		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff",
+				StatBoostConfig.batMorphVolume, 1.0F);
 	}
 
 
@@ -275,7 +286,7 @@ public class LegendsUtil {
 			return MorphHelper.isBat(player);
 		}
 
-		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff", 3.0F, 1.0F);
+		playBatTakeoff(player);
 
 		if (player instanceof EntityPlayerMP && Loader.isModLoaded("Morph")) {
 			EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -340,7 +351,7 @@ public class LegendsUtil {
 		} else {
 			ifMorphedTurnHuman(player);
 		}
-		player.worldObj.playSoundAtEntity((Entity) player, "mob.bat.takeoff", 3.0F, 1.0F);
+		playBatTakeoff(player);
 	}
 
 	/** Toggle Castlevania Dracula True Form morph. */
@@ -394,11 +405,31 @@ public class LegendsUtil {
 			PowersHandler.transvection(player, false);
 			player.getEntityData().removeTag("bvTrueFormTransvection");
 		}
+		player.getEntityData().removeTag(NBT_DOUBLE_JUMP_TRANSVECTION);
 	}
 
 	/**
-	 * Player-keyed Transvection hover (not BV true-form auto). Humanoid cancel rules
-	 * apply only here: keybind toggle-off / ability unequip — not right-click.
+	 * Drop active Transvection hover when sun/day weakness blocks powers
+	 * (toggle-on already gated; this clears hover that was started earlier).
+	 */
+	public static void clearTransvectionIfSunBlocked(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj == null) return;
+		if (!VampireSunRules.generalPowersBlocked(player)) return;
+		Object tv = LegendsProperties.TRANSVECTION.get(player);
+		boolean active = tv instanceof Boolean && ((Boolean) tv).booleanValue();
+		boolean tagged = player.getEntityData().getBoolean("bvTrueFormTransvection")
+				|| player.getEntityData().getBoolean(NBT_DOUBLE_JUMP_TRANSVECTION);
+		if (!active && !tagged) return;
+		PowersHandler.transvection(player, false);
+		player.getEntityData().removeTag("bvTrueFormTransvection");
+		player.getEntityData().removeTag(NBT_DOUBLE_JUMP_TRANSVECTION);
+	}
+
+	public static final String NBT_DOUBLE_JUMP_TRANSVECTION = "bvDoubleJumpTransvection";
+
+	/**
+	 * Player-keyed Transvection hover (not BV true-form auto or double-jump). Humanoid
+	 * cancel rules apply only here: keybind toggle-off / ability unequip — not right-click.
 	 */
 	public static boolean isHumanoidKeyedTransvectionHover(EntityPlayer player) {
 		if (!Loader.isModLoaded("legends") || player == null) return false;
@@ -406,6 +437,7 @@ public class LegendsUtil {
 		if (!(tv instanceof Boolean) || !((Boolean) tv).booleanValue()) return false;
 		if (MorphHelper.isDraculaTrueForm(player)) return false;
 		if (player.getEntityData().getBoolean("bvTrueFormTransvection")) return false;
+		if (player.getEntityData().getBoolean(NBT_DOUBLE_JUMP_TRANSVECTION)) return false;
 		return true;
 	}
 
@@ -415,6 +447,52 @@ public class LegendsUtil {
 		if (!isHumanoidKeyedTransvectionHover(player)) return;
 		if (isAbilityEquipped(player, "transvection")) return;
 		PowersHandler.transvection(player, false);
+	}
+
+	/** Learned or hotbar-assigned Transvection (double-jump does not require hotbar). */
+	public static boolean hasLearnedTransvection(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null) return false;
+		if (LegacyHelper.findAbility(player, "transvection") > 0) return true;
+		try {
+			List<?> learned = LegacyHelper.getLearnedPowers(player);
+			if (learned == null) return false;
+			for (Object o : learned) {
+				if (o instanceof LegacyPower
+						&& "transvection".equals(((LegacyPower) o).getName())) {
+					return true;
+				}
+			}
+		} catch (Throwable ignored) {
+		}
+		return false;
+	}
+
+	/**
+	 * Double-tap Space → toggle hover. Works from the ground; hotbar not required.
+	 * Toggle-off always allowed; toggle-on blocked by sun/weakness.
+	 */
+	public static void tryToggleDoubleJumpTransvection(EntityPlayer player) {
+		if (!StatBoostConfig.enableDoubleJumpTransvection) return;
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj == null) return;
+		if (player.worldObj.isRemote) return;
+		if (!isVampire(player) || !hasLearnedTransvection(player)) return;
+
+		Object tv = LegendsProperties.TRANSVECTION.get(player);
+		boolean active = tv instanceof Boolean && ((Boolean) tv).booleanValue();
+		if (active) {
+			PowersHandler.transvection(player, false);
+			player.getEntityData().removeTag(NBT_DOUBLE_JUMP_TRANSVECTION);
+			return;
+		}
+
+		if (VampireSunRules.generalPowersBlocked(player)) return;
+		if (LegacyHelper.getLegacyClass(player) != null
+				&& LegacyHelper.getLegacyClass(player).getWeaknesses(player)) {
+			return;
+		}
+
+		PowersHandler.transvection(player, true);
+		player.getEntityData().setBoolean(NBT_DOUBLE_JUMP_TRANSVECTION, true);
 	}
 
 	/** Castlevania Dracula teleport (Horror tick spawns EntityDraculaTeleport). */
@@ -550,7 +628,7 @@ public class LegendsUtil {
 		}
 
 		MorphHelper.morph(player, MorphRegistry.bat);
-		player.worldObj.playSoundAtEntity(player, "mob.bat.takeoff", 3.0F, 1.0F);
+		playBatTakeoff(player);
 		// isBat() can lag a tick after morph; treat successful morph call as success
 		return true;
 	}

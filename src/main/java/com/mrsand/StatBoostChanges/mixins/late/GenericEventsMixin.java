@@ -25,6 +25,7 @@ import com.emoniph.witchery.util.SoundEffect;
 import com.emoniph.witchery.util.TargetPointUtil;
 import com.emoniph.witchery.util.TimeUtil;
 import com.emoniph.witchery.util.TransformCreature;
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
@@ -101,7 +102,8 @@ public abstract class GenericEventsMixin {
 					}
 					vPlayer.syncClient();
 					player.addChatComponentMessage(new ChatComponentText("Your immortal vigor returns.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-					player.worldObj.playSoundAtEntity(player, "mob.wolf.howl", 1.0F, 1.0F);
+					player.worldObj.playSoundAtEntity(player, "mob.wolf.howl",
+							StatBoostConfig.wolfMorphVolume, 1.0F);
 				}
 			}
 			if (playerEx.isVampire()) {	

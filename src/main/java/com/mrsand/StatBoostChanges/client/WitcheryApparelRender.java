@@ -30,8 +30,8 @@ import net.minecraft.util.ResourceLocation;
  * Maps Witchery {@code ItemVampireClothes} render to Legends apparel:
  * chest/coat + cape via {@link ModelDracula} (head hidden); legs/boots via
  * Vampire Apparel V1. Helmet stays equipped for set bonuses but uses a hidden
- * ModelBiped. Lord + full set: coat/legs/boots hide during calendar daytime
- * (sun-safe / vampire biomes count as night — same as {@link VampireSunRules#isDaytime}).
+ * ModelBiped. Lord + full set: coat/legs/boots hide (or swap to Apparel V1) in
+ * true sunlight — same as {@link VampireSunRules#isInSunlight} / day-night V1.
  */
 @SideOnly(Side.CLIENT)
 public final class WitcheryApparelRender {
@@ -71,11 +71,23 @@ public final class WitcheryApparelRender {
 	}
 
 	/**
-	 * Vampire Lord + full Witchery set: hide coat during calendar daytime.
-	 * Uses {@link VampireSunRules#isDaytime} so sun-safe biomes (vampire forest /
-	 * ominous) keep the coat visible even when the world clock is day.
+	 * True sunlight exposure (brightness + sky), same as day/night Apparel V1.
+	 * Sun-safe biomes never count as sunlight. Calendar {@code isDay} is not used —
+	 * shade by day keeps the coat.
+	 */
+	private static boolean inSunlightForApparel(EntityPlayer player) {
+		return VampireSunRules.isInSunlight(player);
+	}
+
+	/**
+	 * Vampire Lord + full Witchery set in sunlight:
+	 * {@code lordDaylightShowVampireApparel=false} → hide (regular skin);
+	 * {@code true} → keep armor visible as basic Apparel V1 (not Dracula coat).
 	 */
 	private static boolean shouldHideForDaytime(EntityLivingBase entity) {
+		if (StatBoostConfig.lordDaylightShowVampireApparel) {
+			return false;
+		}
 		if (!(entity instanceof EntityPlayer) || !ModCompat.VAMPIRISM) {
 			return false;
 		}
@@ -83,7 +95,22 @@ public final class WitcheryApparelRender {
 		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
 			return false;
 		}
-		return VampireSunRules.isDaytime(player);
+		return inSunlightForApparel(player);
+	}
+
+	/** Config true + sunlight: chest/legs/boots use Apparel V1 instead of Dracula. */
+	private static boolean shouldUseBasicApparelInSunlight(EntityLivingBase entity) {
+		if (!StatBoostConfig.lordDaylightShowVampireApparel) {
+			return false;
+		}
+		if (!(entity instanceof EntityPlayer) || !ModCompat.VAMPIRISM) {
+			return false;
+		}
+		EntityPlayer player = (EntityPlayer) entity;
+		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
+			return false;
+		}
+		return inSunlightForApparel(player);
 	}
 
 	public static boolean wearsWitcheryVampireChest(EntityPlayer player) {
@@ -183,8 +210,19 @@ public final class WitcheryApparelRender {
 		}
 		int armorType = ((ItemArmor) stack.getItem()).armorType;
 
-		// Helmet always hidden; daytime lord+full set hides coat/legs/boots together.
+		// Helmet always hidden; sunlight + config false → regular skin.
 		if (armorType == 0 || shouldHideForDaytime(entity)) {
+			return HIDDEN;
+		}
+
+		// Sunlight + config true → basic Apparel V1 (not Dracula coat).
+		if (shouldUseBasicApparelInSunlight(entity)) {
+			if (armorType == 1) {
+				return getBasicChestModel(entity);
+			}
+			if (armorType == 2 || armorType == 3) {
+				return getLegsBootsModel(entity, armorType);
+			}
 			return HIDDEN;
 		}
 
@@ -195,6 +233,23 @@ public final class WitcheryApparelRender {
 			return getLegsBootsModel(entity, armorType);
 		}
 		return HIDDEN;
+	}
+
+	/** Apparel V1 chest (body + arms) for sunlight when cfg show-apparel is true. */
+	private static ModelBiped getBasicChestModel(EntityLivingBase entity) {
+		ModelBiped model = ClientProxy.getArmorModel(LEGENDS_APPAREL_V1_MODEL_ID);
+		if (model == null) {
+			return null;
+		}
+		setShow(model.bipedHead, false);
+		setShow(model.bipedHeadwear, false);
+		setShow(model.bipedBody, true);
+		setShow(model.bipedRightArm, true);
+		setShow(model.bipedLeftArm, true);
+		setShow(model.bipedRightLeg, false);
+		setShow(model.bipedLeftLeg, false);
+		applyCommonPose(model, entity, 1);
+		return model;
 	}
 
 	private static ModelBiped getChestModel(EntityLivingBase entity) {

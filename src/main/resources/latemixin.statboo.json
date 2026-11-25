@@ -54,6 +54,7 @@
       "legends.PowersHandlerMixin",
       "legends.RegisterBlocksMixin",
       "legends.RegisterHorrorBlocksMixin",
+      "legends.StatusAcrobaticsMixin",
       
       "RenderHandlerMixin",
       

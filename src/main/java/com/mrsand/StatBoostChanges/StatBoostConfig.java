@@ -68,6 +68,30 @@ public class StatBoostConfig {
 	/** Sneak while misted (negative = sink). */
 	public static double mistSinkSpeed = -0.4D;
 
+	/**
+	 * Volume for {@code mob.wolf.howl} on wolf morph / immortal vigor.
+	 * Default {@code 0.5} is half of the old hard-coded {@code 1.0}.
+	 */
+	public static float wolfMorphVolume = 0.5F;
+
+	/**
+	 * Volume for {@code mob.bat.takeoff} on bat morph.
+	 * Default {@code 2.4} is about 2 dB below the old hard-coded {@code 3.0}.
+	 */
+	public static float batMorphVolume = 2.4F;
+
+	/**
+	 * When false (default), Vampire Lord + full Witchery set hides the coat in
+	 * true sunlight (regular skin; shade keeps Dracula coat). When true, basic
+	 * Apparel V1 stays visible in sunlight instead of the Dracula coat.
+	 */
+	public static boolean lordDaylightShowVampireApparel = false;
+
+	/**
+	 * When true, double-tapping Space toggles Legends transvection (like creative fly).
+	 */
+	public static boolean enableDoubleJumpTransvection = true;
+
 	public static void load(File configFile) {
 		config = new Configuration(configFile);
 		sync();
@@ -81,7 +105,7 @@ public class StatBoostConfig {
 				"enableDayNightVampireApparel",
 				"visual",
 				false,
-				"When true, vampires get Legends apparel day/night visuals (chest at night/shade, hidden in sunlight). When false, worn armor (e.g. Witchery clothes) renders normally.");
+				"When true, vampires get Legends apparel day/night visuals (chest at night/shade, hidden in true sunlight via VampireSunRules.isInSunlight). When false, worn armor (e.g. Witchery clothes) renders normally.");
 		witcheryVampireCapeStyle = config.getInt(
 				"witcheryVampireCapeStyle",
 				"visual",
@@ -103,7 +127,7 @@ public class StatBoostConfig {
 				"removeLegacyDaywalker",
 				"legacy",
 				true,
-				"When true, removes Legends Daywalker from vampire legacies. Non-lords: sunlight blocks powers + burn/nausea. Lords: no sun burn, but daytime blocks powers except rain/mist under a roof.");
+				"When true, removes Legends Daywalker from vampire legacies. Non-lords: sunlight blocks powers + burn/nausea. Lords: no sun burn; daytime blocks powers except mist + weather under a roof or while raining, plus fangs/bite/blood vision.");
 		bvAccurateSunDamage = config.getBoolean(
 				"bvAccurateSunDamage",
 				"legacy",
@@ -130,6 +154,30 @@ public class StatBoostConfig {
 		} else if (vampireEyesGlow > 1.0F) {
 			vampireEyesGlow = 1.0F;
 		}
+		lordDaylightShowVampireApparel = config.getBoolean(
+				"lordDaylightShowVampireApparel",
+				"visual",
+				false,
+				"When false, Vampire Lord with full Witchery vampire clothes shows regular skin in true sunlight (coat hidden; shade keeps Dracula coat). When true, basic Apparel V1 stays visible in sunlight instead of the Dracula coat.");
+		enableDoubleJumpTransvection = config.getBoolean(
+				"enableDoubleJumpTransvection",
+				"gameplay",
+				true,
+				"When true, double-tapping Space toggles Legends transvection (must have learned the ability; hotbar not required).");
+		wolfMorphVolume = (float) config.get(
+				"sound",
+				"wolfMorphVolume",
+				0.5D,
+				"Volume for wolf morph / immortal vigor howl (mob.wolf.howl). Default 0.5 is half of the old 1.0.")
+				.getDouble(0.5D);
+		batMorphVolume = (float) config.get(
+				"sound",
+				"batMorphVolume",
+				2.4D,
+				"Volume for bat morph takeoff (mob.bat.takeoff). Default 2.4 is about 2 dB below the old 3.0.")
+				.getDouble(2.4D);
+		wolfMorphVolume = clampVolume(wolfMorphVolume);
+		batMorphVolume = clampVolume(batMorphVolume);
 		// Mist speeds: tune field defaults above for now (skip .cfg override).
 //		mistHorizontalSpeed = config.get(
 //				"mist",
@@ -154,5 +202,11 @@ public class StatBoostConfig {
 		if (config.hasChanged()) {
 			config.save();
 		}
+	}
+
+	private static float clampVolume(float v) {
+		if (v < 0.0F) return 0.0F;
+		if (v > 4.0F) return 4.0F;
+		return v;
 	}
 }

@@ -47,7 +47,7 @@ public abstract class DefaultSkill implements ISkill {
 				lord = vampire.isVampireLord();
 			}
 			if (lord && VampireSunRules.generalPowersBlocked(player)) {
-				// Daytime lords: only weather + mist (those subclasses override / canBeUsedBy)
+				// Daytime lords: pie only weather + mist (canStart* also requires roof or rain)
 				if (!(this instanceof ChangeWeatherSkill) && !(this instanceof InvisibilitySkill)) {
 					return -2;
 				}

@@ -12,6 +12,7 @@ import com.mrsand.StatBoostChanges.common.packets.PacketClearDeathScreen;
 import com.mrsand.StatBoostChanges.common.packets.PacketCoffinPassDay;
 import com.mrsand.StatBoostChanges.common.packets.PacketHypnosisToggle;
 import com.mrsand.StatBoostChanges.common.packets.PacketSyncTarget;
+import com.mrsand.StatBoostChanges.common.packets.PacketTransvectionToggle;
 import com.mrsand.StatBoostChanges.common.packets.PacketVignette;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket;
 import com.mrsand.StatBoostChanges.common.packets.VExtendedPlayerPacket.SyncVExtendedPlayerHandler;
@@ -77,6 +78,7 @@ public class StatBoostChanges {
 		network.registerMessage(PacketCoffinPassDay.Handler.class, PacketCoffinPassDay.class, 6, Side.SERVER);
 		network.registerMessage(PacketHypnosisToggle.Handler.class, PacketHypnosisToggle.class, 7, Side.SERVER);
 		network.registerMessage(PacketClearDeathScreen.Handler.class, PacketClearDeathScreen.class, 8, Side.CLIENT);
+		network.registerMessage(PacketTransvectionToggle.Handler.class, PacketTransvectionToggle.class, 9, Side.SERVER);
 
 		GeneralEventHandler handler = new GeneralEventHandler();
 		MinecraftForge.EVENT_BUS.register(handler);

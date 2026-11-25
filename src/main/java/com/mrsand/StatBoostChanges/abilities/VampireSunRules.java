@@ -28,7 +28,7 @@ public final class VampireSunRules {
 
 	private static final Logger LOG = LogManager.getLogger("BetterVampires.SunRules");
 	/** Set true temporarily to spam pie/canUse diagnostics into latest.log */
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	private static int debugThrottle;
 
 	private VampireSunRules() {}
@@ -86,8 +86,32 @@ public final class VampireSunRules {
 	}
 
 	/**
+	 * True when overworld weather is raining (vanilla WorldInfo / {@code world.isRaining()}).
+	 * Used only for the mist/weather daytime allowlist — not for unlocking all lord powers.
+	 */
+	public static boolean isRainingForPowers(EntityPlayer player) {
+		if (player == null || player.worldObj == null) return false;
+		try {
+			if (player.worldObj.isRaining()) return true;
+			return com.mrsand.StatBoostChanges.util.LordWeather.isStorming(player.worldObj);
+		} catch (Throwable t) {
+			return false;
+		}
+	}
+
+	/**
+	 * Lord daytime shade for mist/weather only: under a roof <em>or</em> raining
+	 * (open sky in the rain counts like shade for those two skills).
+	 */
+	public static boolean lordDaytimeShade(EntityPlayer player) {
+		return !canSeeSky(player) || isRainingForPowers(player);
+	}
+
+	/**
 	 * General Legends/Vampirism powers may not start (and morphs/fury should strip).
-	 * Lords: any calendar daytime. Non-lords: true sunlight.
+	 * Lords: any calendar daytime (rain does <em>not</em> unlock morphs/fury/etc.).
+	 * Mist + weather stay available via {@link #canStartMist} / {@link #canStartWeather}
+	 * and pie exemptions. Non-lords: true sunlight.
 	 */
 	public static boolean generalPowersBlocked(EntityPlayer player) {
 		if (!isEnabled() || player == null) return false;
@@ -102,12 +126,15 @@ public final class VampireSunRules {
 		}
 	}
 
-	/** Start mist: non-lord needs shade; lord needs night or under roof. */
+	/**
+	 * Start mist: non-lord needs shade; lord needs night, under roof, or rain
+	 * (same shade rule as weather — not full daytime power unlock).
+	 */
 	public static boolean canStartMist(EntityPlayer player) {
 		if (!isEnabled() || player == null) return true;
 		try {
 			if (DaywalkerControl.isVampireLord(player)) {
-				return !isDaytime(player) || !canSeeSky(player);
+				return !isDaytime(player) || lordDaytimeShade(player);
 			}
 			return !isInSunlight(player);
 		} catch (Throwable t) {
@@ -116,14 +143,17 @@ public final class VampireSunRules {
 		}
 	}
 
-	/** Change weather (rain): lords only; night or under roof by day. */
+	/**
+	 * Change weather: lords — night, under roof by day, or already raining
+	 * (so the skill can clear/toggle outdoors once the storm is up).
+	 */
 	public static boolean canStartWeather(EntityPlayer player) {
 		if (!isEnabled() || player == null) return true;
 		try {
 			if (!DaywalkerControl.isVampireLord(player)) {
 				return !isInSunlight(player);
 			}
-			return !isDaytime(player) || !canSeeSky(player);
+			return !isDaytime(player) || lordDaytimeShade(player);
 		} catch (Throwable t) {
 			LOG.warn("[SunRules] canStartWeather failed: {}", t.toString());
 			return true;
@@ -147,7 +177,7 @@ public final class VampireSunRules {
 
 	/**
 	 * Bat form may not start during calendar daytime (sun-safe biomes count as night via
-	 * {@link #isDaytime}). Demorph is never blocked by this.
+	 * {@link #isDaytime}). Rain does not unlock bat. Demorph is never blocked by this.
 	 */
 	public static boolean batFormBlocked(EntityPlayer player) {
 		if (!isEnabled() || player == null) return false;
@@ -161,7 +191,8 @@ public final class VampireSunRules {
 
 	/**
 	 * LegendsAbilitiesPacket blocks every key when {@code getWeaknesses} is true.
-	 * Return true to let that key through anyway (fangs / bite / mist under roof).
+	 * Daytime under roof / in rain allowlist (lords): mist only among morphs.
+	 * Always allowed (like original BV): fangs, bite, blood vision; bat key for demorph.
 	 * <p>
 	 * Packet {@code keyTag} is <em>not</em> always the ability slot:
 	 * 0→1, 1→2, 2→3, 3→6, 4→4, 5→5, 6→7 (see LegendsAbilitiesPacket.receive).
@@ -180,8 +211,10 @@ public final class VampireSunRules {
 			if (power == null) return false;
 			String name = power.getName();
 			if (name == null) return false;
+			// Always usable in sun/day (not shade-gated)
 			if ("fangs".equals(name) || "fangs2".equals(name)
-					|| "vampireBite".equals(name) || "bvVampireBite".equals(name)) {
+					|| "vampireBite".equals(name) || "bvVampireBite".equals(name)
+					|| "bloodVision".equals(name)) {
 				if (DEBUG) {
 					LOG.info("[SunRules] allow keyTag={} slot={} power={}", keyTag, slot, name);
 				}
@@ -191,6 +224,7 @@ public final class VampireSunRules {
 			if ("morphBat".equals(name)) {
 				return true;
 			}
+			// Mist: night, under roof, or raining (same as canStartMist / pie InvisibilitySkill)
 			if ("morpMist".equals(name)) {
 				return canStartMist(player);
 			}
