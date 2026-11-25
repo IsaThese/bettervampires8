@@ -159,6 +159,7 @@ bin/
 
 # Scratch javap/decompile/research dumps from dependency jars (local only)
 .tmp_*/
+tmp_decompile/
 
 # Built jars stay out of git. Dependency jars in lib/ are tracked with Git LFS (private repo).
 *.jar
