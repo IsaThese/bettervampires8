@@ -6,10 +6,11 @@ import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.common.ExtendedVillager;
 import com.emoniph.witchery.util.CreatureUtil;
 import com.mrsand.StatBoostChanges.ModCompat;
+import com.mrsand.StatBoostChanges.StatBoostChanges;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager.VillagerKeys;
+import com.mrsand.StatBoostChanges.common.packets.PacketClearDeathScreen;
 import com.mrsand.StatBoostChanges.util.SuspicionUtil;
-import com.mrsand.StatBoostChanges.util.VampireDeathDebug;
 import com.mrsand.StatBoostChanges.util.VisualUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 import de.teamlapen.vampirism.entity.player.VampirePlayer;
@@ -22,6 +23,8 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.S06PacketUpdateHealth;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
@@ -49,13 +52,12 @@ public class WitcheryEventHandler {
 		ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 		if (playerEx == null || !playerEx.isVampire()) return;
 
-		VampireDeathDebug.log(player, "LIVING_DEATH_ENTER", event.source);
-
 		// Mirror Witchery: if health already restored, just cancel
 		if (player.getHealth() > 0.0F) {
 			event.setCanceled(true);
 			player.isDead = false;
-			VampireDeathDebug.log(player, "CANCEL_ALREADY_ALIVE", event.source);
+			player.deathTime = 0;
+			syncAliveAfterVampireSave(player);
 			return;
 		}
 
@@ -65,9 +67,24 @@ public class WitcheryEventHandler {
 			player.isDead = false;
 			player.deathTime = 0;
 			player.getEntityData().setBoolean(NBT_VAMPIRE_DEATH_SAVED, true);
-			VampireDeathDebug.log(player, "CANCEL_SAVED", event.source);
-		} else {
-			VampireDeathDebug.log(player, "DEATH_ALLOWED", event.source);
+			syncAliveAfterVampireSave(player);
+		}
+	}
+
+	/** Push HP/food + clear-death packet so GuiGameOver does not flash after a cancelled death. */
+	private static void syncAliveAfterVampireSave(EntityPlayer player) {
+		if (!(player instanceof EntityPlayerMP)) return;
+		EntityPlayerMP mp = (EntityPlayerMP) player;
+		mp.isDead = false;
+		mp.deathTime = 0;
+		try {
+			// Suppress GuiGameOver first, then heal — S06(0) from the hit can race ahead.
+			StatBoostChanges.network.sendTo(new PacketClearDeathScreen(), mp);
+			mp.playerNetServerHandler.sendPacket(new S06PacketUpdateHealth(
+					mp.getHealth(),
+					mp.getFoodStats().getFoodLevel(),
+					mp.getFoodStats().getSaturationLevel()));
+		} catch (Throwable ignored) {
 		}
 	}
 

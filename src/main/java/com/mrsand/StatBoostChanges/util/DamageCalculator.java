@@ -43,14 +43,12 @@ public class DamageCalculator {
     }
 
     /**
-     * True when Vampire Lord clothes soft-cap may apply: living attacker, not
-     * fire/starve/drown/void/sun.
+     * True when Vampire Lord clothes soft-cap may apply: combat hits (living
+     * attacker, projectile source, or explosion — OreSpawn Queen jump blasts
+     * have null getEntity()), not fire/starve/drown/void/sun.
      */
     public static boolean shouldCapVampireLordIncoming(DamageSource source) {
         if (source == null) {
-            return false;
-        }
-        if (!(source.getEntity() instanceof EntityLivingBase)) {
             return false;
         }
         if (source.isFireDamage()) {
@@ -63,6 +61,20 @@ public class DamageCalculator {
         if ("sun".equals(source.damageType)) {
             return false;
         }
-        return true;
+        if (source.getEntity() instanceof EntityLivingBase) {
+            return true;
+        }
+        if (source.getSourceOfDamage() instanceof EntityLivingBase) {
+            return true;
+        }
+        // OreSpawn Queen/King jump blasts: DamageSource.setExplosion(), entity null
+        if (source.isExplosion()) {
+            return true;
+        }
+        String type = source.damageType;
+        if ("thrown".equals(type) || "explosion".equals(type) || "explosion.player".equals(type) || "mob".equals(type)) {
+            return true;
+        }
+        return false;
     }
 }

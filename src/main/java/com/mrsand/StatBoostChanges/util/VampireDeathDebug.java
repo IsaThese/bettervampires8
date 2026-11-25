@@ -18,8 +18,8 @@ import net.minecraft.util.EnumChatFormatting;
  *   -Dstatboo.debugVampireDeath=true
  * CurseForge: instance → Settings (gear) → Java Settings → Additional Arguments.
  *
- * Expect: server SAVE/CANCEL with hp restored while client may log TICK_DESYNC
- * (GuiGameOver up, hp still &gt; 0).
+ * Also clears a stuck GuiGameOver after CANCEL_SAVED when hp is already restored
+ * (fallback alongside {@code PacketClearDeathScreen}).
  */
 public final class VampireDeathDebug {
 
@@ -37,15 +37,15 @@ public final class VampireDeathDebug {
 	}
 
 	public static void announceIfNeeded(EntityPlayer player) {
-		if (!ENABLED || announced || player == null || player.worldObj == null) return;
+		if (!enabled() || announced || player == null || player.worldObj == null) return;
 		if (!player.worldObj.isRemote) return;
 		announced = true;
-		LOG.info("VampireDeath debug enabled via -Dstatboo.debugVampireDeath=true");
+		LOG.info("VampireDeath debug ON (-Dstatboo.debugVampireDeath)");
 		chat(player, "VampireDeath debug ON (desync/SAVE in latest.log)");
 	}
 
 	public static void log(EntityPlayer player, String note, DamageSource source) {
-		if (!ENABLED || player == null) return;
+		if (!enabled() || player == null) return;
 		LOG.info(format(player, note, source));
 	}
 
@@ -55,7 +55,7 @@ public final class VampireDeathDebug {
 
 	/** Sparse chat + log for important SAVE/desync events. */
 	public static void logImportant(EntityPlayer player, String note, DamageSource source) {
-		if (!ENABLED || player == null) return;
+		if (!enabled() || player == null) return;
 		String line = format(player, note, source);
 		LOG.info(line);
 		if (player.worldObj != null && player.worldObj.isRemote) {
@@ -64,27 +64,63 @@ public final class VampireDeathDebug {
 		}
 	}
 
+	public static void logData(EntityPlayer player, String note, DamageSource source, String hypothesisId, String extraJson) {
+		if (!enabled() || player == null) return;
+		LOG.info(format(player, note, source) + " [" + hypothesisId + "] extra=" + extraJson);
+	}
+
 	/**
-	 * Client END tick: death GUI or isDead/deathTime while hp &gt; 0.
-	 * Throttled to avoid multi-hit spam.
+	 * Client END tick: clear stuck GuiGameOver after vampire CANCEL_SAVED.
+	 * Desync chat only when debug is enabled.
 	 */
 	public static void tickClient(EntityPlayer player) {
-		if (!ENABLED || player == null || player.worldObj == null || !player.worldObj.isRemote) return;
-		announceIfNeeded(player);
+		if (player == null || player.worldObj == null || !player.worldObj.isRemote) return;
 		if (!GeneralUtil.isVampire(player)) return;
 
 		boolean gameOver = isGameOverScreen();
 		boolean hpAlive = player.getHealth() > 0.0F;
 		boolean flagDead = player.isDead || player.deathTime > 0;
-		boolean desync = (gameOver && hpAlive) || (flagDead && hpAlive);
+		if (gameOver && hpAlive) {
+			clearGameOverScreen(player);
+			if (enabled()) {
+				logImportant(player, "CLEARED_DESYNC_GUI", null);
+			}
+			return;
+		}
+		if (!enabled()) return;
+		announceIfNeeded(player);
+		boolean desync = flagDead && hpAlive;
 		if (!desync) return;
-		// Throttle multi-hit spam; chat only every DESYNC_CHAT_INTERVAL.
 		if (player.ticksExisted % 10 != 0) return;
 		String note = "TICK_DESYNC guiOver=" + gameOver;
 		if (player.ticksExisted % DESYNC_CHAT_INTERVAL == 0) {
 			logImportant(player, note, null);
 		} else {
 			log(player, note, null);
+		}
+	}
+
+	private static void clearGameOverScreen(EntityPlayer player) {
+		try {
+			player.isDead = false;
+			player.deathTime = 0;
+			Class<?> mcClass = Class.forName("net.minecraft.client.Minecraft");
+			Object mc = null;
+			try {
+				mc = mcClass.getMethod("func_71410_x").invoke(null);
+			} catch (Throwable ignored) {
+			}
+			if (mc == null) {
+				mc = mcClass.getMethod("getMinecraft").invoke(null);
+			}
+			if (mc == null) return;
+			Class<?> guiClass = Class.forName("net.minecraft.client.gui.GuiScreen");
+			try {
+				mcClass.getMethod("func_147108_a", guiClass).invoke(mc, new Object[] { null });
+			} catch (Throwable t) {
+				mcClass.getMethod("displayGuiScreen", guiClass).invoke(mc, new Object[] { null });
+			}
+		} catch (Throwable ignored) {
 		}
 	}
 

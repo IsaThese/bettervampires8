@@ -90,9 +90,15 @@ public abstract class GenericEventsMixin {
 				if(playerEx.getBloodPower() > (int)playerEx.getMaxBloodPower()*.8) {
 					//Forces player to eat a villager?
 					vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, false);
-					//Unsure why this was canceled?
-					if(LegendsUtil.isVampireBeast(player))
+					boolean wasTrue = LegendsUtil.isDraculaTrueForm(player);
+					boolean wasBeast = LegendsUtil.isVampireBeast(player);
+					// TF enter sets vulnerable; vigor must demorph TF as well as beast.
+					if (wasTrue || wasBeast) {
+						if (wasTrue) {
+							LegendsUtil.clearTrueFormTransvection(player);
+						}
 						LegendsUtil.ifMorphedTurnHuman(player);
+					}
 					vPlayer.syncClient();
 					player.addChatComponentMessage(new ChatComponentText("Your immortal vigor returns.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 					player.worldObj.playSoundAtEntity(player, "mob.wolf.howl", 1.0F, 1.0F);

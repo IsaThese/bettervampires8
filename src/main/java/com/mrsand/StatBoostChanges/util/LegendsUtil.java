@@ -629,59 +629,79 @@ public class LegendsUtil {
 
 	public static boolean checkForVampireDeath(EntityPlayer player, Integer bloodPower, Integer maxBloodPower, boolean isInSunlight) {
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
-		int criticalBlood = 300;
+		// Flat 300 never fired for high-max vampires (Queen logs: 13x not_low_blood at 473–2999).
+		int criticalBlood = Math.max(300, maxBloodPower / 4);
 		boolean lowBlood = bloodPower > 0 && bloodPower < criticalBlood;
 		boolean vulnerable = vPlayer.getBoolean(PlayerKeys.IS_VULNERABLE);
+		boolean inTrue = MorphHelper.isDraculaTrueForm(player);
+		boolean inBeast = MorphHelper.isVampireBeast(player);
+		boolean tfEquipped = isAbilityEquipped(player, "bvTrueForm");
+		boolean hasTf = VampireRestoredAbilities.hasTrueForm(player);
 
 		// Already in True Form under threshold: hotbar gates exit vs stay+warn.
-		if (lowBlood && MorphHelper.isDraculaTrueForm(player) && !isInSunlight && !vulnerable) {
-			vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
-			vPlayer.syncClient();
-			if (isAbilityEquipped(player, "bvTrueForm")) {
+		// Return true so CreatureUtil sets blood to 25% max (not -300 → instant empty).
+		// Allow auto-exit even if vulnerable was set on a prior save (Queen multi-hit).
+		if (lowBlood && inTrue && !isInSunlight && (!vulnerable || !tfEquipped)) {
+			if (tfEquipped) {
+				if (!vulnerable) {
+					vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+					vPlayer.syncClient();
+				}
 				player.addChatComponentMessage(
 						new ChatComponentText("Your thirst is critical — leave true form or feed.")
 						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-			} else {
-				clearTrueFormTransvection(player);
-				ifMorphedTurnHuman(player);
-				if (LegacyHelper.findAbility(player, "morpMist") != 0
-						|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
-					PowersHandler.mistForm(player, 12);
-				}
-				player.addChatComponentMessage(
-						new ChatComponentText("You are extremely thirsty.")
-						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+				return true;
 			}
-			return false;
+			clearTrueFormTransvection(player);
+			ifMorphedTurnHuman(player);
+			if (!vulnerable) {
+				vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+				vPlayer.syncClient();
+			}
+			if (LegacyHelper.findAbility(player, "morpMist") != 0
+					|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
+				PowersHandler.mistForm(player, 12);
+			}
+			player.addChatComponentMessage(
+					new ChatComponentText("You are extremely thirsty.")
+					.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+			return true;
 		}
 
 		// Already in Demonic Form under threshold: hotbar gates exit vs stay+warn.
-		if (lowBlood && MorphHelper.isVampireBeast(player) && !isInSunlight && !vulnerable) {
-			vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
-			vPlayer.syncClient();
-			if (isAbilityEquipped(player, "bvDemonicForm")) {
+		if (lowBlood && inBeast && !isInSunlight && (!vulnerable || !isAbilityEquipped(player, "bvDemonicForm"))) {
+			boolean beastEquipped = isAbilityEquipped(player, "bvDemonicForm");
+			if (beastEquipped) {
+				if (!vulnerable) {
+					vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+					vPlayer.syncClient();
+				}
 				player.addChatComponentMessage(
 						new ChatComponentText("Your thirst is critical — leave demonic form or feed.")
 						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-			} else {
-				ifMorphedTurnHuman(player);
-				if (LegacyHelper.findAbility(player, "morpMist") != 0
-						|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
-					PowersHandler.mistForm(player, 12);
-				}
-				player.addChatComponentMessage(
-						new ChatComponentText("You are extremely thirsty.")
-						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+				return true;
 			}
-			return false;
+			ifMorphedTurnHuman(player);
+			if (!vulnerable) {
+				vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+				vPlayer.syncClient();
+			}
+			if (LegacyHelper.findAbility(player, "morpMist") != 0
+					|| LegacyHelper.findAbility(player, "morphVampireMist") != 0) {
+				PowersHandler.mistForm(player, 12);
+			}
+			player.addChatComponentMessage(
+					new ChatComponentText("You are extremely thirsty.")
+					.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+			return true;
 		}
 
 		// First-time low-blood morph — no hotbar required.
 		if (lowBlood && !isInSunlight && !vulnerable
-				&& !MorphHelper.isVampireBeast(player)
-				&& !MorphHelper.isDraculaTrueForm(player)) {
+				&& !inBeast
+				&& !inTrue) {
 
-			if (VampireRestoredAbilities.hasTrueForm(player)) {
+			if (hasTf) {
 				if (MorphHelper.isMorphed(player)) {
 					ifMorphedTurnHuman(player);
 				}
@@ -696,6 +716,11 @@ public class LegendsUtil {
 						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 				player.getEntityData().setInteger("isInCombat", 1);
 				player.getEntityData().setInteger("isInCombatTimer", 1200);
+				// Vulnerable so feeding to 80% can fire "immortal vigor returns".
+				if (!vulnerable) {
+					vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+					vPlayer.syncClient();
+				}
 				return true;
 			}
 			if (VampireRestoredAbilities.hasDemonicForm(player)) {
@@ -709,6 +734,10 @@ public class LegendsUtil {
 						.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 				player.getEntityData().setInteger("isInCombat", 1);
 				player.getEntityData().setInteger("isInCombatTimer", 1200);
+				if (!vulnerable) {
+					vPlayer.setBoolean(PlayerKeys.IS_VULNERABLE, true);
+					vPlayer.syncClient();
+				}
 				return true;
 			}
 			if (LegacyHelper.findAbility(player, "morpMist") != 0

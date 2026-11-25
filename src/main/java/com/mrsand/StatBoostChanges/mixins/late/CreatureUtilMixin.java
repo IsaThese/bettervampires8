@@ -14,7 +14,6 @@ import com.emoniph.witchery.util.SoundEffect;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
-import com.mrsand.StatBoostChanges.util.VampireDeathDebug;
 import com.mrsand.StatBoostChanges.util.VampirismUtil;
 import com.mrsand.StatBoostChanges.util.WitcheryUtil;
 
@@ -43,9 +42,6 @@ public abstract class CreatureUtilMixin {
 		cir.cancel();
 		boolean dead = false;
 		if (creature == null || source == null) cir.setReturnValue(true);;
-		if (creature instanceof EntityPlayer) {
-			VampireDeathDebug.log((EntityPlayer) creature, "CHECK_ENTER hp=" + creature.getHealth(), source);
-		}
 		if (!(creature instanceof EntityPlayer)) {
 			if (source.isFireDamage() || source instanceof EntityUtil.DamageSourceVampireFire) { // func_76347_k
 				if (ItemVampireClothes.isExtendedFlameProtectionActive(creature)) {
@@ -73,28 +69,25 @@ public abstract class CreatureUtilMixin {
 		} else if (creature instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) creature;
 			ExtendedPlayer playerEx = ExtendedPlayer.get(player);
-//			GeneralUtil.sendDebugMessage(player, "Death Damage is: " + source.getDamageType());
-			if(source == DamageSource.starve) {
+			boolean canKill = Witchery.modHooks.canVampireBeKilled(player);
+			if (source == DamageSource.starve) {
 				dead = false;
-			}
-			else if (source == DamageSource.outOfWorld || source == DamageSource.inWall) {
+			} else if (source == DamageSource.outOfWorld || source == DamageSource.inWall) {
 				dead = true;
 			} else if (source instanceof EntityUtil.DamageSourceSunlight) {
 				dead = true;
-			} else if (Witchery.modHooks.canVampireBeKilled(player)) {
+			} else if (canKill) {
 				dead = true;
 			} else if (playerEx.getBloodPower() == 0 && playerEx.getVampireLevel() == 1) {
 				dead = true;
-			} else if (LegendsUtil.getWeakness(player) || CreatureUtil.isInSunlight(player)) {
-				playerEx.setBloodPower(Math.max(0, 
-						playerEx.getBloodPower() - (int)(playerEx.getMaxBloodPower() * (3.0 / 9.0))));
 			}
+			// Do NOT sun_drain on lava/Queen/etc. Dim 80 open sky makes
+			// CreatureUtil.isInSunlight true and emptied blood + blocked TF.
 		}
 
 		if (!dead) {
 			if (creature instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) creature;
-				VampireDeathDebug.log(player, "SAVE_BRANCH dead=false", source);
 				((EntityPlayer) creature).getFoodStats().addStats(0, 5.0F); // func_71024_bL, func_75113_a
 				player.setHealth(player.getMaxHealth());
 				ExtendedPlayer playerEx = ExtendedPlayer.get(player);
@@ -112,7 +105,10 @@ public abstract class CreatureUtilMixin {
 					int bloodPower = playerEx.getBloodPower();
 					int maxBlood = playerEx.getMaxBloodPower();
 
-					if(Loader.isModLoaded("legends") && LegendsUtil.checkForVampireDeath(player, bloodPower, maxBlood, CreatureUtil.isInSunlight(creature))) {
+					// Only treat true sun damage as "in sunlight" for TF gating — open-sky
+					// dims (Queen/OreSpawn 80) report isInSunlight during lava/melee too.
+					boolean sunDeath = source instanceof EntityUtil.DamageSourceSunlight;
+					if(Loader.isModLoaded("legends") && LegendsUtil.checkForVampireDeath(player, bloodPower, maxBlood, sunDeath)) {
 						playerEx.setBloodPower((int) Math.round(playerEx.getMaxBloodPower() * .25)); //.333 or .5? //.35 causes it to go back
 					}
 					else {
@@ -122,7 +118,6 @@ public abstract class CreatureUtilMixin {
 
 					if (source.isExplosion() && creature.worldObj.rand.nextInt(4) == 0) // func_94541_c
 						creature.setFire(2); // func_70015_d
-					VampireDeathDebug.log(player, "SAVE_OK return=false", source);
 					cir.setReturnValue(false);
 					return;
 				}
@@ -130,12 +125,10 @@ public abstract class CreatureUtilMixin {
 					WitcheryUtil.decreaseVampireLevel(player);
 					WitcheryUtil.decreaseVampireLevel(player);
 					WitcheryUtil.decreaseVampireLevel(player);
-					VampireDeathDebug.log(player, "SAVE_LEVEL_DROP return=false", source);
 					cir.setReturnValue(false);
 					return;
 				}
 				if(source == DamageSource.starve) {
-					VampireDeathDebug.log(player, "SAVE_STARVE return=false", source);
 					cir.setReturnValue(false);
 				}
 
@@ -144,17 +137,9 @@ public abstract class CreatureUtilMixin {
 		}
 		else if (dead && (creature instanceof EntityPlayer)) {
 			EntityPlayer player = (EntityPlayer) creature;
-			VampireDeathDebug.log(player, "TRUE_DEATH dead=true", source);
-			//			WitcheryUtil.decreaseVampireLevel(player);
-			//			WitcheryUtil.decreaseVampireLevel(player);
-			//			WitcheryUtil.decreaseVampireLevel(player);
-			//			GeneralUtil.sendDebugMessage(player, "you died");
 			VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 			vPlayer.setInteger(PlayerKeys.SUSPICION, 0);
 			vPlayer.sync();
-		}
-		if (creature instanceof EntityPlayer) {
-			VampireDeathDebug.log((EntityPlayer) creature, "CHECK_EXIT return=true", source);
 		}
 		cir.setReturnValue(true);
 	}

@@ -69,6 +69,7 @@ public class StatBoostCore implements IEarlyMixinLoader, IFMLLoadingPlugin {
 		}
 		// GTNH IEarlyMixinLoader only applies mixins returned here — JSON "client" arrays are unused.
 		if (FMLLaunchHandler.side() == Side.CLIENT) {
+			mixins.add("MinecraftGameOverMixin");
 			// Fallback if a plain RenderPlayer is used for FP arm.
 			mixins.add("RenderPlayerMorphHandMixin");
 			// RenderPlayerHand morph FP arm is a late mixin (Legends class; early hook never applied).

@@ -147,6 +147,7 @@ public class GeneralEventHandler {
 		}
 
 		if (event.phase == Phase.END && player.worldObj != null && player.worldObj.isRemote) {
+			com.mrsand.StatBoostChanges.common.packets.PacketClearDeathScreen.tickSuppress();
 			VampireDeathDebug.tickClient(player);
 		}
 
@@ -714,13 +715,16 @@ public class GeneralEventHandler {
 		if (event.entity.worldObj.isRemote) {
 			return;
 		}
-		if (!StatBoostConfig.enableVampireLordDamageCap) {
-			return;
-		}
 		if (!(event.entity instanceof EntityPlayer)) {
 			return;
 		}
 		EntityPlayer player = (EntityPlayer) event.entity;
+		if (!GeneralUtil.isVampire(player)) {
+			return;
+		}
+		if (!StatBoostConfig.enableVampireLordDamageCap) {
+			return;
+		}
 		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
 			return;
 		}
