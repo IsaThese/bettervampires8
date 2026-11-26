@@ -69,7 +69,12 @@ public abstract class CreatureUtilMixin {
 		} else if (creature instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) creature;
 			ExtendedPlayer playerEx = ExtendedPlayer.get(player);
-			boolean canKill = Witchery.modHooks.canVampireBeKilled(player);
+			boolean canKill = false;
+			try {
+				canKill = Witchery.modHooks.canVampireBeKilled(player);
+			} catch (Throwable t) {
+				canKill = false;
+			}
 			if (source == DamageSource.starve) {
 				dead = false;
 			} else if (source == DamageSource.outOfWorld || source == DamageSource.inWall) {
@@ -92,11 +97,13 @@ public abstract class CreatureUtilMixin {
 				player.setHealth(player.getMaxHealth());
 				ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 
-				//Some i=frames so no gitching.
-				player.hurtResistantTime = player.maxHurtResistantTime;
+				// Hard invuln window (LivingAttack cancel) — vanilla hrt alone does not
+				// stop Queen same-tick explosion+melee (logs: deathGate with hrt=40).
 				player.hurtTime = 0;
 				player.deathTime = 0;
 				player.isDead = false;
+				player.extinguish();
+				com.mrsand.StatBoostChanges.util.LordColossalCombat.grantDeathSaveInvuln(player, source);
 
 				if (playerEx.getBloodPower() > 0) {
 
@@ -116,8 +123,7 @@ public abstract class CreatureUtilMixin {
 						playerEx.setBloodPower(Math.max(bloodPower- 300, 0)); //Max logic should already be applied, but ok
 					}
 
-					if (source.isExplosion() && creature.worldObj.rand.nextInt(4) == 0) // func_94541_c
-						creature.setFire(2); // func_70015_d
+					// Do not re-ignite after death-save while fire-immune / invuln window.
 					cir.setReturnValue(false);
 					return;
 				}

@@ -178,15 +178,36 @@ public final class VampireSunRules {
 	/**
 	 * Bat form may not start during calendar daytime (sun-safe biomes count as night via
 	 * {@link #isDaytime}). Rain does not unlock bat. Demorph is never blocked by this.
+	 * Other dimensions: not blocked when {@link StatBoostConfig#daylightOnlyAffectsOverworld}.
 	 */
 	public static boolean batFormBlocked(EntityPlayer player) {
 		if (!isEnabled() || player == null) return false;
 		return isDaytime(player);
 	}
 
+	/**
+	 * Hide vampire cape/coat apparel. Same calendar gate as bat form:
+	 * overworld day outside vampire/ominous woods → hide; night, sun-safe biome,
+	 * or other dimensions (bat allowed) → show. Not true-sunlight exposure.
+	 */
+	public static boolean shouldHideVampireApparel(EntityPlayer player) {
+		if (player == null) return false;
+		return batFormBlocked(player);
+	}
+
 	/** Strip bat when daytime outside sun-safe biomes. */
 	public static boolean shouldForceClearBat(EntityPlayer player) {
 		return batFormBlocked(player);
+	}
+
+	/**
+	 * Vampire Lord combat-fire immunity uses the same calendar-day gate as bat form:
+	 * immune at night, in other dimensions, and sun-safe biomes; <em>not</em> during
+	 * overworld daytime. Sun/sunlight damage is never covered by this.
+	 */
+	public static boolean lordFireImmune(EntityPlayer player) {
+		if (player == null || !DaywalkerControl.isVampireLord(player)) return false;
+		return !batFormBlocked(player);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package com.mrsand.StatBoostChanges.util;
 
+import com.mrsand.StatBoostChanges.StatBoostConfig;
+import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
 import com.tihyo.legends.management.LegendsChatFormat;
 import com.tihyo.legends.management.LegendsHelper;
 import com.tihyo.legends.management.PlayerHelper;
@@ -53,6 +55,20 @@ public final class VampireBloodChannels {
 			return amount;
 		}
 		return DRAIN_PULSE_AMOUNT;
+	}
+
+	/**
+	 * After drain retune: True Form lords gain {@link StatBoostConfig#trueFormBloodGainMult}
+	 * more blood from {@code increaseBloodMeter} pulses.
+	 */
+	public static int scaleTrueFormBloodGain(EntityPlayer player, int amount) {
+		if (amount <= 0 || player == null) return amount;
+		if (!StatBoostConfig.enableLordColossalCombat) return amount;
+		if (!DaywalkerControl.isVampireLord(player)) return amount;
+		if (!LegendsUtil.isDraculaTrueForm(player)) return amount;
+		float mult = StatBoostConfig.trueFormBloodGainMult;
+		if (mult <= 1.0F) return amount;
+		return (int) Math.ceil(amount * (double) mult);
 	}
 
 	/** Server player tick (Phase.END preferred so Horror wrath pulses are visible). */

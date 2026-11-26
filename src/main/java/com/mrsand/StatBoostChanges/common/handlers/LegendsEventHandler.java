@@ -198,8 +198,12 @@ public class LegendsEventHandler {
 	public void onPlayerTick(PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		if(player == null) return;
-		
-		
+
+		// After gravity/movement: undo bat-cast sink while Transvection should hold.
+		if (event.phase == Phase.END && Loader.isModLoaded("legends")) {
+			PhysicsUtil.tickTransvectionBatHoverEnd(player);
+		}
+
 		if (event.side == Side.SERVER && event.phase == Phase.START && !player.worldObj.isRemote) {
 			EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
 			VExtendedPlayer vPlayer = VExtendedPlayer.get(serverPlayer);
@@ -260,6 +264,8 @@ public class LegendsEventHandler {
 				player.getEntityData().setBoolean("IsMistFormSmall", true);
 				MistPhaseDebug.sample(player, "tickSTART");
 			}
+			// Castlevania teleport mid-phase: noClip + safe eject when it ends.
+			PhysicsUtil.tickDraculaTeleportPhasing(player);
 			if (LegendsUtil.isBat(player)) {
 				LegendsUtil.markBatFormActive(player);
 			}
@@ -308,8 +314,14 @@ public class LegendsEventHandler {
 		if (!Loader.isModLoaded("legends")) return;
 		// After Horror Transvection flight: sneak+jump holds altitude for horizontal-only move.
 		PhysicsUtil.tickTransvectionAltitudeLock(player);
+		// Bat Slam/Storm skip Horror hover / override levitation — keep altitude while TV on.
+		PhysicsUtil.tickTransvectionDuringBatAbilities(player);
 		// Humanoid keyed hover: clear if Transvection is no longer on a hotbar key.
 		LegendsUtil.tickHumanoidTransvectionAbilityLoss(player);
+		// Legends clears noClip unless phasing — re-assert during Castlevania mid-teleport.
+		if (LegendsAbilityBridge.isDraculaTeleportMoving(player)) {
+			player.noClip = true;
+		}
 		if (!LegendsAbilityBridge.isMist(player)) return;
 		// Re-apply full mist physics after Legends (clears noClip + may add flight motionY).
 		PhysicsUtil.handleMistPhasing(player);

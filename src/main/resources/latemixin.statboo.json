@@ -26,8 +26,10 @@
       "ItemGlassGobletMixin",
       "ItemVampireClothesMixin",
       "legends.DamageHelperWitcheryClothesMixin",
+      "legends.DamageHelperColossalMixin",
       
       "legends.BattlebournBatHordeMixin",
+      "legends.BattlebournBloodDrainMixin",
       "legends.BlockHorrorCoffinMixin",
       "legends.HorrorCommonEventHandlerMixin",
       "legends.LegendsCommonEventHandlerMixin",
@@ -55,6 +57,7 @@
       "legends.RegisterBlocksMixin",
       "legends.RegisterHorrorBlocksMixin",
       "legends.StatusAcrobaticsMixin",
+      "legends.StatusDoubleJumpBoostMixin",
       
       "RenderHandlerMixin",
       

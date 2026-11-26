@@ -34,6 +34,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 		// --- LEGENDS ONLY REQUIRED ---
 		if (loadedMods.contains("legends")) {
 			mixins.add("legends.BlockAltarMixin");
+			mixins.add("legends.DamageHelperColossalMixin");
 			mixins.add("legends.EntityHerobrineHostilityMixin");
 			mixins.add("legends.EntitySmartCreatureHostilityMixin");
 			mixins.add("legends.EntitySmartWaterCreatureHostilityMixin");

@@ -98,7 +98,7 @@ public abstract class LegendsCommonEventHandlerMixin {
 
 	/**
 	 * Stock {@code onInteract}: RIGHT_CLICK_* → {@code TRANSVECTION.set(false)}.
-	 * Keep hover for humanoid keyed Transvection; other properties pass through.
+	 * Keep hover for humanoid keyed, double-jump Space, and True Form (like TF persist).
 	 */
 	@Redirect(
 			method = "onInteract",
@@ -107,11 +107,11 @@ public abstract class LegendsCommonEventHandlerMixin {
 					target = "Lcom/tihyo/legends/management/properties/LegendsProperties;set(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;)Z"
 			)
 	)
-	private boolean bvSkipHumanoidTransvectionRightClickCancel(LegendsProperties props, EntityPlayer player, Object value) {
+	private boolean bvSkipTransvectionInteractCancel(LegendsProperties props, EntityPlayer player, Object value) {
 		if (props == LegendsProperties.TRANSVECTION
 				&& value instanceof Boolean
 				&& !((Boolean) value).booleanValue()
-				&& LegendsUtil.isHumanoidKeyedTransvectionHover(player)) {
+				&& LegendsUtil.shouldKeepTransvectionOnInteract(player)) {
 			return false;
 		}
 		return props.set(player, value);

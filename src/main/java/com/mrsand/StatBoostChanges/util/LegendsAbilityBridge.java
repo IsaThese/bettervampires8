@@ -33,6 +33,20 @@ public final class LegendsAbilityBridge {
 		return getIntProp(entity, LegendsProperties.MIST_FORM) > 0;
 	}
 
+	/**
+	 * Castlevania teleport mid-phase (matches stock {@code isAbsoluteInvisible}):
+	 * timer in {@code 1..165}. Windup ({@code >165}) and finished ({@code 0}) are excluded.
+	 */
+	public static boolean isDraculaTeleportMoving(EntityLivingBase entity) {
+		int t = getIntProp(entity, LegendsProperties.DRACULA_TELEPORT);
+		if (t > 0 && t <= 165) return true;
+		try {
+			return getIntProp(entity, LegendsProperties.DRAKYULA_TELEPORT) > 0;
+		} catch (Throwable ignored) {
+			return false;
+		}
+	}
+
 	public static boolean isBloodLust(EntityLivingBase entity) {
 		return getIntProp(entity, LegendsProperties.BLOOD_LUST) > 0;
 	}

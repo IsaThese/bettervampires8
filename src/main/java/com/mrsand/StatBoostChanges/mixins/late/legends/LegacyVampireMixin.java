@@ -120,15 +120,13 @@ public abstract class LegacyVampireMixin {
 		ExtendedPlayer playerEx = ExtendedPlayer.get(player);
 		VExtendedPlayer vPlayer = VExtendedPlayer.get(player);
 
+		// Double-jump Space hover: re-assert like True Form so interact cannot drop it.
+		LegendsUtil.tickDoubleJumpTransvectionPersist(player);
+
 		// Always strip Form of Double Jump while Transvection hover is on (any time of day).
 		Object tvEarly = LegendsProperties.TRANSVECTION.get(player);
 		if (tvEarly instanceof Boolean && ((Boolean) tvEarly).booleanValue()) {
-			if (StatHelper.isAbilityActive(player, Stat.acrobatics)) {
-				StatHelper.removeEffect(player, Stat.acrobatics);
-			}
-			if (StatHelper.isAbilityActive(player, Stat.doubleJump)) {
-				StatHelper.removeEffect(player, Stat.doubleJump);
-			}
+			LegendsUtil.stripDoubleJumpDuringTransvection(player);
 		}
 		VampireRestoredAbilities.ensureAutoGranted(player);
 

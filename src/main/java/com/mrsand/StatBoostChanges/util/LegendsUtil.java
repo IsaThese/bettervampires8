@@ -441,6 +441,43 @@ public class LegendsUtil {
 		return true;
 	}
 
+	/** Double-tap Space lord hover (same persist rules as True Form auto-hover). */
+	public static boolean isDoubleJumpTransvectionHover(EntityPlayer player) {
+		return player != null && player.getEntityData().getBoolean(NBT_DOUBLE_JUMP_TRANSVECTION);
+	}
+
+	/**
+	 * Stock Legends {@code onInteract} clears TRANSVECTION on right-click. Keep hover for
+	 * humanoid keyed, double-jump Space toggle, and True Form (TF also re-asserts each tick).
+	 */
+	public static boolean shouldKeepTransvectionOnInteract(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null) return false;
+		if (isHumanoidKeyedTransvectionHover(player)) return true;
+		if (isDoubleJumpTransvectionHover(player)) return true;
+		if (player.getEntityData().getBoolean("bvTrueFormTransvection")) return true;
+		try {
+			if (MorphHelper.isDraculaTrueForm(player)) return true;
+		} catch (Throwable ignored) {
+		}
+		return false;
+	}
+
+	/**
+	 * Re-assert double-jump Space hover each tick (mirrors True Form auto-grant so
+	 * interact cancel cannot drop it). Cleared by double-tap off or sun/weakness.
+	 */
+	public static void tickDoubleJumpTransvectionPersist(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null || player.worldObj == null) return;
+		if (player.worldObj.isRemote) return;
+		if (!isDoubleJumpTransvectionHover(player)) return;
+		if (VampireSunRules.generalPowersBlocked(player)) {
+			PowersHandler.transvection(player, false);
+			player.getEntityData().removeTag(NBT_DOUBLE_JUMP_TRANSVECTION);
+			return;
+		}
+		PowersHandler.transvection(player, true);
+	}
+
 	/** Clear humanoid keyed hover when Transvection is no longer on a hotbar key. */
 	public static void tickHumanoidTransvectionAbilityLoss(EntityPlayer player) {
 		if (player == null || player.worldObj == null || player.worldObj.isRemote) return;
@@ -493,6 +530,25 @@ public class LegendsUtil {
 
 		PowersHandler.transvection(player, true);
 		player.getEntityData().setBoolean(NBT_DOUBLE_JUMP_TRANSVECTION, true);
+		stripDoubleJumpDuringTransvection(player);
+	}
+
+	/** Remove Form of Double Jump / acrobatics while hover is active. */
+	public static void stripDoubleJumpDuringTransvection(EntityPlayer player) {
+		if (!Loader.isModLoaded("legends") || player == null) return;
+		try {
+			if (com.tihyo.legends.abilities.StatHelper.isAbilityActive(player,
+					com.tihyo.legends.abilities.Stat.acrobatics)) {
+				com.tihyo.legends.abilities.StatHelper.removeEffect(player,
+						com.tihyo.legends.abilities.Stat.acrobatics);
+			}
+			if (com.tihyo.legends.abilities.StatHelper.isAbilityActive(player,
+					com.tihyo.legends.abilities.Stat.doubleJump)) {
+				com.tihyo.legends.abilities.StatHelper.removeEffect(player,
+						com.tihyo.legends.abilities.Stat.doubleJump);
+			}
+		} catch (Throwable ignored) {
+		}
 	}
 
 	/** Castlevania Dracula teleport (Horror tick spawns EntityDraculaTeleport). */

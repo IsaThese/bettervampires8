@@ -43,23 +43,63 @@ public class DamageCalculator {
     }
 
     /**
+     * Combat/lava/burn fire that is <em>not</em> Vampirism/Witchery sunlight.
+     * Includes Witchery {@code DamageSourceVampireFire} (fire-resist bypass while burning).
+     */
+    public static boolean isNonSunFireDamage(DamageSource source) {
+        if (source == null) {
+            return false;
+        }
+        if ("sun".equals(source.damageType)) {
+            return false;
+        }
+        try {
+            if (source instanceof com.emoniph.witchery.util.EntityUtil.DamageSourceSunlight) {
+                return false;
+            }
+            if (source instanceof com.emoniph.witchery.util.EntityUtil.DamageSourceVampireFire) {
+                return true;
+            }
+        } catch (Throwable ignored) {
+        }
+        if (source.isFireDamage()) {
+            return true;
+        }
+        String type = source.damageType;
+        return "inFire".equals(type) || "onFire".equals(type) || "lava".equals(type);
+    }
+
+    /**
      * True when Vampire Lord clothes soft-cap may apply: combat hits (living
-     * attacker, projectile source, or explosion — OreSpawn Queen jump blasts
-     * have null getEntity()), not fire/starve/drown/void/sun.
+     * attacker, projectile, explosion, or combat fire like Queen inFire/onFire).
+     * Still excludes starve/drown/void and true sun (Vampirism/Witchery sunlight).
      */
     public static boolean shouldCapVampireLordIncoming(DamageSource source) {
         if (source == null) {
             return false;
         }
-        if (source.isFireDamage()) {
-            return false;
-        }
         if (source == DamageSource.starve || source == DamageSource.drown || source == DamageSource.outOfWorld) {
             return false;
         }
-        // VampirismMod.sunDamage uses damageType "sun"
+        // VampirismMod.sunDamage / Witchery sunlight — not OreSpawn burn ticks
         if ("sun".equals(source.damageType)) {
             return false;
+        }
+        try {
+            if (source instanceof com.emoniph.witchery.util.EntityUtil.DamageSourceSunlight) {
+                return false;
+            }
+        } catch (Throwable ignored) {
+        }
+        // Queen lava/burn: inFire / onFire / lava — must soft-cap (was blanketed out via isFireDamage)
+        if (source.isFireDamage()) {
+            return true;
+        }
+        try {
+            if (source instanceof com.emoniph.witchery.util.EntityUtil.DamageSourceVampireFire) {
+                return true;
+            }
+        } catch (Throwable ignored) {
         }
         if (source.getEntity() instanceof EntityLivingBase) {
             return true;
@@ -72,7 +112,8 @@ public class DamageCalculator {
             return true;
         }
         String type = source.damageType;
-        if ("thrown".equals(type) || "explosion".equals(type) || "explosion.player".equals(type) || "mob".equals(type)) {
+        if ("thrown".equals(type) || "explosion".equals(type) || "explosion.player".equals(type) || "mob".equals(type)
+                || "inFire".equals(type) || "onFire".equals(type) || "lava".equals(type)) {
             return true;
         }
         return false;

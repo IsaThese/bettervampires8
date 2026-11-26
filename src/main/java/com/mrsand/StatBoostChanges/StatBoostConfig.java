@@ -9,10 +9,11 @@ public class StatBoostConfig {
 	public static Configuration config;
 
 	/**
-	 * When true, vampire players get Legends apparel visuals: chest when not in
-	 * sunlight, hidden armor in sunlight. When false, worn armor renders normally.
+	 * When true, vampire players get Legends apparel visuals: chest/cape when bat
+	 * form is allowed (OW night or sun-safe biome; other dims), hidden on OW day.
+	 * When false, worn armor renders normally.
 	 */
-	public static boolean enableDayNightVampireApparel = false;
+	public static boolean enableDayNightVampireApparel = true;
 
 	/**
 	 * When true, Vampire Lord + full Witchery vampire clothes soft-caps huge
@@ -92,6 +93,36 @@ public class StatBoostConfig {
 	 */
 	public static boolean enableDoubleJumpTransvection = true;
 
+	/** Lord bare-hand / ability %maxHP vs high-HP targets + TF scales + incoming burst. */
+	public static boolean enableLordColossalCombat = true;
+	/** Min maxHP for colossal % bonus. Wither=300 (excluded at 500); Queen~3000. */
+	public static float colossalHpThreshold = 500.0F;
+	public static float colossalPctCombat = 0.018F;
+	public static float colossalPctTrueForm = 0.028F;
+	public static float colossalCapCombat = 55.0F;
+	public static float colossalTrueFormCapBase = 48.0F;
+	public static float colossalTrueFormCapLogScale = 24.0F;
+	public static float colossalTrueFormCapLogDivisor = 250.0F;
+	public static int colossalBurstWindowTicks = 40;
+	/** Higher budget = more compressed damage lands per window (less tanky). */
+	public static float colossalBurstBudget = 48.0F;
+	public static float colossalBurstBudgetTrueForm = 72.0F;
+	public static float colossalBurstFloor = 1.0F;
+	public static float trueFormAbilityDamageMult = 1.5F;
+	public static float trueFormBloodGainMult = 1.5F;
+	public static boolean colossalWarnNullSource = true;
+	/** Master toggle for hard death-save invulnerability window. */
+	public static boolean enableVampireDeathSaveInvuln = true;
+	/** Hard death-save invuln ticks after vampire blood/level save (20 ticks = 1s). */
+	public static int vampireDeathSaveInvulnTicks = 40;
+	/** Longer death-save invuln when the killing blow was from a colossal (e.g. Queen). */
+	public static int colossalDeathSaveInvulnTicks = 60;
+
+	/** Vampiric Drain look reach (stock Legends = 10). */
+	public static float vampiricDrainRange = 28.0F;
+	/** Extra AABB/search expand around the look ray (stock ≈ 1). */
+	public static float vampiricDrainWideness = 3.0F;
+
 	public static void load(File configFile) {
 		config = new Configuration(configFile);
 		sync();
@@ -104,8 +135,8 @@ public class StatBoostConfig {
 		enableDayNightVampireApparel = config.getBoolean(
 				"enableDayNightVampireApparel",
 				"visual",
-				false,
-				"When true, vampires get Legends apparel day/night visuals (chest at night/shade, hidden in true sunlight via VampireSunRules.isInSunlight). When false, worn armor (e.g. Witchery clothes) renders normally.");
+				true,
+				"When true, vampires get day/night apparel (Witchery cape/coat + Legends V1): shown when bat form is allowed (OW night or vampire/ominous woods; other dims), hidden on OW day. When false, no day/night hide — worn armor always renders.");
 		witcheryVampireCapeStyle = config.getInt(
 				"witcheryVampireCapeStyle",
 				"visual",
@@ -178,6 +209,56 @@ public class StatBoostConfig {
 				.getDouble(2.4D);
 		wolfMorphVolume = clampVolume(wolfMorphVolume);
 		batMorphVolume = clampVolume(batMorphVolume);
+
+		enableLordColossalCombat = config.getBoolean(
+				"enableLordColossalCombat",
+				"colossal",
+				true,
+				"Vampire Lord: %maxHP armor-bypass on fists/abilities vs high-HP mobs; True Form ability/blood x1.5; incoming burst budget with clothes soft-cap.");
+		colossalHpThreshold = (float) config.get("colossal", "colossalHpThreshold", 500.0D,
+				"Min target max HP for colossal % bonus (Queen ~3000; typical TF/OreSpawn trash ~300).").getDouble(500.0D);
+		colossalPctCombat = (float) config.get("colossal", "colossalPctCombat", 0.018D,
+				"Fraction of target max HP added per eligible hit (non-True Form).").getDouble(0.018D);
+		colossalPctTrueForm = (float) config.get("colossal", "colossalPctTrueForm", 0.028D,
+				"Fraction of target max HP added per eligible hit in True Form.").getDouble(0.028D);
+		colossalCapCombat = (float) config.get("colossal", "colossalCapCombat", 55.0D,
+				"Per-hit cap on colossal bonus for non-True Form.").getDouble(55.0D);
+		colossalTrueFormCapBase = (float) config.get("colossal", "colossalTrueFormCapBase", 48.0D,
+				"True Form colossal cap base before log term.").getDouble(48.0D);
+		colossalTrueFormCapLogScale = (float) config.get("colossal", "colossalTrueFormCapLogScale", 24.0D,
+				"True Form colossal cap += scale * log10(maxHp / divisor).").getDouble(24.0D);
+		colossalTrueFormCapLogDivisor = (float) config.get("colossal", "colossalTrueFormCapLogDivisor", 250.0D,
+				"Divisor inside True Form colossal log10 term.").getDouble(250.0D);
+		colossalBurstWindowTicks = config.getInt("colossalBurstWindowTicks", "colossal", 40, 1, 200,
+				"Incoming soft-cap burst budget window in ticks.");
+		colossalBurstBudget = (float) config.get("colossal", "colossalBurstBudget", 48.0D,
+				"Max compressed incoming damage per window (lord clothes). Higher = take more damage.").getDouble(48.0D);
+		colossalBurstBudgetTrueForm = (float) config.get("colossal", "colossalBurstBudgetTrueForm", 72.0D,
+				"Max compressed incoming damage per window in True Form. Higher = take more damage.").getDouble(72.0D);
+		colossalBurstFloor = (float) config.get("colossal", "colossalBurstFloor", 1.0D,
+				"Minimum damage when burst budget is exhausted.").getDouble(1.0D);
+		trueFormAbilityDamageMult = (float) config.get("colossal", "trueFormAbilityDamageMult", 1.5D,
+				"True Form multiplies Legends ability damage (Bat Attack, bite, etc.).").getDouble(1.5D);
+		trueFormBloodGainMult = (float) config.get("colossal", "trueFormBloodGainMult", 1.5D,
+				"True Form multiplies Legends blood meter gains.").getDouble(1.5D);
+		colossalWarnNullSource = config.getBoolean("colossalWarnNullSource", "colossal", true,
+				"Log a warning when a colossal-relevant hit cannot resolve a lord attacker.");
+		enableVampireDeathSaveInvuln = config.getBoolean("enableVampireDeathSaveInvuln", "colossal", true,
+				"When true, after a vampire death-save grant a hard invuln window (cancel LivingAttack/Hurt + clamp HP). Set false to disable.");
+		vampireDeathSaveInvulnTicks = config.getInt("vampireDeathSaveInvulnTicks", "colossal", 40, 0, 400,
+				"Death-save invuln length in ticks (20 = 1s). Default 40 = 2s.");
+		colossalDeathSaveInvulnTicks = config.getInt("colossalDeathSaveInvulnTicks", "colossal", 60, 0, 400,
+				"Death-save invuln ticks vs colossal killers / Queen-style explosions (lords use this). Default 60 = 3s.");
+
+		vampiricDrainRange = (float) config.get("drain", "vampiricDrainRange", 28.0D,
+				"Vampiric Drain look/reach distance in blocks (stock Legends = 10). Keep lock if AABB or center is within range.").getDouble(28.0D);
+		vampiricDrainWideness = (float) config.get("drain", "vampiricDrainWideness", 3.0D,
+				"Extra blocks of look-ray / AABB expand for Drain targeting (stock ≈ 1). Helps large bosses.").getDouble(3.0D);
+		if (vampiricDrainRange < 1.0F) vampiricDrainRange = 1.0F;
+		if (vampiricDrainRange > 48.0F) vampiricDrainRange = 48.0F;
+		if (vampiricDrainWideness < 0.0F) vampiricDrainWideness = 0.0F;
+		if (vampiricDrainWideness > 16.0F) vampiricDrainWideness = 16.0F;
+
 		// Mist speeds: tune field defaults above for now (skip .cfg override).
 //		mistHorizontalSpeed = config.get(
 //				"mist",

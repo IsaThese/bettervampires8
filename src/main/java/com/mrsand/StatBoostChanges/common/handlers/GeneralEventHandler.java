@@ -20,6 +20,7 @@ import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
 import com.mrsand.StatBoostChanges.abilities.HypnosisMasteryLogic;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
+import com.mrsand.StatBoostChanges.abilities.VampireSunRules;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
 import com.mrsand.StatBoostChanges.common.management.VExtendedVillager;
@@ -34,6 +35,7 @@ import com.mrsand.StatBoostChanges.util.DamageCalculator;
 import com.mrsand.StatBoostChanges.util.GeneralUtil;
 import com.mrsand.StatBoostChanges.util.HypnosisDebug;
 import com.mrsand.StatBoostChanges.util.LegendsUtil;
+import com.mrsand.StatBoostChanges.util.LordColossalCombat;
 import com.mrsand.StatBoostChanges.util.LordWeather;
 import com.mrsand.StatBoostChanges.util.MorphFormDebug;
 import com.mrsand.StatBoostChanges.util.PhysicsUtil;
@@ -146,6 +148,18 @@ public class GeneralEventHandler {
 		if (event.phase == Phase.END && !player.worldObj.isRemote && ModCompat.LEGENDS) {
 			LegendsUtil.tickMistDemist(player);
 			LordWeather.tickDaylightMist(player);
+		}
+
+		// Lord fire immunity (bat-day gate): snuff burn so Witchery VampireFire
+		// (fire-resist bypass while isBurning) never ticks outside overworld day.
+		if (event.phase == Phase.END && !player.worldObj.isRemote
+				&& VampireSunRules.lordFireImmune(player) && player.isBurning()) {
+			player.extinguish();
+		}
+
+		// Death-save: clamp HP every tick (OreSpawn can bypass LivingHurt).
+		if (event.phase == Phase.END && !player.worldObj.isRemote) {
+			LordColossalCombat.tickDeathSaveInvuln(player);
 		}
 
 		if (event.phase == Phase.END && player.worldObj != null && player.worldObj.isRemote) {
@@ -712,6 +726,15 @@ public class GeneralEventHandler {
 		}
 	}
 
+	/** After all cancel/cap handlers — arm setHealth guard for the coming damageEntity. */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void markExpectedHealthDropFromCombat(LivingHurtEvent event) {
+		if (event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
+		if (!(event.entity instanceof EntityPlayer)) return;
+		if (event.isCanceled() || event.ammount <= 0.0F) return;
+		LordColossalCombat.markExpectedHealthDrop((EntityPlayer) event.entity);
+	}
+
 	@SubscribeEvent
 	public void livingHurtVampireLordClothesCap(LivingHurtEvent event) {
 		if (event.entity.worldObj.isRemote) {
@@ -727,13 +750,34 @@ public class GeneralEventHandler {
 		if (!StatBoostConfig.enableVampireLordDamageCap) {
 			return;
 		}
-		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
+		boolean clothes = WitcheryUtil.hasVampireLordClothesCap(player);
+		boolean shouldCap = DamageCalculator.shouldCapVampireLordIncoming(event.source);
+		if (!clothes) {
 			return;
 		}
-		if (!DamageCalculator.shouldCapVampireLordIncoming(event.source)) {
+		if (!shouldCap) {
 			return;
 		}
-		event.ammount = DamageCalculator.capDamage(event.ammount);
+		float capped = DamageCalculator.capDamage(event.ammount);
+		float after = LordColossalCombat.applyIncomingBurst(player, capped);
+		event.ammount = after;
+	}
+
+	/**
+	 * Lord empty-hand melee vs colossal targets (vanilla path that skips DamageHelper).
+	 * Abilities are handled in {@code DamageHelperColossalMixin}.
+	 */
+	@SubscribeEvent
+	public void livingHurtLordColossalFist(LivingHurtEvent event) {
+		if (event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
+		if (!(event.entity instanceof EntityLivingBase)) return;
+		if (!(event.source.getEntity() instanceof EntityPlayer)) return;
+		EntityPlayer lord = (EntityPlayer) event.source.getEntity();
+		if (lord.getHeldItem() != null) return;
+		if (!LordColossalCombat.isLordCombatEligible(lord)) return;
+		EntityLivingBase target = (EntityLivingBase) event.entity;
+		if (target == lord) return;
+		LordColossalCombat.tryApplyColossalBonus(lord, target, event.source);
 	}
 
 	/** Nested Vampire Lords cannot be chipped by leftover mob swings. */
@@ -745,6 +789,52 @@ public class GeneralEventHandler {
 		if (!DaywalkerControl.isVampireLord(player)) return;
 		if (!CoffinSleepUtil.isInCoffin(player)) return;
 		event.setCanceled(true);
+	}
+
+	/**
+	 * Vampire Lord: immune to non-sun fire (Queen burn, lava, Witchery VampireFire
+	 * fire-resist bypass) except overworld daytime — same gate as bat form.
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelFireOnLord(LivingAttackEvent event) {
+		if (event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
+		if (!(event.entity instanceof EntityPlayer)) return;
+		if (!DamageCalculator.isNonSunFireDamage(event.source)) return;
+		EntityPlayer player = (EntityPlayer) event.entity;
+		boolean immune = VampireSunRules.lordFireImmune(player);
+		if (!immune) return;
+		event.setCanceled(true);
+		player.extinguish();
+	}
+
+	/**
+	 * Hard death-save invuln: cancel all incoming attacks until the window ends.
+	 * Needed because OreSpawn Queen lands a second hit the same tick with hrt still 40.
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelDuringDeathSaveInvuln(LivingAttackEvent event) {
+		if (event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
+		if (!(event.entity instanceof EntityPlayer)) return;
+		EntityPlayer player = (EntityPlayer) event.entity;
+		if (!LordColossalCombat.isDeathSaveInvulnerable(player)) return;
+		event.setCanceled(true);
+		player.hurtTime = 0;
+		player.maxHurtTime = 0;
+		player.extinguish();
+	}
+
+	/** Same-tick Queen combo may already be past LivingAttack when death-save grants invuln. */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void cancelHurtDuringDeathSaveInvuln(LivingHurtEvent event) {
+		if (event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
+		if (!(event.entity instanceof EntityPlayer)) return;
+		EntityPlayer player = (EntityPlayer) event.entity;
+		if (!LordColossalCombat.isDeathSaveInvulnerable(player)) return;
+		event.ammount = 0.0F;
+		event.setCanceled(true);
+		player.hurtTime = 0;
+		player.maxHurtTime = 0;
+		player.extinguish();
 	}
 
 	@SubscribeEvent

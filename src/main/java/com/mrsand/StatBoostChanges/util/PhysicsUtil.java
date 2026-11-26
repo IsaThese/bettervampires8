@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.tihyo.legends.management.LegendsHelper;
+import com.tihyo.legends.management.PlayerHelper;
 import com.tihyo.legends.management.properties.LegendsProperties;
 
 import cpw.mods.fml.common.Loader;
@@ -20,6 +21,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
@@ -275,6 +277,193 @@ public class PhysicsUtil {
 		if (player.isSneaking() && player.isJumping) {
 			player.motionY = 0.0D;
 		}
+	}
+
+	/** NBT: post-ability hover grace after Slam/Storm/teleport/etc. */
+	public static final String NBT_TV_BAT_GRACE = "bvTvBatHoverGrace";
+	/** Set while Castlevania mid-teleport noClip is active; cleared after safe eject. */
+	public static final String NBT_DRACULA_TELEPORT_CLIP = "bvDraculaTeleportClip";
+	/** NBT: frozen hover Y while a Legends ability interrupts Transvection physics. */
+	public static final String NBT_TV_BAT_HOLD_Y = "bvTvBatHoldY";
+	/** Hold hover this many ticks after ability flags clear (Horror re-lock gap). */
+	private static final int TV_ABILITY_GRACE_TICKS = 25;
+	/** Y jumps larger than this are treated as ability teleports (re-anchor, don't snap back). */
+	private static final double TV_ABILITY_TELEPORT_DELTA = 0.75D;
+
+	/**
+	 * LivingUpdate: while Transvection + Legends ability interaction, freeze anchor Y
+	 * and cancel downward motion (Bat Slam, Castlevania teleport, anim overrides, …).
+	 */
+	public static void tickTransvectionDuringBatAbilities(EntityPlayer player) {
+		if (player == null || player.worldObj == null || !Loader.isModLoaded("legends")) return;
+		if (!updateTvAbilityGrace(player)) {
+			player.getEntityData().removeTag(NBT_TV_BAT_HOLD_Y);
+			return;
+		}
+		if (player.capabilities != null && player.capabilities.isFlying) return;
+		if (player.isSneaking()) {
+			player.getEntityData().removeTag(NBT_TV_BAT_HOLD_Y);
+			return;
+		}
+		if (!player.getEntityData().hasKey(NBT_TV_BAT_HOLD_Y)) {
+			player.getEntityData().setDouble(NBT_TV_BAT_HOLD_Y, player.posY);
+		}
+		if (player.motionY < 0.0D) {
+			player.motionY = 0.0D;
+		}
+		player.fallDistance = 0.0F;
+	}
+
+	/**
+	 * PlayerTick END: restore gravity-sunk Y, but re-anchor when Legends teleports the player.
+	 */
+	public static void tickTransvectionBatHoverEnd(EntityPlayer player) {
+		if (player == null || player.worldObj == null || !Loader.isModLoaded("legends")) return;
+		if (!shouldHoldTvAbilityHover(player)) {
+			player.getEntityData().removeTag(NBT_TV_BAT_HOLD_Y);
+			return;
+		}
+		if (player.capabilities != null && player.capabilities.isFlying) return;
+		if (player.isSneaking()) {
+			player.getEntityData().removeTag(NBT_TV_BAT_HOLD_Y);
+			return;
+		}
+		if (player.getEntityData().hasKey(NBT_TV_BAT_HOLD_Y)) {
+			double holdY = player.getEntityData().getDouble(NBT_TV_BAT_HOLD_Y);
+			double dy = player.posY - holdY;
+			if (Math.abs(dy) > TV_ABILITY_TELEPORT_DELTA) {
+				// Castlevania teleport / ability move — follow new altitude.
+				player.getEntityData().setDouble(NBT_TV_BAT_HOLD_Y, player.posY);
+			} else if (dy < -1.0E-3D) {
+				forcePlayerY(player, holdY);
+			}
+		}
+		if (player.motionY < 0.0D) {
+			player.motionY = 0.0D;
+		}
+		player.fallDistance = 0.0F;
+		player.onGround = false;
+	}
+
+	private static void forcePlayerY(EntityPlayer player, double holdY) {
+		double x = player.posX;
+		double z = player.posZ;
+		float yaw = player.rotationYaw;
+		float pitch = player.rotationPitch;
+		player.motionY = 0.0D;
+		player.fallDistance = 0.0F;
+		player.onGround = false;
+		if (!player.worldObj.isRemote && player instanceof EntityPlayerMP) {
+			EntityPlayerMP mp = (EntityPlayerMP) player;
+			if (mp.playerNetServerHandler != null) {
+				mp.playerNetServerHandler.setPlayerLocation(x, holdY, z, yaw, pitch);
+				return;
+			}
+		}
+		player.setPosition(x, holdY, z);
+		player.lastTickPosY = holdY;
+		player.prevPosY = holdY;
+	}
+
+	/** @return true while Transvection should suppress ability-induced fall */
+	private static boolean updateTvAbilityGrace(EntityPlayer player) {
+		Boolean active = (Boolean) LegendsProperties.TRANSVECTION.get(player);
+		if (active == null || !active.booleanValue()) {
+			player.getEntityData().removeTag(NBT_TV_BAT_GRACE);
+			return false;
+		}
+		boolean busy = isLegendsAbilityInterruptingHover(player);
+		int grace = player.getEntityData().getInteger(NBT_TV_BAT_GRACE);
+		if (busy) {
+			grace = TV_ABILITY_GRACE_TICKS;
+			player.getEntityData().setInteger(NBT_TV_BAT_GRACE, grace);
+		} else if (grace > 0) {
+			grace--;
+			if (grace > 0) {
+				player.getEntityData().setInteger(NBT_TV_BAT_GRACE, grace);
+			} else {
+				player.getEntityData().removeTag(NBT_TV_BAT_GRACE);
+			}
+		}
+		return busy || grace > 0;
+	}
+
+	/**
+	 * Legends cast/anim windows that skip Horror hover or override levitation pose
+	 * (Bat Slam/Storm/Swarm, Castlevania teleport, general {@code isInAnimation}, etc.).
+	 */
+	public static boolean isLegendsAbilityInterruptingHover(EntityPlayer player) {
+		if (player == null || !Loader.isModLoaded("legends")) return false;
+		if (isBatAbilityActive(player)) return true;
+		if (intProp(LegendsProperties.DRACULA_TELEPORT, player) > 0) return true;
+		try {
+			if (intProp(LegendsProperties.DRAKYULA_TELEPORT, player) > 0) return true;
+		} catch (Throwable ignored) {
+		}
+		try {
+			if (PlayerHelper.isInAnimation(player)) return true;
+		} catch (Throwable ignored) {
+		}
+		try {
+			if (PlayerHelper.overrideFlyingAnimation(player)) return true;
+		} catch (Throwable ignored) {
+		}
+		return false;
+	}
+
+	public static boolean shouldHoldTvAbilityHover(EntityPlayer player) {
+		if (player == null || !Loader.isModLoaded("legends")) return false;
+		Boolean active = (Boolean) LegendsProperties.TRANSVECTION.get(player);
+		if (active == null || !active.booleanValue()) return false;
+		return isLegendsAbilityInterruptingHover(player) || getTvBatGrace(player) > 0;
+	}
+
+	/** @deprecated use {@link #shouldHoldTvAbilityHover} */
+	public static boolean shouldHoldTvBatHover(EntityPlayer player) {
+		return shouldHoldTvAbilityHover(player);
+	}
+
+	public static boolean isBatAbilityActive(EntityPlayer player) {
+		return intProp(LegendsProperties.BAT_SLAM, player) > 0
+				|| intProp(LegendsProperties.BAT_STORM, player) > 0
+				|| intProp(LegendsProperties.BAT_SWARMING, player) > 0
+				|| intProp(LegendsProperties.BAT_HORDE, player) > 0
+				|| intProp(LegendsProperties.BAT_ATTACK, player) > 0;
+	}
+
+	/**
+	 * Mid Castlevania teleport: noClip while moving (timer {@code 1..165}), then mist-style
+	 * {@link #ejectFromSolidsIfNeeded} when the phase ends so the player is not stuck in solids.
+	 * Call from player tick START (client + server) like mist phasing.
+	 */
+	public static void tickDraculaTeleportPhasing(EntityPlayer player) {
+		if (player == null || player.worldObj == null || !Loader.isModLoaded("legends")) return;
+		boolean moving = LegendsAbilityBridge.isDraculaTeleportMoving(player);
+		boolean wasClip = player.getEntityData().getBoolean(NBT_DRACULA_TELEPORT_CLIP);
+		if (moving) {
+			player.noClip = true;
+			player.getEntityData().setBoolean(NBT_DRACULA_TELEPORT_CLIP, true);
+			return;
+		}
+		if (!wasClip) return;
+		// Phase ended — eject like mist end.
+		if (!ejectFromSolidsIfNeeded(player, true)) {
+			player.noClip = true;
+			return;
+		}
+		player.getEntityData().setBoolean(NBT_DRACULA_TELEPORT_CLIP, false);
+		if (!player.capabilities.isCreativeMode) {
+			player.noClip = false;
+		}
+	}
+
+	public static int getTvBatGrace(EntityPlayer player) {
+		return player != null ? player.getEntityData().getInteger(NBT_TV_BAT_GRACE) : 0;
+	}
+
+	private static int intProp(LegendsProperties prop, EntityPlayer player) {
+		Object o = prop.get(player);
+		return o instanceof Integer ? ((Integer) o).intValue() : 0;
 	}
 
 	/** Default human standing height used when bat morph hitbox has not expanded yet. */

@@ -53,6 +53,7 @@ public class StatBoostCore implements IEarlyMixinLoader, IFMLLoadingPlugin {
 		mixins.add("MixinAbstractClientPlayer");
 		mixins.add("EntityPlayerMPMixin");
 		mixins.add("EntityPlayerMixin");
+		mixins.add("EntityLivingBaseSetHealthGuardMixin");
 		mixins.add("BlockIsBedCoffinMixin");
 		mixins.add("FoodStatsMixin");
 		mixins.add("ItemArmorVampireClothesRepairMixin");

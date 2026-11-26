@@ -15,6 +15,7 @@
     "BlockIsBedCoffinMixin",
     "EntityPlayerMPMixin",
     "EntityPlayerMixin",
+    "EntityLivingBaseSetHealthGuardMixin",
     "FoodStatsMixin",
     "ItemArmorVampireClothesRepairMixin",
     "LegendsRenderHelperMixin",

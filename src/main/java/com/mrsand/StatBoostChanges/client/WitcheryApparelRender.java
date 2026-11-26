@@ -30,8 +30,9 @@ import net.minecraft.util.ResourceLocation;
  * Maps Witchery {@code ItemVampireClothes} render to Legends apparel:
  * chest/coat + cape via {@link ModelDracula} (head hidden); legs/boots via
  * Vampire Apparel V1. Helmet stays equipped for set bonuses but uses a hidden
- * ModelBiped. Lord + full set: coat/legs/boots hide (or swap to Apparel V1) in
- * true sunlight — same as {@link VampireSunRules#isInSunlight} / day-night V1.
+ * ModelBiped. When {@link StatBoostConfig#enableDayNightVampireApparel} is true,
+ * lord full set hides (or swaps to Apparel V1) on the bat-form calendar gate.
+ * When that config is false, day/night hide does not apply.
  */
 @SideOnly(Side.CLIENT)
 public final class WitcheryApparelRender {
@@ -71,20 +72,23 @@ public final class WitcheryApparelRender {
 	}
 
 	/**
-	 * True sunlight exposure (brightness + sky), same as day/night Apparel V1.
-	 * Sun-safe biomes never count as sunlight. Calendar {@code isDay} is not used —
-	 * shade by day keeps the coat.
+	 * Bat-form calendar gate for cape/coat (not brightness sunlight).
+	 * Hide in overworld day outside sun-safe biomes; show at night / sun-safe / other dims.
 	 */
-	private static boolean inSunlightForApparel(EntityPlayer player) {
-		return VampireSunRules.isInSunlight(player);
+	private static boolean apparelDayBlocked(EntityPlayer player) {
+		return VampireSunRules.shouldHideVampireApparel(player);
 	}
 
 	/**
-	 * Vampire Lord + full Witchery set in sunlight:
+	 * Vampire Lord + full Witchery set when day/night apparel is enabled and day-blocked:
 	 * {@code lordDaylightShowVampireApparel=false} → hide (regular skin);
 	 * {@code true} → keep armor visible as basic Apparel V1 (not Dracula coat).
+	 * When {@code enableDayNightVampireApparel=false}, never hide for day/night.
 	 */
 	private static boolean shouldHideForDaytime(EntityLivingBase entity) {
+		if (!StatBoostConfig.enableDayNightVampireApparel) {
+			return false;
+		}
 		if (StatBoostConfig.lordDaylightShowVampireApparel) {
 			return false;
 		}
@@ -95,11 +99,14 @@ public final class WitcheryApparelRender {
 		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
 			return false;
 		}
-		return inSunlightForApparel(player);
+		return apparelDayBlocked(player);
 	}
 
-	/** Config true + sunlight: chest/legs/boots use Apparel V1 instead of Dracula. */
+	/** Day/night apparel on + show-apparel cfg + day-blocked → Apparel V1 instead of Dracula. */
 	private static boolean shouldUseBasicApparelInSunlight(EntityLivingBase entity) {
+		if (!StatBoostConfig.enableDayNightVampireApparel) {
+			return false;
+		}
 		if (!StatBoostConfig.lordDaylightShowVampireApparel) {
 			return false;
 		}
@@ -110,7 +117,7 @@ public final class WitcheryApparelRender {
 		if (!WitcheryUtil.hasVampireLordClothesCap(player)) {
 			return false;
 		}
-		return inSunlightForApparel(player);
+		return apparelDayBlocked(player);
 	}
 
 	public static boolean wearsWitcheryVampireChest(EntityPlayer player) {

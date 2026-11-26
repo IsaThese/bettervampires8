@@ -80,11 +80,11 @@ public class LegendsVisualHandler {
             ItemStack[] realArmor = player.inventory.armorInventory;
             this.armorCache.put(player, Arrays.copyOf(realArmor, realArmor.length));
 
-            // True sunlight (shade keeps apparel), same gate as Witchery lord apparel.
-            boolean inSun = VampireSunRules.isInSunlight(player);
+            // Same calendar gate as bat form / Witchery lord cape (not true sunlight).
+            boolean hideApparel = VampireSunRules.shouldHideVampireApparel(player);
 
             for (int i = 0; i < realArmor.length; i++) {
-                if (inSun) {
+                if (hideApparel) {
                     realArmor[i] = null;
                 } else {
                     // Performance Fix: Reuses static ItemStacks instead of calling "new" 60+ times a second

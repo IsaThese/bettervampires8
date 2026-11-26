@@ -67,6 +67,9 @@ public class WitcheryEventHandler {
 			player.isDead = false;
 			player.deathTime = 0;
 			player.getEntityData().setBoolean(NBT_VAMPIRE_DEATH_SAVED, true);
+			// Re-assert full HP after any post-death OreSpawn/Legends mutations.
+			player.setHealth(player.getMaxHealth());
+			com.mrsand.StatBoostChanges.util.LordColossalCombat.grantDeathSaveInvuln(player, event.source);
 			syncAliveAfterVampireSave(player);
 		}
 	}
