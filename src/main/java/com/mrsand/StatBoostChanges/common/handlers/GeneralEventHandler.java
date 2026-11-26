@@ -730,9 +730,18 @@ public class GeneralEventHandler {
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void markExpectedHealthDropFromCombat(LivingHurtEvent event) {
 		if (event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote) return;
-		if (!(event.entity instanceof EntityPlayer)) return;
 		if (event.isCanceled() || event.ammount <= 0.0F) return;
-		LordColossalCombat.markExpectedHealthDrop((EntityPlayer) event.entity);
+		if (event.entity instanceof EntityPlayer) {
+			LordColossalCombat.markExpectedHealthDrop((EntityPlayer) event.entity);
+			return;
+		}
+		// Vampire Lord hit a mob → suppress that mob's heals for a short window.
+		if (event.entity instanceof EntityLivingBase) {
+			LordColossalCombat.markEngagementAntiHeal(
+					(EntityLivingBase) event.entity,
+					event.source,
+					event.source != null ? event.source.getEntity() : null);
+		}
 	}
 
 	@SubscribeEvent
@@ -1212,7 +1221,10 @@ public class GeneralEventHandler {
 	@SubscribeEvent
 	public void onLivingDeath(LivingDeathEvent event) {
 		EntityLivingBase living = event.entityLiving;
-		Entity attacker = event.source.getEntity();
+		if (living != null) {
+			LordColossalCombat.clearEngagementAntiHeal(living);
+		}
+		Entity attacker = event.source != null ? event.source.getEntity() : null;
 		if (attacker == null) return;
 		if (attacker instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) attacker;

@@ -87,6 +87,18 @@ public class WitcheryEventHandler {
 					mp.getHealth(),
 					mp.getFoodStats().getFoodLevel(),
 					mp.getFoodStats().getSaturationLevel()));
+			// #region agent log
+			try {
+				java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(
+						"c:/Users/isaac/IdeaProjects/bettervampires8/.cursor/debug-9ecb1a.log", true));
+				pw.println("{\"sessionId\":\"9ecb1a\",\"runId\":\"death-gui\",\"hypothesisId\":\"H4\","
+						+ "\"location\":\"WitcheryEventHandler.syncAliveAfterVampireSave\",\"message\":\"server_sync\","
+						+ "\"timestamp\":" + System.currentTimeMillis()
+						+ ",\"data\":{\"hp\":" + mp.getHealth() + ",\"dead\":" + mp.isDead + "}}");
+				pw.close();
+			} catch (Throwable ignored2) {
+			}
+			// #endregion
 		} catch (Throwable ignored) {
 		}
 	}

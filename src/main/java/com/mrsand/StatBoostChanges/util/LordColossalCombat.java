@@ -37,6 +37,13 @@ public final class LordColossalCombat {
 	private static final ThreadLocal<Integer> ALLOW_DIRECT_HEALTH_DROP = new ThreadLocal<Integer>();
 	/** Armed by LivingHurt before damageEntity; consumed by setHealth guard. */
 	private static final ConcurrentHashMap<UUID, Boolean> EXPECT_HEALTH_DROP = new ConcurrentHashMap<UUID, Boolean>();
+	/**
+	 * Mob UUID → world-time when engagement heal-suppress ends
+	 * (lord damaged this living; upward setHealth/heal blocked until then).
+	 */
+	private static final ConcurrentHashMap<UUID, Long> ANTI_HEAL_UNTIL = new ConcurrentHashMap<UUID, Long>();
+	/** Lets intentional BV heals on mobs bypass suppress (rare). */
+	private static final ThreadLocal<Integer> ALLOW_MOB_HEAL = new ThreadLocal<Integer>();
 	private static Field vampireBatShooterField;
 	private static int nullWarnThrottle;
 
@@ -322,6 +329,98 @@ public final class LordColossalCombat {
 	public static boolean consumeExpectedHealthDrop(EntityPlayer player) {
 		if (player == null) return false;
 		return EXPECT_HEALTH_DROP.remove(player.getUniqueID()) != null;
+	}
+
+	/**
+	 * After a Vampire Lord damages a non-player living: suppress HP increases for
+	 * {@link StatBoostConfig#lordEngagementAntiHealSeconds}. No entity allowlist —
+	 * safety gated (living, not player, maxHP &gt; 0, server-side).
+	 */
+	public static void markEngagementAntiHeal(EntityLivingBase victim, DamageSource source, Entity fallbackAttacker) {
+		if (!StatBoostConfig.enableLordEngagementAntiHeal) return;
+		if (!isValidAntiHealTarget(victim)) return;
+		if (victim.worldObj == null || victim.worldObj.isRemote) return;
+		EntityPlayer lord = resolveLordQuiet(source, fallbackAttacker);
+		if (lord == null || !DaywalkerControl.isVampireLord(lord)) return;
+		if (lord == victim) return;
+
+		int seconds = StatBoostConfig.lordEngagementAntiHealSeconds;
+		if (seconds < 5) seconds = 5;
+		if (seconds > 10) seconds = 10;
+		long until = victim.worldObj.getTotalWorldTime() + (seconds * 20L);
+		UUID id = victim.getUniqueID();
+		Long prev = ANTI_HEAL_UNTIL.get(id);
+		if (prev == null || until > prev.longValue()) {
+			ANTI_HEAL_UNTIL.put(id, Long.valueOf(until));
+		}
+	}
+
+	public static boolean isEngagementAntiHealActive(EntityLivingBase entity) {
+		if (!StatBoostConfig.enableLordEngagementAntiHeal) return false;
+		if (!isValidAntiHealTarget(entity)) return false;
+		if (entity.worldObj == null || entity.worldObj.isRemote) return false;
+		Long until = ANTI_HEAL_UNTIL.get(entity.getUniqueID());
+		if (until == null) return false;
+		long now = entity.worldObj.getTotalWorldTime();
+		if (now >= until.longValue()) {
+			ANTI_HEAL_UNTIL.remove(entity.getUniqueID());
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * {@code setHealth} upward or {@code heal}: cancel when engagement anti-heal is active.
+	 * @return true if the raise should be blocked
+	 */
+	public static boolean shouldBlockMobHealthRaise(EntityLivingBase entity, float newHealth) {
+		if (entity == null) return false;
+		if (isAllowMobHeal()) return false;
+		float cur;
+		try {
+			cur = entity.getHealth();
+		} catch (Throwable t) {
+			return false;
+		}
+		if (!(newHealth > cur)) return false;
+		return isEngagementAntiHealActive(entity);
+	}
+
+	public static void clearEngagementAntiHeal(EntityLivingBase entity) {
+		if (entity == null) return;
+		ANTI_HEAL_UNTIL.remove(entity.getUniqueID());
+	}
+
+	public static void pushAllowMobHeal() {
+		Integer d = ALLOW_MOB_HEAL.get();
+		ALLOW_MOB_HEAL.set(Integer.valueOf(d == null ? 1 : d.intValue() + 1));
+	}
+
+	public static void popAllowMobHeal() {
+		Integer d = ALLOW_MOB_HEAL.get();
+		if (d == null || d.intValue() <= 1) {
+			ALLOW_MOB_HEAL.remove();
+		} else {
+			ALLOW_MOB_HEAL.set(Integer.valueOf(d.intValue() - 1));
+		}
+	}
+
+	private static boolean isAllowMobHeal() {
+		Integer d = ALLOW_MOB_HEAL.get();
+		return d != null && d.intValue() > 0;
+	}
+
+	private static boolean isValidAntiHealTarget(EntityLivingBase entity) {
+		if (entity == null) return false;
+		if (entity instanceof EntityPlayer) return false;
+		if (entity.isDead) return false;
+		try {
+			float max = entity.getMaxHealth();
+			if (!(max > 0.0F) || Float.isNaN(max)) return false;
+		} catch (Throwable t) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

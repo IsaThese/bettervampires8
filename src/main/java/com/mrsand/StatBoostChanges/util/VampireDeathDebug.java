@@ -81,6 +81,19 @@ public final class VampireDeathDebug {
 		boolean hpAlive = player.getHealth() > 0.0F;
 		boolean flagDead = player.isDead || player.deathTime > 0;
 		if (gameOver && hpAlive) {
+			// #region agent log
+			try {
+				java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(
+						"c:/Users/isaac/IdeaProjects/bettervampires8/.cursor/debug-9ecb1a.log", true));
+				pw.println("{\"sessionId\":\"9ecb1a\",\"runId\":\"death-gui\",\"hypothesisId\":\"H3\","
+						+ "\"location\":\"VampireDeathDebug.tickClient\",\"message\":\"tick_clear_desync_gui\","
+						+ "\"timestamp\":" + System.currentTimeMillis()
+						+ ",\"data\":{\"hp\":" + player.getHealth() + ",\"dead\":" + player.isDead
+						+ ",\"deathT\":" + player.deathTime + "}}");
+				pw.close();
+			} catch (Throwable ignored) {
+			}
+			// #endregion
 			clearGameOverScreen(player);
 			if (enabled()) {
 				logImportant(player, "CLEARED_DESYNC_GUI", null);

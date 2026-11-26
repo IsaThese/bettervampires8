@@ -33,6 +33,22 @@ public class PacketClearDeathScreen implements IMessage {
 		return suppressTicks > 0;
 	}
 
+	/**
+	 * Client: arm suppress as soon as local HP hits 0 (before GuiGameOver),
+	 * so S06(0) cannot flash the death screen ahead of the death-save packet.
+	 */
+	@SideOnly(Side.CLIENT)
+	public static void armSuppressClient(int ticks) {
+		if (ticks > suppressTicks) {
+			suppressTicks = ticks;
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static int getSuppressTicks() {
+		return suppressTicks;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public static void tickSuppress() {
 		if (suppressTicks > 0) {
@@ -43,14 +59,30 @@ public class PacketClearDeathScreen implements IMessage {
 	@SideOnly(Side.CLIENT)
 	public static void applyClear(EntityPlayer player) {
 		suppressTicks = 40;
+		boolean hadGameOver = false;
+		float hp = player != null ? player.getHealth() : -1.0F;
 		if (player != null) {
 			player.isDead = false;
 			player.deathTime = 0;
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 		if (mc != null && mc.currentScreen instanceof GuiGameOver) {
+			hadGameOver = true;
 			mc.displayGuiScreen(null);
 		}
+		// #region agent log
+		try {
+			java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(
+					"c:/Users/isaac/IdeaProjects/bettervampires8/.cursor/debug-9ecb1a.log", true));
+			pw.println("{\"sessionId\":\"9ecb1a\",\"runId\":\"death-gui\",\"hypothesisId\":\"H1\","
+					+ "\"location\":\"PacketClearDeathScreen.applyClear\",\"message\":\"packet_clear\","
+					+ "\"timestamp\":" + System.currentTimeMillis()
+					+ ",\"data\":{\"suppressTicks\":" + suppressTicks + ",\"hadGameOver\":" + hadGameOver
+					+ ",\"hp\":" + hp + "}}");
+			pw.close();
+		} catch (Throwable ignored) {
+		}
+		// #endregion
 	}
 
 	public static class Handler implements IMessageHandler<PacketClearDeathScreen, IMessage> {
