@@ -38,6 +38,7 @@
       "legends.LegacyHelperMixin",
       "legends.LegacyPowerFormAbilityMixin",
       "legends.LegacyPowerTransvectionMixin",
+      "legends.LegacyPowerVampiresWrathMixin",
       "legends.LegacyPowerEyeSizeMixin",
       "legends.LegacyPowerMorphBatMixin",
       "legends.LegacyPowerMorphMistMixin",

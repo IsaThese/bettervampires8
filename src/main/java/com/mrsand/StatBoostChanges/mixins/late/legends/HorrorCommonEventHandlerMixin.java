@@ -9,11 +9,15 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mrsand.StatBoostChanges.abilities.BvSunDamage;
+import com.mrsand.StatBoostChanges.abilities.DaywalkerControl;
+import com.mrsand.StatBoostChanges.util.VampireLatchHits;
 import com.tihyo.horror.handlers.HorrorCommonEventHandler;
 import com.tihyo.legends.client.particles.LegendsParticleType;
 import com.tihyo.legends.client.particles.LegendsParticles;
+import com.tihyo.legends.management.LegendsHelper;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -76,6 +80,85 @@ public abstract class HorrorCommonEventHandlerMixin {
 			return;
 		}
 		LegendsParticles.spawnParticle(type, x, y, z, mx, my, mz);
+	}
+
+	/**
+	 * Bite acquire: sticky 3–5 block targeting (stock {@code getTarget(2.0)}).
+	 * Latch snap + Witchery blood run inside {@link VampireLatchHits#getBiteTarget}.
+	 */
+	@Redirect(
+			method = "onAbilities",
+			slice = @Slice(
+					from = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;VAMPIRE_BITE:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					),
+					to = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;VAMPIRIZATION:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					)
+			),
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/LegendsHelper;getTarget(Lnet/minecraft/entity/player/EntityPlayer;D)Lnet/minecraft/entity/EntityLivingBase;"
+			)
+	)
+	private EntityLivingBase bvBiteWiderTarget(EntityPlayer player, double stockRange) {
+		return VampireLatchHits.getBiteTarget(player);
+	}
+
+	/**
+	 * Vampirization: same sticky latch + snap as bite (getTarget only).
+	 * {@code BAT_SWARMING} ordinal 1 — ordinal 0 is a gate check inside the bite
+	 * block (before {@code VAMPIRIZATION}), which makes a no-ordinal slice negative.
+	 */
+	@Redirect(
+			method = "onAbilities",
+			slice = @Slice(
+					from = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;VAMPIRIZATION:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					),
+					to = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;BAT_SWARMING:Lcom/tihyo/legends/management/properties/LegendsProperties;",
+							ordinal = 1
+					)
+			),
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/LegendsHelper;getTarget(Lnet/minecraft/entity/player/EntityPlayer;D)Lnet/minecraft/entity/EntityLivingBase;"
+			)
+	)
+	private EntityLivingBase bvVampirizationLatchTarget(EntityPlayer player, double stockRange) {
+		return VampireLatchHits.getVampirizationTarget(player);
+	}
+
+	/**
+	 * Lord Vampire's Wrath: sticky latch + snap + Witchery 1/3; others keep stock 3.0.
+	 */
+	@Redirect(
+			method = "onAbilities",
+			slice = @Slice(
+					from = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;VAMPIRES_WRATH:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					),
+					to = @At(
+							value = "FIELD",
+							target = "Lcom/tihyo/legends/management/properties/LegendsProperties;WING_ATTACK:Lcom/tihyo/legends/management/properties/LegendsProperties;"
+					)
+			),
+			at = @At(
+					value = "INVOKE",
+					target = "Lcom/tihyo/legends/management/LegendsHelper;getTarget(Lnet/minecraft/entity/player/EntityPlayer;D)Lnet/minecraft/entity/EntityLivingBase;"
+			)
+	)
+	private EntityLivingBase bvWrathLatchTarget(EntityPlayer player, double stockRange) {
+		if (DaywalkerControl.isVampireLord(player)) {
+			return VampireLatchHits.getWrathTarget(player);
+		}
+		return LegendsHelper.getTarget(player, stockRange);
 	}
 
 	/**

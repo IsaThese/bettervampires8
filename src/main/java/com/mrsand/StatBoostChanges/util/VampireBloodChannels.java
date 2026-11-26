@@ -19,7 +19,8 @@ import net.minecraft.util.ChatComponentText;
  * <ul>
  *   <li>Vampiric Drain ({@code BLOOD_DRAIN}) — stock damage hits grant +4 / 10t
  *       (slightly under Vampiric Bite's +5); no separate BV range pulse</li>
- *   <li>Vampire's Wrath ({@code VAMPIRES_WRATH}) — ≥30% blood on successful contact</li>
+ *   <li>Vampire's Wrath ({@code VAMPIRES_WRATH}) — non-lords ≥30% Legends meter on contact;
+ *       lords: latch Witchery 1/3 once (no meter floor / pulses)</li>
  *   <li>Fury Swipes ({@code FURY_SWIPES}) — +10 / 10t on claw contact</li>
  *   <li>Demonic Form upkeep — 1% max Witchery blood / second while beasted</li>
  * </ul>
@@ -45,16 +46,17 @@ public final class VampireBloodChannels {
 
 	/**
 	 * Stock drain blood rides the same look-at hit as damage (+20 / 10t).
-	 * Scale that grant to {@link #DRAIN_PULSE_AMOUNT} while {@code BLOOD_DRAIN} is active.
+	 * Suppress meter pulses while draining — Witchery latch grant replaces them.
 	 */
 	public static int retuneDrainBloodAmount(EntityPlayer player, int amount) {
-		if (amount != 20 || player == null) {
-			return amount;
+		if (player == null) return amount;
+		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) > 0) {
+			return 0;
 		}
-		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.BLOOD_DRAIN) <= 0) {
-			return amount;
+		if (LegendsAbilityBridge.getIntProp(player, LegendsProperties.VAMPIRE_BITE) > 0) {
+			return 0;
 		}
-		return DRAIN_PULSE_AMOUNT;
+		return VampireLatchHits.suppressWrathMeterPulse(player, amount);
 	}
 
 	/**
@@ -77,6 +79,7 @@ public final class VampireBloodChannels {
 				|| player.worldObj.isRemote) {
 			return;
 		}
+		VampireLatchHits.clearEndedChannels(player);
 		tickFurySwipes(player);
 		tickVampiresWrath(player);
 		tickDemonicFormUpkeep(player);
@@ -116,6 +119,12 @@ public final class VampireBloodChannels {
 	}
 
 	private static void tickVampiresWrath(EntityPlayer player) {
+		// Lords: Witchery latch grant is the reward; skip ≥30 Legends-meter floor.
+		if (DaywalkerControl.isVampireLord(player)) {
+			clearWrathTracking(player);
+			return;
+		}
+
 		int wrath = LegendsAbilityBridge.getIntProp(player, LegendsProperties.VAMPIRES_WRATH);
 		NBTTagCompound data = player.getEntityData();
 		boolean tracking = data.getBoolean(TAG_WRATH_TRACKING);
@@ -146,14 +155,19 @@ public final class VampireBloodChannels {
 
 		boolean hadContact = data.getBoolean(TAG_WRATH_CONTACT);
 		int gained = data.getInteger(TAG_WRATH_GAINED);
-		data.removeTag(TAG_WRATH_TRACKING);
-		data.removeTag(TAG_WRATH_GAINED);
-		data.removeTag(TAG_WRATH_CONTACT);
-		data.removeTag(TAG_WRATH_LAST_BLOOD);
+		clearWrathTracking(player);
 
 		if (hadContact && gained < WRATH_MIN_BLOOD) {
 			PlayerHelper.increaseBloodMeter(player, WRATH_MIN_BLOOD - gained, false);
 		}
+	}
+
+	private static void clearWrathTracking(EntityPlayer player) {
+		NBTTagCompound data = player.getEntityData();
+		data.removeTag(TAG_WRATH_TRACKING);
+		data.removeTag(TAG_WRATH_GAINED);
+		data.removeTag(TAG_WRATH_CONTACT);
+		data.removeTag(TAG_WRATH_LAST_BLOOD);
 	}
 
 	private static boolean isValidBloodContact(EntityPlayer player, EntityLivingBase target) {

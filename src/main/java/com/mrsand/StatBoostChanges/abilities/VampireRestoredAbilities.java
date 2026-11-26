@@ -70,6 +70,11 @@ public final class VampireRestoredAbilities {
 			powersChanged = true;
 			changed = true;
 		}
+		// Stock Wrath ownership is virtual for lords (LegacyHelperMixin); strip BV duplicate.
+		if (BvVampirePowers.vampiresWrath != null && learned.remove(BvVampirePowers.vampiresWrath)) {
+			powersChanged = true;
+			changed = true;
+		}
 		if (powersChanged) {
 			PropertyManager.setUnlockedPowers(player, learned);
 		}

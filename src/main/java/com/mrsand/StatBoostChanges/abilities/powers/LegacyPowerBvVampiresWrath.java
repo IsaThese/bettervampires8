@@ -82,8 +82,8 @@ public class LegacyPowerBvVampiresWrath extends LegacyPower {
 	@Override
 	public String getDescription(EntityPlayer player) {
 		return "Vampire's Wrath: embrace your victim, draining life and blood. "
-				+ "Deals heavy damage while channeling; grants at least 30% blood on a successful hold. "
-				+ "Same ability as The Count.";
+				+ "Lords: latch 3–5→~2 and gain 1/3 max Witchery blood once. "
+				+ "Prefer the stock Vampire's Wrath special on the vampire tree.";
 	}
 
 	@Override

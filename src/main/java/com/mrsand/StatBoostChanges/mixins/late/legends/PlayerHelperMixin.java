@@ -52,6 +52,7 @@ public abstract class PlayerHelperMixin {
 	 */
 	@ModifyVariable(method = "increaseBloodMeter", at = @At("HEAD"), argsOnly = true, ordinal = 0)
 	private static int bvRetuneDrainBloodGrant(int amount, EntityPlayer player) {
+		// Bite/drain latch: Witchery lump replaces Legends meter pulses (returns 0).
 		int retuned = VampireBloodChannels.retuneDrainBloodAmount(player, amount);
 		return VampireBloodChannels.scaleTrueFormBloodGain(player, retuned);
 	}
@@ -59,15 +60,18 @@ public abstract class PlayerHelperMixin {
 	/**
 	 * Never replace stock {@code isInvincible}. A prior HEAD-cancel wiped Legends states
 	 * (full {@code DRACULA_TELEPORT}, {@code BAT_SWARMING}/{@code BAT_HORDE}, dash, etc.).
-	 * Only OR BV extras stock does not list. Note: stock does not treat
-	 * {@code VAMPIRE_BITE} as invincible (timer + anim only) — do not re-add it.
+	 * Only OR BV extras stock does not list. BV adds mist, Stat.invulnerability,
+	 * and Vampiric Bite channel invuln (stock bite was timer + anim only).
 	 */
 	@Inject(method = "isInvincible", at = @At("RETURN"), cancellable = true)
 	private static void isInvincibleBvExtras(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValue() != null && cir.getReturnValue().booleanValue()) return;
 		// Mist is BV phasing invuln (stock lists mist under absolute-invisible, not isInvincible).
 		// Stat.invulnerability covers BV setInvincibleTicks paths beyond the INVINCIBLE prop.
-		if (LegendsAbilityBridge.isMist(player) || LegendsAbilityBridge.isInvincible(player)) {
+		// Bite channel: invuln for full cast (stock never granted this).
+		if (LegendsAbilityBridge.isMist(player)
+				|| LegendsAbilityBridge.isInvincible(player)
+				|| LegendsAbilityBridge.isVampireBite(player)) {
 			cir.setReturnValue(Boolean.TRUE);
 		}
 	}

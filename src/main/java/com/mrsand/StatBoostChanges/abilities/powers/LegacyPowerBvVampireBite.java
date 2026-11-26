@@ -60,7 +60,7 @@ public class LegacyPowerBvVampireBite extends LegacyPower {
 			} else {
 				LegendsUtil.vampireBite(player, BITE_SECONDS);
 			}
-			LegacyHelper.setCooldown(player, key, 200);
+			LegacyHelper.setCooldown(player, key, 400);
 		}
 	}
 
@@ -89,8 +89,9 @@ public class LegacyPowerBvVampireBite extends LegacyPower {
 			return "Fury Swipes: ferociously claw the target. Deals ~10 damage + 2 bleeding; "
 					+ "fills blood quickly on claw contact.";
 		}
-		return "Vampiric Bite: bite the victim, cause bleed, and fill your blood meter. "
-				+ "Deals ~2 damage per tick and staggers. Becomes Fury Swipes in True Form.";
+		return "Vampiric Bite: latch from 3–5 blocks (snaps to ~2), bleed, and fill Witchery blood "
+				+ "(1/7 max; True Form × blood mult → 1/6). Invulnerable while channeling. "
+				+ "~20s cooldown. Becomes Fury Swipes in True Form.";
 	}
 
 	@Override

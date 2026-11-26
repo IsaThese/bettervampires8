@@ -109,7 +109,11 @@ public class StatBoostConfig {
 	public static float colossalBurstBudgetTrueForm = 72.0F;
 	public static float colossalBurstFloor = 1.0F;
 	public static float trueFormAbilityDamageMult = 1.5F;
-	public static float trueFormBloodGainMult = 1.5F;
+	/**
+	 * True Form multiplies Legends blood-meter pulses and bite latch Witchery
+	 * ({@code 1/7 * 7/6 = 1/6}).
+	 */
+	public static float trueFormBloodGainMult = 7.0F / 6.0F;
 	public static boolean colossalWarnNullSource = true;
 	/** Master toggle for hard death-save invulnerability window. */
 	public static boolean enableVampireDeathSaveInvuln = true;
@@ -117,11 +121,29 @@ public class StatBoostConfig {
 	public static int vampireDeathSaveInvulnTicks = 40;
 	/** Longer death-save invuln when the killing blow was from a colossal (e.g. Queen). */
 	public static int colossalDeathSaveInvulnTicks = 60;
+	/**
+	 * After a Vampire Lord damages a mob, suppress that mob's HP increases
+	 * ({@code heal}/{@code setHealth} up) for this many seconds.
+	 */
+	public static boolean enableLordEngagementAntiHeal = true;
+	/** Seconds of heal-suppress after a lord hit (clamped 5–10). */
+	public static int lordEngagementAntiHealSeconds = 8;
 
 	/** Vampiric Drain look reach (stock Legends = 10). */
 	public static float vampiricDrainRange = 28.0F;
 	/** Extra AABB/search expand around the look ray (stock ≈ 1). */
 	public static float vampiricDrainWideness = 3.0F;
+	/** Vampiric Bite acquire range (stock Horror = 2). Clamped 3–5. */
+	public static float vampiricBiteRange = 4.0F;
+	public static float vampiricBiteWideness = 1.0F;
+	/** Once per bite latch: fraction of max Witchery blood (× trueFormBloodGainMult in TF). */
+	public static float biteLatchBloodFraction = 1.0F / 7.0F;
+	/** Once per drain latch: fraction of max Witchery blood. */
+	public static float drainLatchBloodFraction = 0.20F;
+	/** Once per lord Wrath latch: fraction of max Witchery blood. */
+	public static float wrathLatchBloodFraction = 1.0F / 3.0F;
+	/** True/Demonic form punch heal as fraction of max HP (replaces 2% blood). */
+	public static float formHitHealPercent = 0.02F;
 
 	public static void load(File configFile) {
 		config = new Configuration(configFile);
@@ -214,7 +236,7 @@ public class StatBoostConfig {
 				"enableLordColossalCombat",
 				"colossal",
 				true,
-				"Vampire Lord: %maxHP armor-bypass on fists/abilities vs high-HP mobs; True Form ability/blood x1.5; incoming burst budget with clothes soft-cap.");
+				"Vampire Lord: %maxHP armor-bypass on fists/abilities vs high-HP mobs; True Form ability/blood mult; incoming burst budget with clothes soft-cap.");
 		colossalHpThreshold = (float) config.get("colossal", "colossalHpThreshold", 500.0D,
 				"Min target max HP for colossal % bonus (Queen ~3000; typical TF/OreSpawn trash ~300).").getDouble(500.0D);
 		colossalPctCombat = (float) config.get("colossal", "colossalPctCombat", 0.018D,
@@ -239,8 +261,9 @@ public class StatBoostConfig {
 				"Minimum damage when burst budget is exhausted.").getDouble(1.0D);
 		trueFormAbilityDamageMult = (float) config.get("colossal", "trueFormAbilityDamageMult", 1.5D,
 				"True Form multiplies Legends ability damage (Bat Attack, bite, etc.).").getDouble(1.5D);
-		trueFormBloodGainMult = (float) config.get("colossal", "trueFormBloodGainMult", 1.5D,
-				"True Form multiplies Legends blood meter gains.").getDouble(1.5D);
+		trueFormBloodGainMult = (float) config.get("colossal", "trueFormBloodGainMult", 7.0D / 6.0D,
+				"True Form multiplies Legends blood meter gains and bite latch Witchery (1/7 * 7/6 = 1/6).")
+				.getDouble(7.0D / 6.0D);
 		colossalWarnNullSource = config.getBoolean("colossalWarnNullSource", "colossal", true,
 				"Log a warning when a colossal-relevant hit cannot resolve a lord attacker.");
 		enableVampireDeathSaveInvuln = config.getBoolean("enableVampireDeathSaveInvuln", "colossal", true,
@@ -249,6 +272,18 @@ public class StatBoostConfig {
 				"Death-save invuln length in ticks (20 = 1s). Default 40 = 2s.");
 		colossalDeathSaveInvulnTicks = config.getInt("colossalDeathSaveInvulnTicks", "colossal", 60, 0, 400,
 				"Death-save invuln ticks vs colossal killers / Queen-style explosions (lords use this). Default 60 = 3s.");
+		enableLordEngagementAntiHeal = config.getBoolean(
+				"enableLordEngagementAntiHeal",
+				"colossal",
+				true,
+				"When a Vampire Lord damages a mob, block that mob from healing / raising HP for a short window (counters OreSpawn-style fast regen).");
+		lordEngagementAntiHealSeconds = config.getInt(
+				"lordEngagementAntiHealSeconds",
+				"colossal",
+				8,
+				5,
+				10,
+				"Heal-suppress duration in seconds after a lord hit (5–10). Default 8.");
 
 		vampiricDrainRange = (float) config.get("drain", "vampiricDrainRange", 28.0D,
 				"Vampiric Drain look/reach distance in blocks (stock Legends = 10). Keep lock if AABB or center is within range.").getDouble(28.0D);
@@ -258,6 +293,29 @@ public class StatBoostConfig {
 		if (vampiricDrainRange > 48.0F) vampiricDrainRange = 48.0F;
 		if (vampiricDrainWideness < 0.0F) vampiricDrainWideness = 0.0F;
 		if (vampiricDrainWideness > 16.0F) vampiricDrainWideness = 16.0F;
+
+		vampiricBiteRange = (float) config.get("drain", "vampiricBiteRange", 4.0D,
+				"Vampiric Bite acquire range in blocks (stock Horror = 2). Clamped 3–5; latch snaps victim to ~2.").getDouble(4.0D);
+		vampiricBiteWideness = (float) config.get("drain", "vampiricBiteWideness", 1.0D,
+				"Extra AABB expand for Bite targeting.").getDouble(1.0D);
+		if (vampiricBiteRange < 3.0F) vampiricBiteRange = 3.0F;
+		if (vampiricBiteRange > 5.0F) vampiricBiteRange = 5.0F;
+		if (vampiricBiteWideness < 0.0F) vampiricBiteWideness = 0.0F;
+		if (vampiricBiteWideness > 8.0F) vampiricBiteWideness = 8.0F;
+
+		biteLatchBloodFraction = (float) config.get("drain", "biteLatchBloodFraction", 1.0D / 7.0D,
+				"Once per bite latch: fraction of max Witchery blood (True Form also × trueFormBloodGainMult).")
+				.getDouble(1.0D / 7.0D);
+		drainLatchBloodFraction = (float) config.get("drain", "drainLatchBloodFraction", 0.20D,
+				"Once per drain latch: fraction of max Witchery blood granted.").getDouble(0.20D);
+		wrathLatchBloodFraction = (float) config.get("drain", "wrathLatchBloodFraction", 1.0D / 3.0D,
+				"Once per lord Vampire's Wrath latch: fraction of max Witchery blood.").getDouble(1.0D / 3.0D);
+		formHitHealPercent = (float) config.get("drain", "formHitHealPercent", 0.02D,
+				"True/Demonic form melee: heal this fraction of max HP instead of Witchery blood.").getDouble(0.02D);
+		if (biteLatchBloodFraction < 0.0F) biteLatchBloodFraction = 0.0F;
+		if (drainLatchBloodFraction < 0.0F) drainLatchBloodFraction = 0.0F;
+		if (wrathLatchBloodFraction < 0.0F) wrathLatchBloodFraction = 0.0F;
+		if (formHitHealPercent < 0.0F) formHitHealPercent = 0.0F;
 
 		// Mist speeds: tune field defaults above for now (skip .cfg override).
 //		mistHorizontalSpeed = config.get(

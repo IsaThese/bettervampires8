@@ -20,10 +20,11 @@ Combat slots
 
 Slot 1  —  bvVampireBite
   Humanoid : Vampiric Bite
-    Bite the target, cause bleed, fill blood meter.
-    ~6 damage; staggers ~5 seconds.
+    Latch from 3–5 blocks (snaps victim to ~2 for the bite anim). Bleed + stagger.
+    Once per latch: Witchery blood = max × (1/7); in True Form also × trueFormBloodGainMult
+    (default 7/6 → 1/6 of max). Invulnerable while channeling. ~20s cooldown.
   True Form: Fury Swipes
-    Claw flurry. ~10 damage + 2 bleeding.
+    Claw flurry. ~10 damage + 2 bleeding; meter pulses on claw contact.
 
 Slot 2  —  bvHellfire
   Humanoid : Hellfire
@@ -75,11 +76,6 @@ Special —  bvDemonicMegiddo  (PowerType.special — special move slot only)
     Ultimate AoE dome of chaotic magic. ~80 total damage in radius, staggers;
     you are invulnerable while it plays. Does not break blocks/terrain.
 
-Special —  bvVampiresWrath  (PowerType.special — The Count)
-  Vampire's Wrath
-    Embrace / drain channel (same as The Count). Heavy damage while held;
-    blood fill uses Horror wrath pulses with a BV floor of ≥30% on successful contact.
-
 Armor  —  bvCape
   Cape
     Toggle cape mode (shroud / open cape visuals & related suit behavior).
@@ -88,12 +84,23 @@ Not a separate BV power
 -----------------------
   Blood Flow Vision — Legacy vampire stats already drive PowersHandler.bloodVision.
 
+  Vampire's Wrath — stock Legends {@code vampiresWrath} only (no BV duplicate).
+    Vampire Lords auto-own it (same virtual grant as other lord powers; not purchasable).
+    Lord upgrade: sticky latch 3–5→~2 like Bite; once per latch Witchery blood = max × (1/3).
+    Special cooldown (~1000). Non-lords learn/purchase stock Wrath normally (meter pulses
+    + BV ≥30% Legends-meter floor on contact).
+
+  Vampirization — stock convert channel; lords get the same latch getTarget (3–5→~2)
+    so large targets are easier to lock. Damage / infection unchanged.
+
 Cooldowns (approx. suit ticks)
 ------------------------------
-  Slot 1 / 2 : 200
-  Slot 3     : 500
-  Slot 4     : 400
-  Slot 5     : 400
-  Soul Steal : 500
-  Megiddo    : 1000
-  Cape       : 40
+  Slot 1 (Bite) : 400
+  Slot 2        : 200
+  Slot 3        : 500
+  Slot 4        : 400
+  Slot 5        : 400
+  Soul Steal    : 500
+  Megiddo       : 1000
+  Cape          : 40
+  Stock Wrath   : ~1000 (special)

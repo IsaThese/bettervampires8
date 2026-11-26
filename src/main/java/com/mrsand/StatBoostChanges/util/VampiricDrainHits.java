@@ -19,6 +19,8 @@ import net.minecraft.util.Vec3;
  */
 public final class VampiricDrainHits {
 
+	public static final String NBT_DRAIN_LATCHED = VampireLatchHits.Channel.DRAIN.latchedKey;
+
 	private VampiricDrainHits() {}
 
 	/** Closest point distance from eyes to entity AABB (0 if inside). */
@@ -63,11 +65,29 @@ public final class VampiricDrainHits {
 		}
 
 		EntityLivingBase sticky = getStickyTarget(player, range);
-		if (sticky != null) return sticky;
+		if (sticky != null) {
+			if (!remote) {
+				tryDrainLatch(player, sticky);
+			}
+			return sticky;
+		}
 		if (!remote) {
-			return findWideCrosshair(player, range, widen);
+			EntityLivingBase found = findWideCrosshair(player, range, widen);
+			if (found != null) {
+				tryDrainLatch(player, found);
+			}
+			return found;
 		}
 		return null;
+	}
+
+	/** First lock this drain cast: Witchery blood once. Idempotent. */
+	public static void tryDrainLatch(EntityPlayer player, EntityLivingBase target) {
+		VampireLatchHits.tryDrainLatch(player, target);
+	}
+
+	public static void clearLatchIfDrainEnded(EntityPlayer player) {
+		VampireLatchHits.clearEndedChannels(player);
 	}
 
 	private static EntityLivingBase getStickyTarget(EntityPlayer player, double range) {

@@ -19,6 +19,10 @@ public final class BvVampirePowers {
 	public static final LegacyPowerBvDarkInferno darkInferno = new LegacyPowerBvDarkInferno();
 	public static final LegacyPowerBvSoulSteal soulSteal = new LegacyPowerBvSoulSteal();
 	public static final LegacyPowerBvDemonicMegiddo demonicMegiddo = new LegacyPowerBvDemonicMegiddo();
+	/**
+	 * Legacy BV duplicate — no longer registered. Lords use stock
+	 * {@link LegacyRegistry#vampiresWrath} (auto-owned + latch upgrade).
+	 */
 	public static final LegacyPowerBvVampiresWrath vampiresWrath = new LegacyPowerBvVampiresWrath();
 	public static final LegacyPowerBvCape cape = new LegacyPowerBvCape();
 	/** Lord-only passive; shown on the tree, never purchasable. */
@@ -46,17 +50,16 @@ public final class BvVampirePowers {
 		LegacyRegistry.manager.addPower(darkInferno);
 		LegacyRegistry.manager.addPower(soulSteal);
 		LegacyRegistry.manager.addPower(demonicMegiddo);
-		LegacyRegistry.manager.addPower(vampiresWrath);
 		LegacyRegistry.manager.addPower(cape);
 		LegacyRegistry.manager.addPower(intangibility);
 		registered = true;
 	}
 
-	/** All BetterVampires vampire powers — Vampirism lord-only. */
+	/** All BetterVampires vampire powers — Vampirism lord-only. Stock Wrath is upgraded separately. */
 	public static LegacyPower[] all() {
 		return new LegacyPower[] {
 				hypnosisMastery, demonicForm, demonicFury, trueForm, draculaTeleport, hellfire,
-				vampireBite, battlePrecognition, darkInferno, soulSteal, demonicMegiddo, vampiresWrath,
+				vampireBite, battlePrecognition, darkInferno, soulSteal, demonicMegiddo,
 				cape, intangibility
 		};
 	}

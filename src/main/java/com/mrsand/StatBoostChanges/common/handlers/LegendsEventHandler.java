@@ -3,6 +3,7 @@ package com.mrsand.StatBoostChanges.common.handlers;
 import java.util.UUID;
 
 import com.emoniph.witchery.Witchery;
+import com.mrsand.StatBoostChanges.StatBoostConfig;
 import com.mrsand.StatBoostChanges.abilities.VampireRestoredAbilities;
 import com.mrsand.StatBoostChanges.common.management.PlayerKeys;
 import com.mrsand.StatBoostChanges.common.management.VExtendedPlayer;
@@ -144,13 +145,17 @@ public class LegendsEventHandler {
 			}
 			else if (MorphHelper.isVampireBeast(player) || MorphHelper.isDraculaTrueForm(player)) {
 				if (event.target instanceof EntityLivingBase) {
-					EntityLivingBase target = (EntityLivingBase)event.target;
-					if(LegendsHelper.isBloodTarget(target)) {
-						if(Loader.isModLoaded("witchery"))
-							if(target.getHealth() != 0) {
-								WitcheryUtil.increaseBloodPower(player, (int)Math.ceil(WitcheryUtil.getMaxBloodPower(player)*.02F));
-								WitcheryUtil.playDrinkSound(event.entityPlayer, target);
-							}
+					EntityLivingBase target = (EntityLivingBase) event.target;
+					if (LegendsHelper.isBloodTarget(target) && target.getHealth() > 0.0F) {
+						// HP sustain only — do not refill Witchery blood (exits / form gates).
+						float pct = StatBoostConfig.formHitHealPercent;
+						if (pct > 0.0F) {
+							float heal = Math.max(1.0F, (float) Math.ceil(player.getMaxHealth() * pct));
+							player.heal(heal);
+						}
+						if (Loader.isModLoaded("witchery")) {
+							WitcheryUtil.playDrinkSound(event.entityPlayer, target);
+						}
 					}
 				}
 			}

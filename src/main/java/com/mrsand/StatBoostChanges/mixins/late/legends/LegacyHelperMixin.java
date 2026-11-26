@@ -40,6 +40,11 @@ public abstract class LegacyHelperMixin {
 			cir.setReturnValue(Boolean.valueOf(DaywalkerControl.isVampireLord(player)));
 			return;
 		}
+		// Stock Vampire's Wrath: lords own it automatically (merged lord upgrade; not BV duplicate).
+		if (power == LegacyRegistry.vampiresWrath && DaywalkerControl.isVampireLord(player)) {
+			cir.setReturnValue(Boolean.TRUE);
+			return;
+		}
 		if (!DaywalkerControl.isEnabled() || power != LegacyRegistry.daywalker) return;
 		if (DaywalkerControl.isVampireLord(player)) {
 			cir.setReturnValue(Boolean.TRUE);
@@ -52,6 +57,11 @@ public abstract class LegacyHelperMixin {
 	private static void bvBlockForcedLearn(EntityPlayer player, LegacyPower power,
 			CallbackInfoReturnable<Boolean> cir) {
 		if (BvVampirePowers.isLordOnlyPower(power)) {
+			cir.setReturnValue(Boolean.FALSE);
+			return;
+		}
+		// Lords already own stock Wrath; hide purchase (parent bloodRaze would otherwise block).
+		if (power == LegacyRegistry.vampiresWrath && DaywalkerControl.isVampireLord(player)) {
 			cir.setReturnValue(Boolean.FALSE);
 			return;
 		}
