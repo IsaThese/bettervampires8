@@ -159,9 +159,18 @@ bin/
 
 # Scratch javap/decompile/research dumps from dependency jars (local only)
 .tmp_*/
+tmp_*/
 tmp_decompile/
+tmp_legends_decomp/
+tmp_orespawn/
+tmp_*.txt
+*.javap.txt
+
+# Accidental extracted/class dumps at repo root (not source)
+/com/tihyo/
 
 # Built jars stay out of git. Dependency jars in lib/ are tracked with Git LFS (private repo).
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 !lib/**/*.jar
+*.class

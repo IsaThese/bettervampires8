@@ -1,2 +1,2 @@
-Transvection needs to disable double jump
-Buffing/Thinking around op items and defeating the queen.
+falling down
+range
